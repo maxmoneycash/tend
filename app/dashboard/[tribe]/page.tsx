@@ -48,14 +48,16 @@ export default async function TribeDashboard({
   if (!tribe) redirect("/dashboard");
 
   const demo = demoMode();
+  const authBypass = process.env.TEND_DEMO_AUTH_BYPASS === "1";
 
-  if (!demo) {
+  if (!demo && !authBypass) {
     const session = await auth0.getSession();
     if (!session) redirect(`/auth/login?returnTo=/dashboard/${tribe.id}`);
     if (!canAccessTribe(session.user, tribe.id as TribeId)) {
       return (
         <>
         <Navbar />
+    <div style={{ paddingTop: "108px" }} />
         <div className="mx-auto max-w-2xl px-6 pt-24">
           <h1 className="font-display text-4xl font-bold">Not your tenant</h1>
           <p className="mt-4 text-faded">
@@ -126,11 +128,13 @@ export default async function TribeDashboard({
     <>
     <Navbar />
     <div className="mx-auto max-w-4xl px-6 pt-12">
-      {demo && (
+      {(demo || authBypass) && (
         <div className="mb-6 rounded-lg border border-amber bg-parch px-4 py-3 text-sm">
-          <strong>Demo mode</strong> — sample data, sign-in bypassed. Connect
-          Stripe &amp; Auth0 (see README) and this page goes live with the
-          tribe&apos;s real numbers.
+          <strong>{demo ? "Demo mode" : "Stripe test mode"}</strong> —{" "}
+          {demo
+            ? "sample data, sign-in bypassed."
+            : "real test transactions, sign-in bypassed for recording."}{" "}
+          Production access is isolated with Auth0 Organizations.
         </div>
       )}
 

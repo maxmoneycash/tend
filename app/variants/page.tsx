@@ -44,6 +44,7 @@ export default function VariantsPage() {
   return (
     <>
     <Navbar />
+    <div style={{ paddingTop: "108px" }} />
     <div className="mx-auto max-w-4xl px-6 pt-12 pb-8 space-y-16">
       <header>
         <p className="text-sm font-semibold uppercase tracking-widest text-clay">

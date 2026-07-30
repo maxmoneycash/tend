@@ -26,6 +26,7 @@ export default function Home() {
   return (
     <>
     <Navbar />
+    <div style={{ paddingTop: "108px" }} />
     <div className="relative overflow-hidden">
       {/* ambient blobs */}
       <div
@@ -82,7 +83,7 @@ export default function Home() {
             { label: "PROGRAMS LIVE", value: "2" },
             { label: "PLATFORM FEE", value: "0%" },
             { label: "COUNTIES COVERED", value: "5" },
-            { label: "MACHINE PAYERS", value: "MPP" },
+            { label: "MACHINE PAYERS", value: "MPP PREVIEW" },
           ].map((s) => (
             <div key={s.label} className="surface-2 rounded-[10px] p-3 text-center">
               <p className="text-[9px] text-zinc-600 uppercase tracking-wider">
@@ -139,7 +140,7 @@ export default function Home() {
                 </div>
                 <div className="mt-4 pt-3 border-t border-white/[0.04] flex items-center justify-between">
                   <span className="text-[11px] text-zinc-600 font-mono">
-                    100% to the org · no platform fee
+                    0% Tend fee · Stripe fees apply
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 text-orange-400 text-[11px] font-medium group-hover:bg-orange-500/20 transition-colors">
                     View program →
@@ -203,7 +204,9 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-5 py-14">
           <div className="rule-row">
             <h2 className="display-2">Machines pay rent here.</h2>
-            <span className="note">Stripe Machine Payments Protocol</span>
+            <span className="note">
+              Stripe MPP prototype · crypto preview access required
+            </span>
           </div>
           <div className="mt-7 grid gap-8 lg:grid-cols-[1fr_1.1fr] items-start">
             <p className="max-w-xl text-[14px] leading-relaxed text-zinc-400">

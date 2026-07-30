@@ -13,6 +13,7 @@ export default async function Thanks({
   return (
     <>
     <Navbar />
+    <div style={{ paddingTop: "108px" }} />
     <div className="mx-auto max-w-2xl px-6 pt-24 text-center">
       {demo === "1" && (
         <p className="mb-6 rounded-lg border border-amber bg-parch px-4 py-3 text-sm">

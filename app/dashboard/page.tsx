@@ -6,14 +6,19 @@ import { demoMode } from "@/lib/demo";
 import { tribes, type TribeId } from "@/lib/tribes";
 
 export default async function DashboardIndex() {
-  if (demoMode()) {
+  const authBypass = process.env.TEND_DEMO_AUTH_BYPASS === "1";
+
+  if (demoMode() || authBypass) {
     return (
       <>
       <Navbar />
+    <div style={{ paddingTop: "108px" }} />
       <div className="mx-auto max-w-2xl px-6 pt-24">
         <h1 className="font-display text-4xl font-bold">Tribal tenants</h1>
         <p className="mt-2 text-sm text-faded">
-          Demo mode — both tenants are open with sample data.
+          {authBypass
+            ? "Stripe test mode — sign-in is bypassed for this recording."
+            : "Demo mode — both tenants are open with sample data."}
         </p>
         <div className="mt-6 grid gap-4">
           {(Object.keys(tribes) as TribeId[]).map((id) => (

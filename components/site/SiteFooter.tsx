@@ -30,7 +30,7 @@ export function SiteFooter() {
         </div>
         <div className="mt-8 pt-5 border-t border-white/[0.04] flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-zinc-600 uppercase tracking-wider">
           <span>Ramaytush &amp; Muwekma Ohlone land · San Francisco Bay</span>
-          <span>humans pay by card · machines pay by MPP</span>
+          <span>humans pay by card · MPP prototype for machines</span>
         </div>
       </div>
     </footer>

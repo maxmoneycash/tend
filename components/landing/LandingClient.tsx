@@ -7,8 +7,6 @@ import { useEffect, useState } from "react";
 import { animate, inView } from "motion";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
-import { MarketOverview } from "./MarketOverview";
-import { BrandCarousel } from "./BrandCarousel";
 import { campaigns as staticCampaigns } from "@/lib/campaigns";
 import type { Campaign } from "@/lib/campaigns";
 import "@/styles/landing.css";
@@ -1470,20 +1468,20 @@ export function LandingClient() {
 
     if (phoneNotifList && phoneFrame) {
       const NOTIF_POOL = [
-        { user: 'bpatterson40', amount: '$2,339.31', token: 'USDT' },
-        { user: 'joanne_smith', amount: '$224.99', token: 'USDT0' },
-        { user: 'roxanne25', amount: '$1,305.00', token: 'USDT' },
-        { user: 'cameron_diaz', amount: '$15.99', token: 'USDT0' },
-        { user: 'alex_williams', amount: '$85.50', token: 'USDT' },
-        { user: 'sarah_connor', amount: '$3,000.00', token: 'USDT0' },
-        { user: 'tony_stark', amount: '$9,999.99', token: 'USDT' },
-        { user: 'bruce_wayne', amount: '$150.00', token: 'USDT0' },
-        { user: 'natasha_r', amount: '$42.00', token: 'USDT' },
-        { user: 'steve_rogers', amount: '$19.41', token: 'USDT0' },
-        { user: 'wanda_m', amount: '$600.00', token: 'USDT' },
-        { user: 'clark_kent', amount: '$1.99', token: 'USDT0' },
-        { user: 'peter_parker', amount: '$12.50', token: 'USDT' },
-        { user: 'diana_prince', amount: '$840.00', token: 'USDT0' },
+        { user: 'bpatterson40', amount: '$2,339.31', token: 'USDC' },
+        { user: 'joanne_smith', amount: '$224.99', token: 'USDC' },
+        { user: 'roxanne25', amount: '$1,305.00', token: 'USDC' },
+        { user: 'cameron_diaz', amount: '$15.99', token: 'USDC' },
+        { user: 'alex_williams', amount: '$85.50', token: 'USDC' },
+        { user: 'sarah_connor', amount: '$3,000.00', token: 'USDC' },
+        { user: 'tony_stark', amount: '$9,999.99', token: 'USDC' },
+        { user: 'bruce_wayne', amount: '$150.00', token: 'USDC' },
+        { user: 'natasha_r', amount: '$42.00', token: 'USDC' },
+        { user: 'steve_rogers', amount: '$19.41', token: 'USDC' },
+        { user: 'wanda_m', amount: '$600.00', token: 'USDC' },
+        { user: 'clark_kent', amount: '$1.99', token: 'USDC' },
+        { user: 'peter_parker', amount: '$12.50', token: 'USDC' },
+        { user: 'diana_prince', amount: '$840.00', token: 'USDC' },
       ];
 
       function createNotifEl(data, time, isNew, delay) {
@@ -1497,11 +1495,11 @@ export function LandingClient() {
                 <div class="phone-notif-icon">
                   <img src="/whop-app-logo.png" alt="Whop" style="width:100%;height:100%;border-radius:6px;object-fit:cover;" />
                 </div>
-                <span class="phone-notif-title">Whop Finance</span>
+                <span class="phone-notif-title">Tend</span>
               </div>
               <span class="phone-notif-time">${time}</span>
             </div>
-            <div class="phone-notif-body"><span class="phone-notif-text"><span style="font-weight:500">${data.user}</span> just paid ${data.amount}</span> <span class="phone-notif-token"><img src="${data.token === 'USDT0' ? '/usdt0-logo.png' : '/tether.svg'}" alt="${data.token}" class="phone-notif-token-icon" />${data.token}</span></div>
+            <div class="phone-notif-body"><span class="phone-notif-text"><span style="font-weight:500">${data.user}</span> just pledged ${data.amount}</span> <span class="phone-notif-token"><img src="${data.token === 'USDT0' ? '/usdt0-logo.png' : '/tether.svg'}" alt="${data.token}" class="phone-notif-token-icon" />${data.token}</span></div>
           </div>
         `;
         return wrap;
@@ -1625,17 +1623,6 @@ export function LandingClient() {
                 <br />
                 <div className="hero-h1-row">
                   <h1 className="hero-h1"><span className="hero-h1-line">As a</span></h1>
-                  <div className="hero-toggle-wrap">
-                    <span className="hero-toggle-label hero-toggle-label--active">FOR RESIDENTS</span>
-                    <button className="hero-toggle-switch" id="heroToggle" aria-label="Toggle creator/brand view">
-                      <div className="hero-toggle-track">
-                        <div className="hero-toggle-knob">
-                          <div className="hero-toggle-knob-gradient"></div>
-                        </div>
-                      </div>
-                    </button>
-                    <span className="hero-toggle-label hero-toggle-label--inactive">FOR MACHINES</span>
-                  </div>
                   <h1 className="hero-h1"><span className="hero-h1-line">Resident</span></h1>
                 </div>
                 <p className="hero-sub">A small recurring land-tax pledge to the tribes whose land you live on — direct to their accounts, no platform fee.</p>
@@ -1824,8 +1811,8 @@ export function LandingClient() {
             <div className="section-inner">
               <div className="phone-notifs-text">
                 <div className="pill-badge">Real-Time Payments</div>
-                <h2 className="section-h2">Watch the Pledges Flow In</h2>
-                <p className="section-p">Every time a pledge arrives, you'll see it happen live. Instant, transparent, and continuous.</p>
+                <h2 className="section-h2">Watch Donations Stream In</h2>
+                <p className="section-p">Every donation streams on Tempo and offramps to the tribe through Stripe — live, transparent, continuous.</p>
               </div>
               <div className="phone-dash-row">
                 {/* Phone */}
@@ -1880,17 +1867,17 @@ export function LandingClient() {
                       <div className="dash-top-row">
                         <div className="dash-earnings-card" id="dashEarningsCard">
                           <div className="dash-earnings-header">
-                            <div className="dash-earnings-label">Total Earned</div>
+                            <div className="dash-earnings-label">Total Streamed</div>
                             <span className="dash-earnings-rate">$0.75/1k</span>
                           </div>
                           <div className="dash-earnings-row">
                             <span className="dash-earnings-big" id="dashEarningsNum">$620</span>
                           </div>
-                          <div className="dash-earnings-sub">USDT on Aptos · 1,889,831 views</div>
+                          <div className="dash-earnings-sub">USDC on Tempo · offramped with Stripe</div>
                         </div>
                         <div className="dash-campaigns-count">
                           <div className="dash-count-num">6</div>
-                          <div className="dash-count-sub">Active Campaigns</div>
+                          <div className="dash-count-sub">Active programs</div>
                           <div className="dash-count-sub">7 Clips</div>
                         </div>
                       </div>
@@ -1900,7 +1887,7 @@ export function LandingClient() {
                           <span className="dash-active-name">Yunakin Land Tax</span>
                           <span className="dash-active-badge">Active</span>
                         </div>
-                        <div className="dash-active-meta">$0.75 CPM · Aptos testnet</div>
+                        <div className="dash-active-meta">Streaming · Tempo → Stripe offramp</div>
                         <div className="dash-active-bar">
                           <div className="dash-active-bar-fill" id="dashBarFill" style={{ width: '32.7%' }}></div>
                         </div>
@@ -1959,7 +1946,7 @@ export function LandingClient() {
                             <span className="dash-td-balance dash-td-earned" data-base="8.67">+$8.67</span>
                           </div>
                         </div>
-                        <div className="dash-table-footer">Auto-refreshing · USDT flows in real time</div>
+                        <div className="dash-table-footer">Auto-refreshing · donations stream in real time</div>
                       </div>
                     </div>
 
@@ -2037,7 +2024,7 @@ export function LandingClient() {
                             <span className="dash-td-balance" style={{ color: '#f97316', cursor: 'pointer' }}>View ↗</span>
                           </div>
                         </div>
-                        <div className="dash-table-footer">Settlement complete · USDT on Aptos mainnet</div>
+                        <div className="dash-table-footer">Offramp complete · Stripe → the tribe’s account</div>
                       </div>
                     </div>
                   </div>
@@ -2679,7 +2666,6 @@ export function LandingClient() {
           </section>
 
           {/* ═══════ MARKET OVERVIEW ═══════ */}
-          <MarketOverview />
 
           {/* ═══════ FAQ ═══════ */}
           <section className="section section--white" id="faq" data-view="creator">
@@ -2700,162 +2686,14 @@ export function LandingClient() {
           </section>
 
           {/* ═══════ BRAND: SOCIAL PROOF (scrolling brand logos + counter) ═══════ */}
-          <section className="section section--brand-social" id="brand-social" data-view="brand" style={{ display: 'none' }}>
-            <div className="section-inner">
-              <h2 className="section-h2 brand-gradient-text">Join 200+ Profitable Brands</h2>
-              <p className="section-p" style={{ color: 'rgba(255,255,255,0.7)' }}>Verified brands win 30% more deals and gain brand trust</p>
-            </div>
-            <div className="brand-logos-grid">
-              <div className="brand-logo-col brand-logo-col--up">
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/TyP1Yy6hkL0nbmJjAqXoWEWV5k.png?width=424&height=399" alt="Stake" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/CTpkzYq4hR70pw88nzpDTdRZtAY.webp?width=150&height=146" alt="Crayo" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/5CLgmuP9GtAKX4BiQFhK1Y9m1Go.png?width=512&height=512" alt="F1" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/azIcNCZ9lPyGHbB8S5LYQxBhiIc.png?width=400&height=400" alt="Billboard" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/TyP1Yy6hkL0nbmJjAqXoWEWV5k.png?width=424&height=399" alt="Stake" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/CTpkzYq4hR70pw88nzpDTdRZtAY.webp?width=150&height=146" alt="Crayo" /></div>
-              </div>
-              <div className="brand-logo-col brand-logo-col--down">
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/OMZv1Zi0y5IBxLBQhERGHKKBo.webp?width=240&height=240" alt="Polymarket" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/KDttIf02RDEagXzVVwWfzAA4sI.png?width=512&height=512" alt="Whop" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/DWRSzVgWDvxVN9NIbCjqxdS0CY.png?width=225&height=225" alt="NFL" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/RSd2Jed8EU8U8jQN5Y18tXleNOw.png?width=512&height=512" alt="F1" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/OMZv1Zi0y5IBxLBQhERGHKKBo.webp?width=240&height=240" alt="Polymarket" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/KDttIf02RDEagXzVVwWfzAA4sI.png?width=512&height=512" alt="Whop" /></div>
-              </div>
-              <div className="brand-counter-card">
-                <span className="brand-counter-num" id="brandCounterNum">320</span>
-                <span className="brand-counter-label">Brands</span>
-              </div>
-              <div className="brand-logo-col brand-logo-col--up">
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/IqywNUUTt6j2pjgaQiUY9JQGWGI.png?width=8000&height=4500" alt="Association of Ramaytush Ohlone" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/SiBp2vckPrUBs4TOQ46vrbwvbMo.jpg?width=900&height=1200" alt="Brez" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/RqTVfvK79lmmSzvL5cXl2YYjm18.png?width=229&height=220" alt="Eleven" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/WjsQ0Adlg1Q7UG7mcdjdYtsWa2w.jpg?width=900&height=900" alt="Iman" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/IqywNUUTt6j2pjgaQiUY9JQGWGI.png?width=8000&height=4500" alt="Association of Ramaytush Ohlone" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/SiBp2vckPrUBs4TOQ46vrbwvbMo.jpg?width=900&height=1200" alt="Brez" /></div>
-              </div>
-              <div className="brand-logo-col brand-logo-col--down">
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/kxA2ahkw536WT17BXDLi8dA1kE.jpg?width=2048&height=1152" alt="Druski" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/KvLYdVXqIuc33NZpBi65ODZ1gtk.jpg?width=600&height=373" alt="Jacob" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/TyP1Yy6hkL0nbmJjAqXoWEWV5k.png?width=424&height=399" alt="Stake" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/5CLgmuP9GtAKX4BiQFhK1Y9m1Go.png?width=512&height=512" alt="F1" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/kxA2ahkw536WT17BXDLi8dA1kE.jpg?width=2048&height=1152" alt="Druski" /></div>
-                <div className="brand-logo-item"><img src="https://framerusercontent.com/images/KvLYdVXqIuc33NZpBi65ODZ1gtk.jpg?width=600&height=373" alt="Jacob" /></div>
-              </div>
-            </div>
-          </section>
 
           {/* ═══════ BRAND: CAMPAIGN RESULTS (Carousel) ═══════ */}
-          <section className="section section--brand-results" id="brand-results" data-view="brand" style={{ display: 'none', background: '#000', overflow: 'hidden' }}>
-            <div className="section-inner">
-              <div className="pill-badge">Results</div>
-              <h2 className="section-h2 brand-gradient-text">See What Brands Have Achieved</h2>
-              <p className="section-p" style={{ color: 'rgba(255,255,255,0.6)' }}>Join top opportunities from trusted brands and start collaborating right away.</p>
-              <BrandCarousel />
-            </div>
-          </section>
 
           {/* ═══════ BRAND: BOOST VISIBILITY ═══════ */}
-          <section className="section section--gray" id="brand-boost" data-view="brand" style={{ display: 'none' }}>
-            <div className="section-inner">
-              <div className="pill-badge">Featured</div>
-              <h2 className="section-h2">Boost Visibility</h2>
-              <p className="section-p">Featured placement so more creators see and apply to your campaigns</p>
-              <div className="brand-boost-card">
-                <div className="brand-boost-browser">
-                  <div className="dash-browser-bar">
-                    <div className="dash-browser-dots">
-                      <span className="dash-dot dash-dot--red"></span>
-                      <span className="dash-dot dash-dot--yellow"></span>
-                      <span className="dash-dot dash-dot--green"></span>
-                    </div>
-                    <div className="dash-browser-url">
-                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12"/><path d="M8 2a10 10 0 0 1 0 12M8 2a10 10 0 0 0 0 12"/></svg>
-                      <span>app.contentrewards.com/campaigns</span>
-                    </div>
-                  </div>
-                  <div className="brand-boost-content">
-                    <div className="brand-boost-earnings-overlay">
-                      <div className="brand-boost-earnings-big">$87.5k</div>
-                      <div className="brand-boost-earnings-slash">/ $101.8k</div>
-                    </div>
-                    <div className="brand-boost-campaigns-badge">CAMPAIGNS 19</div>
-                    <div className="brand-boost-table">
-                      <div className="brand-boost-table-row">
-                        <span className="brand-boost-camp-name">Stake.com — $2 CPM Clipping</span>
-                        <span className="brand-boost-camp-views">4.2M views</span>
-                        <span className="brand-boost-camp-earned brand-boost-green">$8,400</span>
-                      </div>
-                      <div className="brand-boost-table-row">
-                        <span className="brand-boost-camp-name">NFL Sunday Highlights</span>
-                        <span className="brand-boost-camp-views">24M views</span>
-                        <span className="brand-boost-camp-earned brand-boost-green">$19,000</span>
-                      </div>
-                      <div className="brand-boost-table-row">
-                        <span className="brand-boost-camp-name">Polymarket Election Clips</span>
-                        <span className="brand-boost-camp-views">4.5M views</span>
-                        <span className="brand-boost-camp-earned brand-boost-green">$3,375</span>
-                      </div>
-                      <div className="brand-boost-table-row">
-                        <span className="brand-boost-camp-name">Billboard Music Awards</span>
-                        <span className="brand-boost-camp-views">12M views</span>
-                        <span className="brand-boost-camp-earned brand-boost-green">$18,000</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
 
           {/* ═══════ BRAND: PROTECTION FEATURES ═══════ */}
-          <section className="section section--white" id="brand-protection" data-view="brand" style={{ display: 'none' }}>
-            <div className="section-inner">
-              <div className="pill-badge">Security</div>
-              <h2 className="section-h2">Protection Features You Can Trust</h2>
-              <p className="section-p">Protection systems designed to secure payments and reduce risks for every clipper</p>
-              <div className="brand-protection-grid">
-                <div className="brand-protection-card">
-                  <div className="brand-protection-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
-                  </div>
-                  <h3 className="brand-protection-h">Flag Videos</h3>
-                  <p className="brand-protection-p">Instantly flag any video that doesn't meet your standards</p>
-                </div>
-                <div className="brand-protection-card">
-                  <div className="brand-protection-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                  </div>
-                  <h3 className="brand-protection-h">Bot Protection</h3>
-                  <p className="brand-protection-p">Block fake engagement and ensure authentic reach on each video</p>
-                </div>
-                <div className="brand-protection-card">
-                  <div className="brand-protection-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                  </div>
-                  <h3 className="brand-protection-h">VIP Support</h3>
-                  <p className="brand-protection-p">Priority access to our team whenever you need help</p>
-                </div>
-              </div>
-            </div>
-          </section>
 
           {/* ═══════ BRAND: FAQ ═══════ */}
-          <section className="section section--gray" id="brand-faq" data-view="brand" style={{ display: 'none' }}>
-            <div className="section-inner">
-              <div className="pill-badge">FAQs</div>
-              <h2 className="section-h2">Answers to Your Questions</h2>
-              <p className="section-p" style={{ color: '#6b7280' }}>Quick explanations to guide you through every step of the process.</p>
-              <div className="faq-list"><div className="faq-list-inner">
-                <div className="faq-item"><button className="faq-q"><span>Does Content Rewards take a fee from agencies?</span><span className="faq-icon"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M216.49,104.49l-80,80a12,12,0,0,1-17,0l-80-80a12,12,0,0,1,17-17L128,159l71.51-71.52a12,12,0,0,1,17,17Z"/></svg></span></button><div className="faq-a"><div className="faq-a-inner"><p>Yes, Content Rewards applies a small platform fee on agency-managed campaigns. This fee covers platform access, creator vetting, and campaign management tools.</p></div></div></div>
-                <div className="faq-item"><button className="faq-q"><span>Why has a submission been automatically flagged?</span><span className="faq-icon"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M216.49,104.49l-80,80a12,12,0,0,1-17,0l-80-80a12,12,0,0,1,17-17L128,159l71.51-71.52a12,12,0,0,1,17,17Z"/></svg></span></button><div className="faq-a"><div className="faq-a-inner"><p>Our bot detection system automatically flags submissions that show signs of artificial engagement. This protects your budget from fake views and ensures authentic reach.</p></div></div></div>
-                <div className="faq-item"><button className="faq-q"><span>What if I am unsure if a flagged submission is botted?</span><span className="faq-icon"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M216.49,104.49l-80,80a12,12,0,0,1-17,0l-80-80a12,12,0,0,1,17-17L128,159l71.51-71.52a12,12,0,0,1,17,17Z"/></svg></span></button><div className="faq-a"><div className="faq-a-inner"><p>You can review the evidence provided by our Shelby verification system. If you're still unsure, contact our VIP support team for a manual review.</p></div></div></div>
-                <div className="faq-item"><button className="faq-q"><span>If my client wants me to add more money to a campaign how do I do this?</span><span className="faq-icon"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M216.49,104.49l-80,80a12,12,0,0,1-17,0l-80-80a12,12,0,0,1,17-17L128,159l71.51-71.52a12,12,0,0,1,17,17Z"/></svg></span></button><div className="faq-a"><div className="faq-a-inner"><p>Navigate to your campaign dashboard, click "Add Budget" and follow the prompts. Additional funds are applied instantly and your campaign continues without interruption.</p></div></div></div>
-                <div className="faq-item"><button className="faq-q"><span>How do payouts work?</span><span className="faq-icon"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M216.49,104.49l-80,80a12,12,0,0,1-17,0l-80-80a12,12,0,0,1,17-17L128,159l71.51-71.52a12,12,0,0,1,17,17Z"/></svg></span></button><div className="faq-a"><div className="faq-a-inner"><p>Creator payouts are handled automatically through our Shelby smart contract system. Brands only pay for verified, authentic views — no manual processing required.</p></div></div></div>
-              </div></div>
-              <Link href="/faqs" className="faq-see-all">See all questions<svg viewBox="0 0 24 24" fill="none"><line x1="21.5" y1="12" x2="0.5" y2="12" stroke="#fff" strokeWidth="1.75"/><polyline points="13.86 4.36 21.5 12 13.86 19.64" fill="none" stroke="#fff" strokeWidth="1.75"/></svg></Link>
-            </div>
-          </section>
 
           {/* ═══════ FOOTER ═══════ */}
           <footer className="footer">
