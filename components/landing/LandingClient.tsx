@@ -1468,20 +1468,18 @@ export function LandingClient() {
 
     if (phoneNotifList && phoneFrame) {
       const NOTIF_POOL = [
-        { user: 'bpatterson40', amount: '$2,339.31', token: 'USDC' },
-        { user: 'joanne_smith', amount: '$224.99', token: 'USDC' },
-        { user: 'roxanne25', amount: '$1,305.00', token: 'USDC' },
-        { user: 'cameron_diaz', amount: '$15.99', token: 'USDC' },
-        { user: 'alex_williams', amount: '$85.50', token: 'USDC' },
-        { user: 'sarah_connor', amount: '$3,000.00', token: 'USDC' },
-        { user: 'tony_stark', amount: '$9,999.99', token: 'USDC' },
-        { user: 'bruce_wayne', amount: '$150.00', token: 'USDC' },
         { user: 'natasha_r', amount: '$42.00', token: 'USDC' },
-        { user: 'steve_rogers', amount: '$19.41', token: 'USDC' },
-        { user: 'wanda_m', amount: '$600.00', token: 'USDC' },
-        { user: 'clark_kent', amount: '$1.99', token: 'USDC' },
-        { user: 'peter_parker', amount: '$12.50', token: 'USDC' },
-        { user: 'diana_prince', amount: '$840.00', token: 'USDC' },
+        { user: 'a.hernandez', amount: '$25.00', token: 'USDC' },
+        { user: 'ci-runner @ acme', amount: '$25.00', token: 'USDC' },
+        { user: 'j.wong', amount: '$100.00', token: 'USDC' },
+        { user: 'alex_w', amount: '$85.50', token: 'USDC' },
+        { user: 'sarah_c', amount: '$50.00', token: 'USDC' },
+        { user: 'fleet-7 @ mission-labs', amount: '$25.00', token: 'USDC' },
+        { user: 'm.okafor', amount: '$15.00', token: 'USDC' },
+        { user: 'deploy-bot @ presidio.ai', amount: '$25.00', token: 'USDC' },
+        { user: 'r.silva', amount: '$19.41', token: 'USDC' },
+        { user: 'k.nguyen', amount: '$600.00', token: 'USDC' },
+        { user: 'd.miller', amount: '$12.50', token: 'USDC' },
       ];
 
       function createNotifEl(data, time, isNew, delay) {
@@ -1493,13 +1491,13 @@ export function LandingClient() {
             <div class="phone-notif-top">
               <div class="phone-notif-app">
                 <div class="phone-notif-icon">
-                  <img src="/whop-app-logo.png" alt="Whop" style="width:100%;height:100%;border-radius:6px;object-fit:cover;" />
+                  <div style="width:100%;height:100%;border-radius:6px;background:#FA4616;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">T</div>
                 </div>
                 <span class="phone-notif-title">Tend</span>
               </div>
               <span class="phone-notif-time">${time}</span>
             </div>
-            <div class="phone-notif-body"><span class="phone-notif-text"><span style="font-weight:500">${data.user}</span> just pledged ${data.amount}</span> <span class="phone-notif-token"><img src="${data.token === 'USDT0' ? '/usdt0-logo.png' : '/tether.svg'}" alt="${data.token}" class="phone-notif-token-icon" />${data.token}</span></div>
+            <div class="phone-notif-body"><span class="phone-notif-text"><span style="font-weight:500">${data.user}</span> just pledged ${data.amount}</span> <span class="phone-notif-token"><span class="phone-notif-token-icon" style="background:#26A17B;border-radius:50%;display:inline-block;"></span>${data.token}</span></div>
           </div>
         `;
         return wrap;
@@ -1633,176 +1631,6 @@ export function LandingClient() {
                   <a href="#" className="btn-white">Explore programs</a>
                 </div>
               </div>
-              <div className="hero-visual">
-                <img src="https://framerusercontent.com/images/5RlXjISAoh2vfp5MeLPNxQZkTE.svg" alt="" className="hero-svg-backdrop" />
-                <div className="hero-3d-cards">
-                  <div className="hero-3d-card hero-3d-card--left">
-                    <div className="hero-card-body">
-                      <img src="https://framerusercontent.com/images/yMSetzwPEQ2bU2GYllzxgnmb5U.png" alt="" className="hero-3d-icon hero-card-anim" />
-                      {/* Glowing rails with USDT coins flowing to people */}
-                      <svg className="hero-coin-rails" viewBox="0 0 192 210" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                          <filter id="railGlow" x="-40%" y="-40%" width="180%" height="180%">
-                            <feGaussianBlur stdDeviation="3" result="blur" />
-                            <feMerge>
-                              <feMergeNode in="blur" />
-                              <feMergeNode in="SourceGraphic" />
-                            </feMerge>
-                          </filter>
-                          <linearGradient id="railGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="rgba(255,165,50,0.6)" />
-                            <stop offset="100%" stopColor="rgba(255,165,50,0.15)" />
-                          </linearGradient>
-                          <symbol id="usdtCoin" viewBox="0 0 28 28">
-                            <circle cx="14" cy="14" r="14" fill="#53ae94" />
-                            <path d="M15.7 12.1V9.9h4.8V6.7H7.5V9.9h4.8v2.2c-3.9.2-6.8 1-6.8 1.9s2.9 1.7 6.8 1.9v6.7h3.5v-6.7c3.9-.2 6.8-1 6.8-1.9s-2.9-1.7-6.8-1.9m0 3.2c-.1 0-.6 0-1.7 0-.9 0-1.5 0-1.7 0-3.4-.1-6-.7-6-1.4s2.6-1.3 6-1.5v2.3c.2 0 .9.1 1.8.1 1.1 0 1.6-.1 1.7-.1v-2.3c3.4.2 6 .8 6 1.5s-2.6 1.3-6 1.5" fill="#fff"/>
-                          </symbol>
-                        </defs>
-                        {/* Rail paths — start below logo area, fan out to people */}
-                        <path id="rail1" d="M96,45 C90,80 32,110 28,185" stroke="url(#railGrad)" strokeWidth="1.5" filter="url(#railGlow)" opacity="0.45" fill="none" />
-                        <path id="rail2" d="M96,45 C94,75 60,120 58,185" stroke="url(#railGrad)" strokeWidth="1.5" filter="url(#railGlow)" opacity="0.45" fill="none" />
-                        <path id="rail3" d="M96,45 C96,80 96,130 96,185" stroke="url(#railGrad)" strokeWidth="1.5" filter="url(#railGlow)" opacity="0.45" fill="none" />
-                        <path id="rail4" d="M96,45 C98,75 132,120 134,185" stroke="url(#railGrad)" strokeWidth="1.5" filter="url(#railGlow)" opacity="0.45" fill="none" />
-                        <path id="rail5" d="M96,45 C102,80 160,110 164,185" stroke="url(#railGrad)" strokeWidth="1.5" filter="url(#railGlow)" opacity="0.45" fill="none" />
-                        {/* Coins — upright, shrink to 0 at destination */}
-                        <g transform="translate(-8,-8)">
-                          <use href="#usdtCoin" width="16" height="16">
-                            <animateMotion dur="2.8s" repeatCount="indefinite" begin="0s">
-                              <mpath href="#rail1" />
-                            </animateMotion>
-                            <animateTransform attributeName="transform" type="scale" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.8s" repeatCount="indefinite" begin="0s" additive="sum" />
-                          </use>
-                        </g>
-                        <g transform="translate(-8,-8)">
-                          <use href="#usdtCoin" width="16" height="16">
-                            <animateMotion dur="2.4s" repeatCount="indefinite" begin="0.5s">
-                              <mpath href="#rail2" />
-                            </animateMotion>
-                            <animateTransform attributeName="transform" type="scale" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.4s" repeatCount="indefinite" begin="0.5s" additive="sum" />
-                          </use>
-                        </g>
-                        <g transform="translate(-8,-8)">
-                          <use href="#usdtCoin" width="16" height="16">
-                            <animateMotion dur="2.6s" repeatCount="indefinite" begin="0.2s">
-                              <mpath href="#rail3" />
-                            </animateMotion>
-                            <animateTransform attributeName="transform" type="scale" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.6s" repeatCount="indefinite" begin="0.2s" additive="sum" />
-                          </use>
-                        </g>
-                        <g transform="translate(-8,-8)">
-                          <use href="#usdtCoin" width="16" height="16">
-                            <animateMotion dur="2.5s" repeatCount="indefinite" begin="0.8s">
-                              <mpath href="#rail4" />
-                            </animateMotion>
-                            <animateTransform attributeName="transform" type="scale" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.5s" repeatCount="indefinite" begin="0.8s" additive="sum" />
-                          </use>
-                        </g>
-                        <g transform="translate(-8,-8)">
-                          <use href="#usdtCoin" width="16" height="16">
-                            <animateMotion dur="2.7s" repeatCount="indefinite" begin="1.1s">
-                              <mpath href="#rail5" />
-                            </animateMotion>
-                            <animateTransform attributeName="transform" type="scale" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.7s" repeatCount="indefinite" begin="1.1s" additive="sum" />
-                          </use>
-                        </g>
-                      </svg>
-                      <img src="https://framerusercontent.com/images/WOJ0vcfFdASTTZzZXSHcJjab8.png" alt="" className="hero-3d-preview hero-card-anim" />
-                    </div>
-                    <div className="hero-card-label hero-card-anim">New Creators</div>
-                    <div className="hero-card-shine"></div>
-                  </div>
-                  <div className="hero-3d-card hero-3d-card--center">
-                    <div className="hero-card-title hero-card-anim">Campaigns</div>
-                    <div className="hero-scroll-wrap">
-                      <div className="hero-scroll-track">
-                        {[...campaigns.filter(c => c.thumbnail), ...campaigns.filter(c => c.thumbnail)].map((c, i) => (
-                          <div key={`hero-camp-${i}`} className="hero-camp-mini">
-                            <img src={c.thumbnail} alt="" className="hero-camp-thumb" />
-                            <div className="hero-camp-info">
-                              <div className="hero-camp-name">{c.title}</div>
-                              <div className="hero-camp-meta">{c.brand}</div>
-                              <div className="hero-camp-rate">{c.rate} / 1k views</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="hero-card-shine"></div>
-                  </div>
-                  <div className="hero-3d-card hero-3d-card--right">
-                    <div className="hero-right-dash">
-                      {/* Stats row */}
-                      <div className="hero-right-stats">
-                        <div className="hero-right-stat">
-                          <div className="hero-right-stat-label">CPM</div>
-                          <div className="hero-right-stat-value" id="heroRightCpm">0.00 $</div>
-                        </div>
-                        <div className="hero-right-stat">
-                          <div className="hero-right-stat-label">TRUST SCORE</div>
-                          <div className="hero-right-stat-value" id="heroRightScore">0%</div>
-                        </div>
-                        <svg className="hero-right-shield" width="18" height="22" viewBox="0 0 18 22" fill="none">
-                          <path d="M9 1L1 5v6c0 5.25 3.4 10.15 8 11.35C13.6 21.15 17 16.25 17 11V5L9 1z" fill="#e0e0e0" stroke="#ccc" strokeWidth="0.5"/>
-                        </svg>
-                      </div>
-                      {/* Payout protection — single line */}
-                      <div className="hero-right-payout">
-                        <span className="hero-right-payout-label">PAYOUT PROTECTION</span>
-                        <svg width="12" height="12" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#21b835"/><path d="M4.5 8.2L7 10.5 11.5 6" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        <span className="hero-right-payout-active-text">ACTIVE</span>
-                      </div>
-                      {/* Gauge — exact production SVG with JS-animated needle */}
-                      <div className="hero-right-gauge-wrap">
-                        <svg className="hero-right-gauge-svg" viewBox="0 0 400 270" xmlns="http://www.w3.org/2000/svg">
-                          <defs>
-                            <filter id="hg-base-shadow" x="-20%" y="-20%" width="140%" height="140%">
-                              <feDropShadow dx="0" dy="15" stdDeviation="20" floodColor="#a3b4cc" floodOpacity="0.35" />
-                            </filter>
-                            <filter id="hg-needle-shadow" x="-50%" y="-50%" width="200%" height="200%">
-                              <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor="#091426" floodOpacity="0.25" />
-                            </filter>
-                            <filter id="hg-blur-sm" x="-20%" y="-20%" width="140%" height="140%">
-                              <feGaussianBlur stdDeviation="3" />
-                            </filter>
-                            <linearGradient id="hg-base-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                              <stop offset="0%" stopColor="#FFFFFF" />
-                              <stop offset="100%" stopColor="#E2E8F4" />
-                            </linearGradient>
-                            <clipPath id="hg-track-clip">
-                              <path d="M 65 250 A 135 135 0 0 1 335 250 L 285 250 A 85 85 0 0 0 115 250 Z" />
-                            </clipPath>
-                          </defs>
-                          {/* Gauge base */}
-                          <g>
-                            <path d="M 30 250 A 170 170 0 0 1 370 250 Z" fill="url(#hg-base-grad)" filter="url(#hg-base-shadow)" />
-                            <path d="M 31 250 A 169 169 0 0 1 369 250" fill="none" stroke="#FFFFFF" strokeWidth="2.5" />
-                          </g>
-                          {/* Colored track */}
-                          <g clipPath="url(#hg-track-clip)">
-                            <path d="M 200 250 L 50 250 A 150 150 0 0 1 78.65 161.83 Z" fill="#FCA35D" stroke="#FCA35D" strokeWidth="1.5" strokeLinejoin="round" />
-                            <path d="M 200 250 L 78.65 161.83 A 150 150 0 0 1 153.65 107.34 Z" fill="#F47D31" stroke="#F47D31" strokeWidth="1.5" strokeLinejoin="round" />
-                            <path d="M 200 250 L 153.65 107.34 A 150 150 0 0 1 246.35 107.34 Z" fill="#E75A16" stroke="#E75A16" strokeWidth="1.5" strokeLinejoin="round" />
-                            <path d="M 200 250 L 246.35 107.34 A 150 150 0 0 1 321.35 161.83 Z" fill="#D13F0D" stroke="#D13F0D" strokeWidth="1.5" strokeLinejoin="round" />
-                            <path d="M 200 250 L 321.35 161.83 A 150 150 0 0 1 350 250 Z" fill="#B63007" stroke="#B63007" strokeWidth="1.5" strokeLinejoin="round" />
-                            {/* Inner shadows */}
-                            <path d="M 65 250 A 135 135 0 0 1 335 250" fill="none" stroke="#000000" strokeWidth="12" filter="url(#hg-blur-sm)" opacity="0.15" />
-                            <path d="M 115 250 A 85 85 0 0 1 285 250" fill="none" stroke="#000000" strokeWidth="8" filter="url(#hg-blur-sm)" opacity="0.15" />
-                            <path d="M 65 250 A 135 135 0 0 1 335 250" fill="none" stroke="#000000" strokeWidth="4" filter="url(#hg-blur-sm)" opacity="0.1" />
-                          </g>
-                          {/* Animated needle — JS controls rotation via transform */}
-                          <g filter="url(#hg-needle-shadow)">
-                            <g id="heroRightNeedle" style={{transformOrigin: '200px 250px', transform: 'rotate(-180deg)'}}>
-                              <path d="M 200 228 L 300 244 L 300 256 L 200 272 A 22 22 0 1 1 200 228 Z M 200 242 A 8 8 0 1 0 200 258 A 8 8 0 1 0 200 242 Z" fill="#FFFFFF" fillRule="evenodd" />
-                              <path d="M 299 244 L 325 250 L 299 256 Z" fill="#EA580C" stroke="#EA580C" strokeWidth="1" strokeLinejoin="round" />
-                            </g>
-                          </g>
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="hero-card-shine"></div>
-                  </div>
-                </div>
-              </div>
             </div>
           </section>
 
@@ -1846,7 +1674,7 @@ export function LandingClient() {
                     </div>
                     <div className="dash-browser-url">
                       <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12"/><path d="M8 2a10 10 0 0 1 0 12M8 2a10 10 0 0 0 0 12"/></svg>
-                      <span>app.contentrewards.xyz</span>
+                      <span>tend.example</span>
                     </div>
                   </div>
                   <div className="dash-content">
@@ -1856,8 +1684,8 @@ export function LandingClient() {
                         <img src="https://framerusercontent.com/images/XXhHjUvBpWZhAQ0cxQMYloDvnlI.png?width=1024&height=1024" alt="" className="dash-nav-logo-img" />
                       </div>
                       <div className="dash-nav-tabs">
-                        <span className="dash-tab dash-tab--active" data-dash-tab="payouts">Payouts</span>
-                        <span className="dash-tab" data-dash-tab="earn">Earn</span>
+                        <span className="dash-tab dash-tab--active" data-dash-tab="payouts">Donations</span>
+                        <span className="dash-tab" data-dash-tab="earn">Streams</span>
                       </div>
                     </div>
 
@@ -1868,7 +1696,7 @@ export function LandingClient() {
                         <div className="dash-earnings-card" id="dashEarningsCard">
                           <div className="dash-earnings-header">
                             <div className="dash-earnings-label">Total Streamed</div>
-                            <span className="dash-earnings-rate">$0.75/1k</span>
+                            <span className="dash-earnings-rate">$1.00/min</span>
                           </div>
                           <div className="dash-earnings-row">
                             <span className="dash-earnings-big" id="dashEarningsNum">$620</span>
@@ -1876,9 +1704,9 @@ export function LandingClient() {
                           <div className="dash-earnings-sub">USDC on Tempo · offramped with Stripe</div>
                         </div>
                         <div className="dash-campaigns-count">
-                          <div className="dash-count-num">6</div>
+                          <div className="dash-count-num">2</div>
                           <div className="dash-count-sub">Active programs</div>
-                          <div className="dash-count-sub">7 Clips</div>
+                          <div className="dash-count-sub">214 supporters</div>
                         </div>
                       </div>
                       {/* Active Campaign Card */}
@@ -1896,17 +1724,17 @@ export function LandingClient() {
                       {/* Live Earnings Table */}
                       <div className="dash-table">
                         <div className="dash-table-header">
-                          <span className="dash-th dash-th--campaign">CLIP</span>
-                          <span className="dash-th dash-th--sponsor">VIEWS</span>
-                          <span className="dash-th dash-th--balance">EARNED</span>
+                          <span className="dash-th dash-th--campaign">SUPPORTER</span>
+                          <span className="dash-th dash-th--sponsor">BATCHES</span>
+                          <span className="dash-th dash-th--balance">STREAMED</span>
                         </div>
                         <div className="dash-table-body" id="dashTableBody">
                           <div className="dash-table-row">
                             <div className="dash-td-campaign">
-                              <img className="dash-clip-thumb" src="https://img.youtube.com/vi/zx8RsYjf_kY/default.jpg" alt="" />
+                              <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>N</div>
                               <div className="dash-camp-info">
-                                <span className="dash-camp-name">zx8RsYjf_kY</span>
-                                <span className="dash-camp-cat">Tracking · bot 15</span>
+                                <span className="dash-camp-name">natasha_r</span>
+                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
                               </div>
                             </div>
                             <span className="dash-td-sponsor" data-base-views="1485618">1,485,618</span>
@@ -1914,10 +1742,10 @@ export function LandingClient() {
                           </div>
                           <div className="dash-table-row">
                             <div className="dash-td-campaign">
-                              <img className="dash-clip-thumb" src="https://img.youtube.com/vi/5z0Gr5-pHMo/default.jpg" alt="" />
+                              <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>C</div>
                               <div className="dash-camp-info">
-                                <span className="dash-camp-name">5z0Gr5-pHMo</span>
-                                <span className="dash-camp-cat">Tracking · bot 12</span>
+                                <span className="dash-camp-name">ci-runner @ acme</span>
+                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
                               </div>
                             </div>
                             <span className="dash-td-sponsor" data-base-views="3962">3,962</span>
@@ -1925,10 +1753,10 @@ export function LandingClient() {
                           </div>
                           <div className="dash-table-row">
                             <div className="dash-td-campaign">
-                              <img className="dash-clip-thumb" src="https://img.youtube.com/vi/jPThSwhJ8CE/default.jpg" alt="" />
+                              <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>J</div>
                               <div className="dash-camp-info">
-                                <span className="dash-camp-name">jPThSwhJ8CE</span>
-                                <span className="dash-camp-cat">Tracking · bot 15</span>
+                                <span className="dash-camp-name">j.wong</span>
+                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
                               </div>
                             </div>
                             <span className="dash-td-sponsor" data-base-views="388078">388,078</span>
@@ -1936,10 +1764,10 @@ export function LandingClient() {
                           </div>
                           <div className="dash-table-row">
                             <div className="dash-td-campaign">
-                              <img className="dash-clip-thumb" src="https://img.youtube.com/vi/kcGGSoaN2zA/default.jpg" alt="" />
+                              <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>F</div>
                               <div className="dash-camp-info">
-                                <span className="dash-camp-name">kcGGSoaN2zA</span>
-                                <span className="dash-camp-cat">Tracking · bot 8</span>
+                                <span className="dash-camp-name">fleet-7 @ mission-labs</span>
+                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
                               </div>
                             </div>
                             <span className="dash-td-sponsor" data-base-views="12173">12,173</span>
@@ -1955,12 +1783,12 @@ export function LandingClient() {
                       {/* Submit clip — full width */}
                       <div className="dash-campaign-active">
                         <div className="dash-active-header">
-                          <span className="dash-active-name">Submit a Clip</span>
-                          <span className="dash-earnings-sub">YouTube Shorts · TikTok · Reels</span>
+                          <span className="dash-active-name">Start a stream</span>
+                          <span className="dash-earnings-sub">Deposit once · streams in 250ms batches</span>
                         </div>
                         <div className="dash-earn-input-row">
-                          <input type="text" className="dash-earn-input" placeholder="Paste YouTube Shorts URL..." readOnly value="youtube.com/shorts/zx8RsYjf_kY" />
-                          <button className="dash-earn-btn">Submit</button>
+                          <input type="text" className="dash-earn-input" placeholder="Deposit amount..." readOnly value="zone://tend/yunakin-donations · $50" />
+                          <button className="dash-earn-btn">Open stream</button>
                         </div>
                       </div>
                       {/* Verification — same style as campaign-active card */}
