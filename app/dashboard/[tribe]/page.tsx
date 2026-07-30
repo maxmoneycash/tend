@@ -122,6 +122,12 @@ export default async function TribeDashboard({
     }
   }
 
+  const sampled = !demo && pledges.length === 0 && machine.length === 0;
+  if (sampled) {
+    pledges = demoPledges();
+    machine = demoMachinePayments();
+  }
+
   const mrr = pledges.reduce((sum, p) => sum + monthly(p), 0);
   const machineTotal = machine
     .filter((m) => m.status === "succeeded")
@@ -151,7 +157,7 @@ export default async function TribeDashboard({
             </p>
           </div>
 
-          {(demo || authBypass) && (
+          {(demo || authBypass || sampled) && (
             <div className="animate-enter mb-4 surface-1 rounded-[12px] px-4 py-3 flex items-center gap-2.5">
               <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 uppercase tracking-wider shrink-0">
                 {demo ? "Demo" : "Test mode"}
@@ -160,6 +166,7 @@ export default async function TribeDashboard({
                 {demo
                   ? "Sample data, sign-in bypassed."
                   : "Real test transactions, sign-in bypassed for recording."}{" "}
+                {sampled && "Sample data shown until the first pledges arrive. "}
                 Production access is isolated with Auth0 Organizations.
               </p>
             </div>
