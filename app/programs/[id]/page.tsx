@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
 import { AmbientBlobs } from "@/components/layout/AmbientBlobs";
 import { countyNotes, countyTribes, getTribe, type TribeId } from "@/lib/tribes";
+import { StreamPanel } from "@/components/stream/StreamPanel";
 
 const COVER: Record<TribeId, string> = {
   ramaytush: "cover-orange",
@@ -116,21 +117,16 @@ export default async function ProgramDetail({
             </div>
 
             <div className="space-y-4">
-              <div className="surface-1 rounded-[16px] p-5">
-                <p className="text-[11px] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
-                  Contribute
-                </p>
-                <p className="mt-2 text-[12px] leading-relaxed text-[#555555]">
-                  Recurring pledge by card, created on the organization&apos;s
-                  own Stripe account. Tend takes no platform fee.
-                </p>
-                <Link
-                  href="/pledge"
-                  className="btn-whop mt-4 w-full py-3 rounded-[12px] text-[13px] font-semibold flex items-center justify-center"
-                >
-                  Start a pledge
+              <StreamPanel
+                tribeName={tribe.name}
+                zone={`zone://tend/${tribe.id}-donations`}
+              />
+              <p className="text-[11px] text-[#8a8a8a] text-center">
+                prefer a classic recurring card pledge?{" "}
+                <Link href="/pledge" className="underline underline-offset-4 text-[#555555] hover:text-[#111111]">
+                  Start one here
                 </Link>
-              </div>
+              </p>
 
               <div className="surface-1 rounded-[16px] p-5">
                 <p className="text-[11px] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">

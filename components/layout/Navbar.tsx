@@ -10,7 +10,7 @@ import "@/styles/landing.css";
 
 const NAV_LINKS = [
   { href: "/programs", label: "Programs" },
-  { href: "/campaigns/create", label: "Create Program" },
+  { href: "/onboarding/setup", label: "Create Program" },
   { href: "/explorer", label: "Explorer" },
   { href: "/rewards", label: "Rewards" },
   { href: "/dashboard", label: "Dashboards" },
