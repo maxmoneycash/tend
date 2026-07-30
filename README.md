@@ -1,33 +1,32 @@
 # Tend
 
-**Contribution rails for the land where you live and work.** Bay Area
-residents can discover Indigenous-led contribution programs connected to their
-location. The prototype features the Association of Ramaytush Ohlone's
-official **Yunakin Land Tax** and support for the Muwekma Ohlone Preservation
-Foundation. Humans contribute by card. A sandbox flow also demonstrates how AI
-agents could contribute over **Stripe's Machine Payments Protocol**.
+**Streamed donations for the land you live on.** Tend hosts sovereign
+contribution programs for Bay Area Ohlone tribes — the Association of
+Ramaytush Ohlone's Yunakin Land Tax and the Muwekma Ohlone Preservation
+Foundation — with three ways to give:
 
-Tend takes no platform fee; Stripe processing fees may apply. This hackathon
-prototype is not affiliated with or endorsed by either organization and does
-not create real charges without Stripe test credentials.
+- **Humans**: recurring card pledges via Stripe Checkout, created directly on
+  each tribe's own Stripe Connect account (no platform fee).
+- **Streams**: deposit once into a **private donation zone** (tempoxyz/zones
+  model — anchored to Tempo L1, confidential balances); the zone streams it
+  out in 250ms batches and **offramps to the tribe through Stripe**.
+- **Machines**: AI agents pay an annual land tax over **Stripe's Machine
+  Payments Protocol** (`mppx` 402 challenge → credential → receipt).
+
+Auth0 isolates each tribe's tenant (Organizations + per-tribe access);
+Stripe Projects (projects.dev) provisions the stack. The Explorer is a
+research report built from the Muwekma Atlas — ten thousand years of
+documented history with evidence tiers. UI is the Content Rewards design
+system (the team's own prior product), light theme.
+
+**Runs with zero keys**: demo mode renders every surface with sample data —
+`npm install && npm run dev` → http://localhost:3100. Streaming and zone
+provisioning are mock demos; Checkout, webhooks, Connect and MPP endpoints
+are real code awaiting keys (setup below).
 
 Built at the Auth0 × Stripe hackathon, July 2026.
 
-## How it holds together
-
-- **Territory, honestly** — an address resolves to a county (US Census
-  geocoder, keyless), and a county maps to every tribe whose *own published
-  definition* includes it. Santa Clara County shows both tribes; Tend never
-  arbitrates boundaries.
-- **Sovereignty by architecture** — each tribe is a tenant: pledges are Stripe
-  Checkout subscriptions created **directly on that tribe's connected
-  account** (their supporters, their data, their payout; 0% platform fee), and
-  dashboard access is granted per-tribe via **Auth0** (Organizations in
-  production, email allowlist for the demo).
-- **Machines pay rent** — `POST /api/mpp/land-tax?tribe=…` answers with an MPP
-  402 challenge (Tempo testnet stablecoin; card/SPT when a Stripe profile is
-  configured). The agent pays, gets its receipt, and the payment routes onward
-  to the tribe.
+---
 
 ## Setup
 
