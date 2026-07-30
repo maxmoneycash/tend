@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
-import { RevealManager } from "@/components/site/RevealManager";
 
 export const metadata: Metadata = {
   title: "Tend — a land tax for the land you live on",
@@ -23,45 +22,63 @@ export default function RootLayout({
         />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Figtree:wght@500;600&family=Geist+Mono:wght@400;500&display=swap"
         />
       </head>
       <body className="min-h-screen flex flex-col antialiased">
-        <RevealManager />
-        <header className="mx-auto w-full max-w-5xl px-6 py-5 flex items-center justify-between">
-          <Link
-            href="/"
-            className="font-display text-[1.55rem] font-extrabold tracking-tight leading-none"
-          >
-            Tend
-            <span className="text-tide">.</span>
-          </Link>
-          <nav className="flex items-center gap-6 font-display text-sm font-semibold">
-            <Link href="/dashboard" className="text-faded hover:text-ink">
-              Dashboards
-            </Link>
-            <Link href="/variants" className="text-faded hover:text-ink">
-              Variants
-            </Link>
-            <a
-              href="/auth/login?returnTo=/dashboard"
-              className="text-faded hover:text-ink"
+        <header
+          className="sticky top-0 z-50"
+          style={{
+            background: "rgba(21,21,21,0.8)",
+            backdropFilter: "blur(12px)",
+            borderBottom: "1px solid rgba(255,255,255,0.06)",
+          }}
+        >
+          <div className="mx-auto w-full max-w-6xl px-5 py-3.5 flex items-center justify-between">
+            <Link
+              href="/"
+              className="font-display text-[19px] font-bold tracking-tight text-white"
             >
-              Tribal sign-in
-            </a>
-          </nav>
+              Tend
+              <span className="text-[#FA4616]">.</span>
+            </Link>
+            <nav className="flex items-center gap-1">
+              <Link
+                href="/programs"
+                className="px-3.5 py-2 rounded-lg text-[12px] font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] transition-colors"
+              >
+                Programs
+              </Link>
+              <Link
+                href="/dashboard"
+                className="px-3.5 py-2 rounded-lg text-[12px] font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] transition-colors"
+              >
+                Dashboards
+              </Link>
+              <Link
+                href="/variants"
+                className="px-3.5 py-2 rounded-lg text-[12px] font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] transition-colors"
+              >
+                Variants
+              </Link>
+              <a
+                href="/auth/login?returnTo=/dashboard"
+                className="ml-2 bg-[#1754d8] text-white hover:bg-[#1e63e6] px-4 py-2 rounded-lg text-[12px] font-semibold transition-colors"
+              >
+                Tribal sign-in
+              </a>
+            </nav>
+          </div>
         </header>
 
         <main className="flex-1">{children}</main>
 
-        <footer className="band noise mt-24">
-          <div className="mx-auto max-w-5xl px-6 py-14">
-            <p className="display-2">
-              Tend the land
-              <br />
-              you live on.
+        <footer className="mt-24 border-t border-white/[0.06] bg-[#0f0f0f]">
+          <div className="mx-auto max-w-6xl px-5 py-12">
+            <p className="font-display text-[24px] font-bold text-white">
+              Tend the land you live on.
             </p>
-            <div className="mt-10 grid gap-8 sm:grid-cols-2 text-[0.95rem] leading-relaxed opacity-90">
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 text-[12px] leading-relaxed text-zinc-500">
               <p>
                 Tend is a hackathon prototype (Auth0 × Stripe, July 2026). It
                 is not affiliated with, or endorsed by, the Association of
@@ -76,7 +93,7 @@ export default function RootLayout({
                 platform fee; payment processing fees may apply.
               </p>
             </div>
-            <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-paper/25 pt-5 font-display text-xs font-medium opacity-75">
+            <div className="mt-8 pt-5 border-t border-white/[0.04] flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-zinc-600 uppercase tracking-wider">
               <span>Ramaytush &amp; Muwekma Ohlone land · San Francisco Bay</span>
               <span>humans pay by card · machines pay by MPP</span>
             </div>
