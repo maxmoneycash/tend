@@ -32,12 +32,14 @@ export default function RootLayout({
           >
             Tend
           </a>
-          <a
-            href="/auth/login?returnTo=/dashboard"
-            className="text-sm font-medium text-faded hover:text-ink"
-          >
-            Tribal sign-in
-          </a>
+          <nav className="flex items-center gap-5 text-sm font-medium text-faded">
+            <a href="/dashboard" className="hover:text-ink">
+              Dashboards
+            </a>
+            <a href="/auth/login?returnTo=/dashboard" className="hover:text-ink">
+              Tribal sign-in
+            </a>
+          </nav>
         </header>
         <main className="flex-1">{children}</main>
         <footer className="rule mt-16">

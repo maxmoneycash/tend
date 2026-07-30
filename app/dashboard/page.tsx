@@ -1,9 +1,37 @@
 import { redirect } from "next/navigation";
 import { auth0 } from "@/lib/auth0";
 import { accessibleTribes } from "@/lib/access";
-import { tribes } from "@/lib/tribes";
+import { demoMode } from "@/lib/demo";
+import { tribes, type TribeId } from "@/lib/tribes";
 
 export default async function DashboardIndex() {
+  if (demoMode()) {
+    return (
+      <div className="mx-auto max-w-2xl px-6 pt-24">
+        <h1 className="font-display text-4xl font-bold">Tribal tenants</h1>
+        <p className="mt-2 text-sm text-faded">
+          Demo mode — both tenants are open with sample data.
+        </p>
+        <div className="mt-6 grid gap-4">
+          {(Object.keys(tribes) as TribeId[]).map((id) => (
+            <a
+              key={id}
+              href={`/dashboard/${id}`}
+              className="card p-5 hover:border-moss"
+            >
+              <div className="font-display text-xl font-semibold">
+                {tribes[id].name}
+              </div>
+              <div className="text-sm text-faded mt-1">
+                {tribes[id].taxName} →
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   const session = await auth0.getSession();
   if (!session) redirect("/auth/login?returnTo=/dashboard");
 
