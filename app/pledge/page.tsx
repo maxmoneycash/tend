@@ -178,15 +178,15 @@ export default function Home() {
           {[
             {
               title: "A proven practice",
-              body: "Voluntary land taxes work: the East Bay's Shuumi Land Tax built one of the strongest Indigenous land trusts in the country. The Ramaytush Yunakin program exists today, and the Muwekma Ohlone Preservation Foundation accepts direct support. Tend demonstrates how verified programs could share modern contribution rails.",
+              body: "Shuumi built one of the strongest Indigenous land trusts in the country — the model works. Yunakin runs today; Tend gives programs like it shared rails.",
             },
             {
               title: "No Tend platform fee",
-              body: "Pledges are created directly on the tribe's own Stripe account — their supporters, their data, their payout. Tend takes no platform fee; Stripe processing fees may apply. If Tend vanished tomorrow, every pledge would keep flowing.",
+              body: "Pledges live on the tribe's own Stripe account. If Tend vanished tomorrow, every pledge would keep flowing.",
             },
             {
               title: "Sovereignty as architecture",
-              body: "Each tribe is its own tenant: it controls its counties, rates, and words, and grants its own dashboard access. Tribes in disagreement never share a surface, a pot, or a boundary decision.",
+              body: "Each tribe controls its counties, rates, words, and access. No shared pot, no boundary decisions made for them.",
             },
           ].map((f) => (
             <div key={f.title} className="surface-1 rounded-[16px] p-5">
@@ -200,8 +200,8 @@ export default function Home() {
       </section>
 
       {/* Machine section */}
-      <section className="band mt-16">
-        <div className="mx-auto max-w-6xl px-5 py-14">
+      <section className="relative mx-auto max-w-6xl px-5 mt-16">
+        <div>
           <div className="rule-row">
             <h2 className="display-2">Machines pay rent here.</h2>
             <span className="note">
@@ -209,13 +209,16 @@ export default function Home() {
             </span>
           </div>
           <div className="mt-7 grid gap-8 lg:grid-cols-[1fr_1.1fr] items-start">
-            <p className="max-w-xl text-[14px] leading-relaxed text-[#555555]">
-              Ten trillion dollars of market cap sits on Ohlone land. Its agent
-              fleets pay for compute, APIs, and data over machine rails — Tend
-              lets them pay for where they run. One line in your automation; an
-              AI agent can make an annual contribution like any other API
-              payment.
-            </p>
+            <div>
+              <p className="text-[14px] leading-relaxed text-[#3a3a3a] max-w-md">
+                AI agents run on this land too. One line in your automation and
+                they contribute like any other API payment.
+              </p>
+              <p className="mt-3 text-[12px] text-[#8a8a8a] max-w-md">
+                Challenge → credential → receipt, over Stripe&apos;s Machine
+                Payments Protocol.
+              </p>
+            </div>
             <div>
               <pre className="terminal">
                 {`$ `}
