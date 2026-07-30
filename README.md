@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tend
 
-## Getting Started
+**A land tax for the land you live on.** Bay Area residents locate whose
+ancestral Ohlone land they're on and start a voluntary recurring land tax that
+goes 100% to the tribe — the Association of Ramaytush Ohlone's **Yunakin Land
+Tax** (SF Peninsula) and the Muwekma Ohlone Tribe's **Ohlone Land Tax** (East &
+South Bay). Humans pay by card. Machines pay too: AI agents working on this
+land can pay an annual land tax over **Stripe's Machine Payments Protocol**.
 
-First, run the development server:
+Built at the Auth0 × Stripe hackathon, July 2026.
+
+## How it holds together
+
+- **Territory, honestly** — an address resolves to a county (US Census
+  geocoder, keyless), and a county maps to every tribe whose *own published
+  definition* includes it. Santa Clara County shows both tribes; Tend never
+  arbitrates boundaries.
+- **Sovereignty by architecture** — each tribe is a tenant: pledges are Stripe
+  Checkout subscriptions created **directly on that tribe's connected
+  account** (their supporters, their data, their payout; 0% platform fee), and
+  dashboard access is granted per-tribe via **Auth0** (Organizations in
+  production, email allowlist for the demo).
+- **Machines pay rent** — `POST /api/mpp/land-tax?tribe=…` answers with an MPP
+  402 challenge (Tempo testnet stablecoin; card/SPT when a Stripe profile is
+  configured). The agent pays, gets its receipt, and the payment routes onward
+  to the tribe.
+
+## Setup
+
+The stack provisions through **Stripe Projects** (CLI ≥ 1.43.3 — installed):
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+stripe login
+stripe plugin install projects          # requires login first
+stripe projects init tend
+stripe projects add auth0/client        # → AUTH0_DOMAIN / _CLIENT_ID / _CLIENT_SECRET
+stripe projects add vercel/project      # → VERCEL_TOKEN etc. for unattended deploy
+stripe projects env --pull
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then the hand-set pieces (Projects doesn't write these):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .env.example .env.local              # then fill in:
+echo "AUTH0_SECRET=$(openssl rand -hex 32)" >> .env.local
+# Auth0 dashboard → your app → Allowed Callback URLs: http://localhost:3100/auth/callback
+#                              Allowed Logout URLs:   http://localhost:3100
+# Stripe test keys (payments are separate from Projects):
+#   STRIPE_SECRET_KEY=sk_test_...
+stripe listen --forward-to localhost:3100/api/stripe/webhook   # → STRIPE_WEBHOOK_SECRET
+node scripts/setup-connect.mjs          # → TEND_ACCT_RAMAYTUSH / TEND_ACCT_MUWEKMA
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## The demo
 
-## Learn More
+**Human:** address → whose land → sliding-scale amount → Checkout (test card
+`4242 4242 4242 4242`) → `/thanks` → tribe dashboard shows the pledge.
 
-To learn more about Next.js, take a look at the following resources:
+**Machine:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+node scripts/agent-pays.mjs ramaytush http://localhost:3100
+# under the hood: npx mppx account create && npx mppx account fund --network testnet
+#                 npx mppx http://localhost:3100/api/mpp/land-tax?tribe=ramaytush --method POST
+npx mppx@latest validate http://localhost:3100/api/mpp/land-tax   # protocol conformance
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Tribal admin:** header → Tribal sign-in (Auth0) → `/dashboard/[tribe]` —
+gated by `TEND_ORG_*` (Auth0 Organization) or `TEND_ADMINS_*` (email
+allowlist).
 
-## Deploy on Vercel
+Deploy: `npx vercel deploy --prod --token="$VERCEL_TOKEN"` (token courtesy of
+`vercel/project`). Contest: `stripe projects init` was step one — run the
+CLI's `/contest` command for the Stripe Projects raffle.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## What Tend is not
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A prototype only: not affiliated with or endorsed by either tribe, and nothing
+launches in a tribe's name without that tribe's direction. Connected accounts
+here are test-mode stand-ins; real onboarding is a conversation with the
+tribes, on their terms. The MPP transfer-routing to connected accounts is
+best-effort in test mode (settlement timing); production would use separate
+charges & transfers with reconciliation.
