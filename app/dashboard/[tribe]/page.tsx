@@ -144,7 +144,7 @@ export default async function TribeDashboard({
             </h1>
             <p className="text-[13px] sm:text-[14px] text-[#7d7d7d] max-w-xl text-pretty leading-relaxed">
               {demo
-                ? "This is the fundraising program in a box: no code, no hosting, no development director required."
+                ? "The fundraising program in a box."
                 : account
                   ? `Payments land directly on this tribe's own Stripe account (${account.slice(0, 12)}…).`
                   : "Platform mode — pledges are tagged to this program until the tribe connects its own account."}

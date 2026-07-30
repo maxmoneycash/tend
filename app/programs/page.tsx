@@ -36,9 +36,8 @@ export default function ProgramsPage() {
               Indigenous-led contribution programs
             </h1>
             <p className="text-[13px] sm:text-[14px] font-sans text-[#7d7d7d] max-w-xl text-pretty leading-relaxed tracking-[-0.01em]">
-              Each program is a sovereign tenant — its counties, rates, words,
-              and Stripe account belong to the tribe. Tend takes no platform
-              fee.
+              Sovereign tenants: their counties, their rates, their Stripe
+              account. No platform fee.
             </p>
           </div>
 
@@ -92,9 +91,7 @@ export default function ProgramsPage() {
                 Your program here
               </p>
               <p className="mt-2 text-[12px] leading-relaxed text-[#6b6b6b] max-w-xl">
-                Tend hosts sovereign tenants for Indigenous-led contribution
-                programs. Onboarding is a conversation, on the tribe&apos;s
-                terms.
+                Onboarding is a conversation, on the tribe&apos;s terms.
               </p>
             </div>
           </div>

@@ -20,9 +20,8 @@ export default function RewardsPage() {
               Streamed donations
             </h1>
             <p className="text-[13px] sm:text-[14px] font-sans text-[#7d7d7d] max-w-xl text-pretty leading-relaxed tracking-[-0.01em]">
-              Donations stream as USDC on Tempo and offramp to each
-              tribe&apos;s own account through Stripe — live, transparent,
-              continuous.
+              USDC streams on Tempo and offramps to each tribe&apos;s own
+              Stripe account.
             </p>
           </div>
 

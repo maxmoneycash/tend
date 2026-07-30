@@ -101,8 +101,7 @@ export function DonationsTab() {
           </div>
         ))}
         <p className="mt-3 text-[10px] font-mono text-[#8a8a8a]">
-          Donations settle as USDC on Tempo and offramp to each tribe&apos;s own
-          Stripe account. Demo data — connect keys to go live.
+          Demo data — connect keys to go live.
         </p>
       </div>
     </div>

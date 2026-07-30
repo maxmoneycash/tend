@@ -61,11 +61,7 @@ export default function Home() {
             <span className="text-gradient-whop">Tend it.</span>
           </h1>
           <p className="animate-enter animate-enter-delay-2 mt-5 max-w-xl text-[15px] leading-relaxed text-[#555555]">
-            A voluntary land tax is a small recurring contribution from the
-            people living on Ohlone land to the tribes who have belonged to it
-            for ten thousand years. Type your address, find Indigenous-led
-            contribution programs connected to where you live, and begin.{" "}
-            <strong className="text-[#2a2a2a]">Tend takes no platform fee.</strong>
+            A small recurring contribution to the tribes whose land you live on. Type your address and begin — <strong className="text-[#2a2a2a]">no platform fee.</strong>
           </p>
           <div className="animate-enter animate-enter-delay-3 mt-7 flex flex-wrap gap-3">
             <a href="#pledge" className="btn tnd-btn-primary">
@@ -151,10 +147,7 @@ export default function Home() {
           ))}
         </div>
         <p className="mt-4 text-[11px] leading-relaxed text-[#8a8a8a] max-w-2xl">
-          Santa Clara County appears in both tribes&apos; published definitions
-          — Tend shows both and never arbitrates boundaries. In the East Bay,
-          Sogorea Te&apos; Land Trust&apos;s Shuumi Land Tax (Lisjan Ohlone) is
-          also part of this landscape.
+          Santa Clara appears in both tribes&apos; definitions — Tend shows both and never decides.
         </p>
       </section>
 
@@ -209,16 +202,9 @@ export default function Home() {
             </span>
           </div>
           <div className="mt-7 grid gap-8 lg:grid-cols-[1fr_1.1fr] items-start">
-            <div>
-              <p className="text-[14px] leading-relaxed text-[#3a3a3a] max-w-md">
-                AI agents run on this land too. One line in your automation and
-                they contribute like any other API payment.
-              </p>
-              <p className="mt-3 text-[12px] text-[#8a8a8a] max-w-md">
-                Challenge → credential → receipt, over Stripe&apos;s Machine
-                Payments Protocol.
-              </p>
-            </div>
+            <p className="text-[14px] leading-relaxed text-[#3a3a3a] max-w-md">
+              AI agents run on this land too — one line in your automation.
+            </p>
             <div>
               <pre className="terminal">
                 {`$ `}
@@ -230,10 +216,6 @@ export default function Home() {
 → pay $25.00
 ← receipt ✓ routing status recorded`}
               </pre>
-              <p className="mt-2.5 text-[10px] font-mono text-[#8a8a8a] uppercase tracking-wider">
-                first call returns the challenge · second call carries the
-                credential
-              </p>
             </div>
           </div>
         </div>
