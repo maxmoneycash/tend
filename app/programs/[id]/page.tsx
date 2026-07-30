@@ -97,7 +97,7 @@ export default async function ProgramDetail({
               Recurring pledge by card, created on the organization&apos;s own
               Stripe account. Tend takes no platform fee.
             </p>
-            <Link href="/#pledge" className="btn btn-primary w-full mt-4 text-[13px]">
+            <Link href="/#pledge" className="btn tnd-btn-primary w-full mt-4 text-[13px]">
               Start a pledge
             </Link>
           </div>

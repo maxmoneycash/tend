@@ -32,7 +32,7 @@ export default async function Thanks({
           ? "In a configured deployment, Stripe Checkout creates the subscription and sends the receipt."
           : "A receipt is on its way from Stripe, and every renewal happens without you lifting a finger."}
       </p>
-      <Link href="/" className="btn btn-primary mt-10">
+      <Link href="/" className="btn tnd-btn-primary mt-10">
         Back to Tend
       </Link>
     </div>

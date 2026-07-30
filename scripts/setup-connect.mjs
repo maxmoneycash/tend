@@ -24,8 +24,8 @@ function loadEnv() {
 loadEnv();
 
 const key = process.env.STRIPE_SECRET_KEY;
-if (!key?.startsWith("sk_test_")) {
-  console.error("Set STRIPE_SECRET_KEY to a TEST key (sk_test_...) first.");
+if (!key || !/^(sk_test_|rkcs_test_)/.test(key)) {
+  console.error("Set STRIPE_SECRET_KEY to a Stripe test or sandbox key first.");
   process.exit(1);
 }
 const stripe = new Stripe(key);

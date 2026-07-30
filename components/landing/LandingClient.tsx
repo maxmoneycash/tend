@@ -1205,7 +1205,7 @@ export function LandingClient() {
       // Store original creator content
       const creatorH1 = heroH1First?.textContent || 'Get Paid for Posting';
       const creatorSub = heroSub?.textContent || '';
-      const creatorOrangeBtn = btnOrange?.textContent || 'Start Earning Today';
+      const creatorOrangeBtn = btnOrange?.textContent || 'Start a pledge';
       const creatorWhiteBtn = btnWhite?.textContent || 'Explore Campaigns';
 
       heroToggleBtn.addEventListener('click', () => {
@@ -1621,12 +1621,12 @@ export function LandingClient() {
             <div className="hero-radial-overlay"></div>
             <div className="hero-inner">
               <div className="hero-content">
-                <h1 className="hero-h1"><span className="hero-h1-line">Get Paid for Posting</span></h1>
+                <h1 className="hero-h1"><span className="hero-h1-line">Tend the Land</span></h1>
                 <br />
                 <div className="hero-h1-row">
-                  <h1 className="hero-h1"><span className="hero-h1-line">As the</span></h1>
+                  <h1 className="hero-h1"><span className="hero-h1-line">As a</span></h1>
                   <div className="hero-toggle-wrap">
-                    <span className="hero-toggle-label hero-toggle-label--active">FOR CREATORS</span>
+                    <span className="hero-toggle-label hero-toggle-label--active">FOR RESIDENTS</span>
                     <button className="hero-toggle-switch" id="heroToggle" aria-label="Toggle creator/brand view">
                       <div className="hero-toggle-track">
                         <div className="hero-toggle-knob">
@@ -1634,16 +1634,16 @@ export function LandingClient() {
                         </div>
                       </div>
                     </button>
-                    <span className="hero-toggle-label hero-toggle-label--inactive">FOR BRANDS</span>
+                    <span className="hero-toggle-label hero-toggle-label--inactive">FOR MACHINES</span>
                   </div>
-                  <h1 className="hero-h1"><span className="hero-h1-line">Creator</span></h1>
+                  <h1 className="hero-h1"><span className="hero-h1-line">Resident</span></h1>
                 </div>
-                <p className="hero-sub">Create content for brands and earn real income from every video that you post.</p>
-                <h1 className="hero-h1 hero-h1--mobile"><span className="hero-h1-line">Get Paid For The</span><br /><span className="hero-h1-line">Content You Post</span></h1>
-                <p className="hero-sub hero-sub--mobile">Make videos you enjoy and earn from every campaign. It's that simple.</p>
+                <p className="hero-sub">A small recurring land-tax pledge to the tribes whose land you live on — direct to their accounts, no platform fee.</p>
+                <h1 className="hero-h1 hero-h1--mobile"><span className="hero-h1-line">Tend The Land</span><br /><span className="hero-h1-line">You Live On</span></h1>
+                <p className="hero-sub hero-sub--mobile">Find your tribe's program and begin in ninety seconds. It's that simple.</p>
                 <div className="hero-ctas">
-                  <a href="/onboarding/creator" className="btn-orange"><span className="btn-orange-glow"></span><span className="btn-orange-label">Start Earning Today</span></a>
-                  <a href="#" className="btn-white">Explore Campaigns</a>
+                  <a href="/pledge" className="btn-orange"><span className="btn-orange-glow"></span><span className="btn-orange-label">Start a pledge</span></a>
+                  <a href="#" className="btn-white">Explore programs</a>
                 </div>
               </div>
               <div className="hero-visual">
@@ -1824,8 +1824,8 @@ export function LandingClient() {
             <div className="section-inner">
               <div className="phone-notifs-text">
                 <div className="pill-badge">Real-Time Payments</div>
-                <h2 className="section-h2">Watch the Money Flow In</h2>
-                <p className="section-p">Every time a creator gets paid, you'll see it happen live. Instant, transparent, and continuous.</p>
+                <h2 className="section-h2">Watch the Pledges Flow In</h2>
+                <p className="section-p">Every time a pledge arrives, you'll see it happen live. Instant, transparent, and continuous.</p>
               </div>
               <div className="phone-dash-row">
                 {/* Phone */}
@@ -2050,8 +2050,8 @@ export function LandingClient() {
           <section className="section section--white section--rounded-top" id="how-it-works" data-view="creator">
             <div className="section-inner">
               <div className="pill-badge">How it Works</div>
-              <h2 className="section-h2">Get Paid in 3 Simple Steps</h2>
-              <p className="section-p">From submission to payment, your work turns into earnings with a smooth and transparent process.</p>
+              <h2 className="section-h2">Begin in 3 Simple Steps</h2>
+              <p className="section-p">From address to pledge, your acknowledgment becomes standing support with a smooth and transparent process.</p>
 
               <div className="hiw-cards">
                 {/* Step 1 */}
@@ -2294,7 +2294,7 @@ export function LandingClient() {
               </div>
 
               <div className="hiw-cta">
-                <a href="/onboarding/creator" className="btn-orange"><span className="btn-orange-glow"></span><span className="btn-orange-label">Start Earning Today</span></a>
+                <a href="/pledge" className="btn-orange"><span className="btn-orange-glow"></span><span className="btn-orange-label">Start a pledge</span></a>
               </div>
 
               <div className="trusted-avatars-row">
@@ -2866,8 +2866,8 @@ export function LandingClient() {
                   <div className="footer-divider"></div>
                   <p className="footer-desc">Create, post and earn real money for posting clips on YouTube, TikTok &amp; Instagram.</p>
                   <div className="footer-ctas">
-                    <a href="/onboarding/creator" className="footer-cta-btn">Become a Creator<span className="footer-cta-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M12.707 17.293 8.414 13H18v-2H8.414l4.293-4.293-1.414-1.414L4.586 12l6.707 6.707z"></path></svg></span></a>
-                    <a href="https://discord.com/invite/KVKqXuUj" target="_blank" rel="noopener" className="footer-discord" aria-label="Discord">
+                    <a href="/pledge" className="footer-cta-btn">Become a Creator<span className="footer-cta-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M12.707 17.293 8.414 13H18v-2H8.414l4.293-4.293-1.414-1.414L4.586 12l6.707 6.707z"></path></svg></span></a>
+                    <a href="#" target="_blank" rel="noopener" className="footer-discord" aria-label="Discord">
                       <img src="https://framerusercontent.com/images/zoWaVQPkZV0QfcnLEOacVQ0yoZs.png?width=225&height=225" alt="Discord" />
                     </a>
                   </div>
@@ -2875,7 +2875,7 @@ export function LandingClient() {
                 <div className="footer-cols">
                   <div className="footer-col-group">
                     <div className="footer-col"><h4>Navigation</h4><a href="#">Discover</a><a href="#">Creators</a><a href="#">Brands</a></div>
-                    <div className="footer-col"><h4>Socials</h4><a href="https://x.com/contentrewards" target="_blank" rel="noopener">Twitter/X</a><a href="https://instagram.com/contentrewards" target="_blank" rel="noopener">Instagram</a></div>
+                    <div className="footer-col"><h4>Socials</h4><a href="#" target="_blank" rel="noopener">Twitter/X</a><a href="#" target="_blank" rel="noopener">Instagram</a></div>
                     <div className="footer-col"></div>
                   </div>
                   <div className="footer-col-group">

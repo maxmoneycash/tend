@@ -25,7 +25,7 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const isLightPage = pathname === "/onboarding/creator" || pathname === "/faqs";
+  const isLightPage = pathname === "/" || pathname === "/onboarding/creator" || pathname === "/faqs";
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -125,7 +125,7 @@ export function Navbar() {
               </Link>
             ))}
           </div>
-          <Link href="/#pledge" className="btn-nav-cta">
+          <Link href="/pledge" className="btn-nav-cta">
             Start a pledge <span className="arrow">→</span>
           </Link>
           <button

@@ -115,7 +115,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
           onChange={(e) => setAddress(e.target.value)}
           aria-label="Street address"
         />
-        <button className="btn btn-primary" disabled={busy} type="submit">
+        <button className="btn tnd-btn-primary" disabled={busy} type="submit">
           {busy && !located ? "Locating…" : "Whose land am I on?"}
         </button>
       </form>
@@ -251,7 +251,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                   setAmount(c);
                   setCustom("");
                 }}
-                className={`chip ${amount === c && !custom ? "chip-active" : ""}`}
+                className={`tnd-chip ${amount === c && !custom ? "tnd-chip-active" : ""}`}
               >
                 ${c}
               </button>
@@ -270,7 +270,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
             type="button"
             onClick={checkout}
             disabled={busy || (!custom && !amount)}
-            className="btn btn-primary mt-6"
+            className="btn tnd-btn-primary mt-6"
           >
             {busy
               ? "Opening checkout…"

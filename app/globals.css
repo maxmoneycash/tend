@@ -1752,28 +1752,28 @@ input[type="range"]::-webkit-slider-thumb:hover {
   border-radius: 12px;
   transition: all 0.2s ease-out;
 }
-.btn-primary {
+.tnd-btn-primary {
   background: #fa4616;
   color: #0a0a0a;
   border: 1px solid rgba(250, 70, 22, 0.3);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(250, 70, 22, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
-.btn-primary:hover {
+.tnd-btn-primary:hover {
   background: #ff5a2e;
   transform: translateY(-1px);
   box-shadow: 0 4px 20px rgba(250, 70, 22, 0.3), 0 0 0 1px rgba(250, 70, 22, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
-.btn-primary:active { transform: translateY(0); }
-.btn-primary:disabled { opacity: 0.55; }
+.tnd-btn-primary:active { transform: translateY(0); }
+.tnd-btn-primary:disabled { opacity: 0.55; }
 .btn-ghost {
   background: rgba(255, 255, 255, 0.06);
   color: #d4d4d8;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .btn-ghost:hover { background: rgba(255, 255, 255, 0.1); }
-.chip {
+.tnd-chip {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 9999px;
   padding: 0.4rem 0.95rem;
@@ -1784,8 +1784,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
   cursor: pointer;
   transition: all 0.15s ease-out;
 }
-.chip:hover { color: #e4e4e7; background: rgba(255, 255, 255, 0.06); }
-.chip-active {
+.tnd-chip:hover { color: #e4e4e7; background: rgba(255, 255, 255, 0.06); }
+.tnd-chip-active {
   background: rgba(250, 70, 22, 0.15);
   border-color: rgba(250, 70, 22, 0.3);
   color: #fa4616;
