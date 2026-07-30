@@ -155,7 +155,9 @@ export async function POST(request: Request) {
       receipt: `Annual land tax received for ${tribe.name}.`,
       amountUsd,
       routedToTribeAccount: routed,
-      note: "ʼOttoy — thank you. This land remembers.",
+      note: routed
+        ? "Payment received and routed to the configured connected account."
+        : "Payment received; onward routing requires reconciliation.",
     }),
   );
 }

@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
+import { RevealManager } from "@/components/site/RevealManager";
 
 export const metadata: Metadata = {
   title: "Tend — a land tax for the land you live on",
   description:
-    "Locate whose ancestral Ohlone land you live on and start a voluntary recurring land tax that goes 100% to the tribe. Humans pay by card; machines pay over Stripe MPP.",
+    "Find Indigenous-led contribution programs connected to where you live. Humans can contribute by card; machines can pay over Stripe MPP.",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="font-sans">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -21,44 +23,63 @@ export default function RootLayout({
         />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap"
         />
       </head>
       <body className="min-h-screen flex flex-col antialiased">
-        <header className="mx-auto w-full max-w-4xl px-6 py-6 flex items-center justify-between">
-          <a
+        <RevealManager />
+        <header className="mx-auto w-full max-w-5xl px-6 py-5 flex items-center justify-between">
+          <Link
             href="/"
-            className="font-display text-2xl font-bold tracking-tight"
+            className="font-display text-[1.55rem] font-extrabold tracking-tight leading-none"
           >
             Tend
-          </a>
-          <nav className="flex items-center gap-5 text-sm font-medium text-faded">
-            <a href="/variants" className="hover:text-ink">
-              Variants
-            </a>
-            <a href="/dashboard" className="hover:text-ink">
+            <span className="text-tide">.</span>
+          </Link>
+          <nav className="flex items-center gap-6 font-display text-sm font-semibold">
+            <Link href="/dashboard" className="text-faded hover:text-ink">
               Dashboards
-            </a>
-            <a href="/auth/login?returnTo=/dashboard" className="hover:text-ink">
+            </Link>
+            <Link href="/variants" className="text-faded hover:text-ink">
+              Variants
+            </Link>
+            <a
+              href="/auth/login?returnTo=/dashboard"
+              className="text-faded hover:text-ink"
+            >
               Tribal sign-in
             </a>
           </nav>
         </header>
+
         <main className="flex-1">{children}</main>
-        <footer className="rule mt-16">
-          <div className="mx-auto max-w-4xl px-6 py-8 text-sm text-faded space-y-2">
-            <p>
-              Tend is a hackathon prototype (Auth0 × Stripe, July 2026). It is
-              not affiliated with, or endorsed by, the Association of Ramaytush
-              Ohlone or the Muwekma Ohlone Tribe — nothing launches in a
-              tribe&apos;s name without that tribe&apos;s direction.
+
+        <footer className="band noise mt-24">
+          <div className="mx-auto max-w-5xl px-6 py-14">
+            <p className="display-2">
+              Tend the land
+              <br />
+              you live on.
             </p>
-            <p>
-              Where territorial definitions differ, Tend shows every tribe
-              whose published definition includes your county and lets you
-              choose — it never arbitrates boundaries. 100% of every
-              contribution goes to the tribe; the platform takes nothing.
-            </p>
+            <div className="mt-10 grid gap-8 sm:grid-cols-2 text-[0.95rem] leading-relaxed opacity-90">
+              <p>
+                Tend is a hackathon prototype (Auth0 × Stripe, July 2026). It
+                is not affiliated with, or endorsed by, the Association of
+                Ramaytush Ohlone or the Muwekma Ohlone Tribe — nothing
+                launches in a tribe&apos;s name without that tribe&apos;s
+                direction.
+              </p>
+              <p>
+                Where territorial definitions differ, Tend shows every tribe
+                whose published definition includes your county and lets you
+                choose — it never arbitrates boundaries. Tend takes no
+                platform fee; payment processing fees may apply.
+              </p>
+            </div>
+            <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-paper/25 pt-5 font-display text-xs font-medium opacity-75">
+              <span>Ramaytush &amp; Muwekma Ohlone land · San Francisco Bay</span>
+              <span>humans pay by card · machines pay by MPP</span>
+            </div>
           </div>
         </footer>
       </body>

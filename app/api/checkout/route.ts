@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { demoMode } from "@/lib/demo";
 import { getStripe } from "@/lib/stripe";
 import { getTribe, getTribeAccount, type TribeId } from "@/lib/tribes";
 
@@ -19,6 +20,12 @@ export async function POST(req: Request) {
   const account = getTribeAccount(tribeId as TribeId);
   const origin = new URL(req.url).origin;
 
+  if (demoMode()) {
+    return NextResponse.json({
+      url: `${origin}/thanks?tribe=${tribeId}&demo=1`,
+    });
+  }
+
   const stripe = getStripe();
   const params = {
     mode: "subscription" as const,
@@ -31,7 +38,7 @@ export async function POST(req: Request) {
           unit_amount: amountCents,
           product_data: {
             name: `${tribe.taxName} — ${tribe.name}`,
-            description: `Voluntary ${interval}ly land tax, 100% to the tribe.`,
+            description: `Voluntary ${interval}ly contribution. Tend takes no platform fee; processing fees may apply.`,
           },
         },
       },

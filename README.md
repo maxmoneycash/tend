@@ -1,11 +1,15 @@
 # Tend
 
-**A land tax for the land you live on.** Bay Area residents locate whose
-ancestral Ohlone land they're on and start a voluntary recurring land tax that
-goes 100% to the tribe — the Association of Ramaytush Ohlone's **Yunakin Land
-Tax** (SF Peninsula) and the Muwekma Ohlone Tribe's **Ohlone Land Tax** (East &
-South Bay). Humans pay by card. Machines pay too: AI agents working on this
-land can pay an annual land tax over **Stripe's Machine Payments Protocol**.
+**Contribution rails for the land where you live and work.** Bay Area
+residents can discover Indigenous-led contribution programs connected to their
+location. The prototype features the Association of Ramaytush Ohlone's
+official **Yunakin Land Tax** and support for the Muwekma Ohlone Preservation
+Foundation. Humans contribute by card. A sandbox flow also demonstrates how AI
+agents could contribute over **Stripe's Machine Payments Protocol**.
+
+Tend takes no platform fee; Stripe processing fees may apply. This hackathon
+prototype is not affiliated with or endorsed by either organization and does
+not create real charges without Stripe test credentials.
 
 Built at the Auth0 × Stripe hackathon, July 2026.
 

@@ -29,7 +29,7 @@ function suggest(housing: string, bracket: string): number {
   return bracket === "low" ? 30 : bracket === "mid" ? 50 : 75;
 }
 
-export function PledgeFlow() {
+export function PledgeFlow({ demo = false }: { demo?: boolean }) {
   const [address, setAddress] = useState("");
   const [located, setLocated] = useState<Located | null>(null);
   const [tribeId, setTribeId] = useState<string | null>(null);
@@ -95,6 +95,11 @@ export function PledgeFlow() {
 
   return (
     <section className="card p-6 sm:p-8">
+      {demo && (
+        <p className="mb-4 font-display text-sm font-semibold text-sun-deep">
+          Hackathon demo — no real charge will be created
+        </p>
+      )}
       {/* Step 1 — locate */}
       <form
         onSubmit={(e) => {
@@ -162,7 +167,7 @@ export function PledgeFlow() {
                   tribeId === t.id ? "card-selected" : "hover:border-moss"
                 }`}
               >
-                <div className="text-xs font-semibold uppercase tracking-widest text-clay">
+                <div className="font-display text-sm font-semibold text-tide">
                   {t.region}
                 </div>
                 <div className="font-display text-xl font-semibold mt-1">
@@ -269,7 +274,7 @@ export function PledgeFlow() {
           >
             {busy
               ? "Opening checkout…"
-              : `Begin — $${custom || amount}/${interval}, 100% to the tribe`}
+              : `${demo ? "Preview" : "Begin"} — $${custom || amount}/${interval}, no Tend fee`}
           </button>
         </div>
       )}

@@ -128,10 +128,10 @@ export default async function TribeDashboard({
         </div>
       )}
 
-      <p className="text-sm font-semibold uppercase tracking-widest text-clay">
+      <p className="font-display text-sm font-semibold text-tide">
         {tribe.taxName}
       </p>
-      <h1 className="font-display text-4xl font-bold mt-2">{tribe.name}</h1>
+      <h1 className="display-2 mt-2">{tribe.name}</h1>
       <p className="mt-2 text-sm text-faded">
         {demo
           ? "This is the fundraising program in a box: no code, no hosting, no development director required."
@@ -151,7 +151,9 @@ export default async function TribeDashboard({
         <div className="card p-5">
           <div className="text-sm text-faded">Recurring</div>
           <div className="font-display text-4xl font-bold mt-1">{usd(mrr)}</div>
-          <div className="text-xs text-faded mt-1">per month, 100% yours</div>
+          <div className="text-xs text-faded mt-1">
+            per month · no Tend platform fee
+          </div>
         </div>
         <div className="card p-5">
           <div className="text-sm text-faded">Machine payments</div>

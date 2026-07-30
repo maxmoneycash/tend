@@ -29,11 +29,11 @@ export const tribes: Record<TribeId, Tribe> = {
   muwekma: {
     id: "muwekma",
     name: "Muwekma Ohlone Tribe",
-    taxName: "Ohlone Land Tax",
+    taxName: "Muwekma Ohlone contribution",
     region: "East & South San Francisco Bay",
     blurb:
-      "The Muwekma Ohlone Tribe comprises documented descendants of the Verona Band of Alameda County, with ancestral ties across the East and South Bay. This voluntary land tax supports the tribe's work toward restored federal recognition and land return.",
-    siteUrl: "https://muwekma.org",
+      "The Muwekma Ohlone Preservation Foundation supports cultural revitalization, community education, land access, and the Tribe's work toward restored federal recognition.",
+    siteUrl: "https://www.muwekmafoundation.org/home",
     accountEnv: "TEND_ACCT_MUWEKMA",
     annualMachineTaxCents: 2500,
   },
@@ -54,7 +54,7 @@ export const countyTribes: Record<string, TribeId[]> = {
 
 export const countyNotes: Record<string, string> = {
   "Santa Clara":
-    "Santa Clara County appears in both tribes' published definitions — the Ramaytush description reaches northwest from Cupertino, and Muwekma ancestral territory covers the South Bay. Both are shown; the choice is yours, and splitting a pledge across both is welcome.",
+    "A county result is not precise enough to resolve Santa Clara's territorial boundaries. Tend shows both possible matches and does not decide between them.",
   Alameda:
     "Sogorea Te' Land Trust's Shuumi Land Tax also serves the East Bay (Lisjan Ohlone). Tend shows the tribes it hosts; Shuumi lives at sogoreate-landtrust.org.",
   "Contra Costa":

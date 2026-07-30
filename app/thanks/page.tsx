@@ -1,31 +1,37 @@
+import Link from "next/link";
 import { getTribe } from "@/lib/tribes";
 
 export default async function Thanks({
   searchParams,
 }: {
-  searchParams: Promise<{ tribe?: string }>;
+  searchParams: Promise<{ tribe?: string; demo?: string }>;
 }) {
-  const { tribe: tribeParam } = await searchParams;
+  const { tribe: tribeParam, demo } = await searchParams;
   const tribe = getTribe(tribeParam ?? "");
 
   return (
     <div className="mx-auto max-w-2xl px-6 pt-24 text-center">
-      <p className="text-sm font-semibold uppercase tracking-widest text-clay">
-        Pledge begun
+      {demo === "1" && (
+        <p className="mb-6 rounded-lg border border-amber bg-parch px-4 py-3 text-sm">
+          <strong>Demo preview</strong> — no payment or subscription was
+          created.
+        </p>
+      )}
+      <p className="font-display text-sm font-semibold text-tide">
+        {demo === "1" ? "Pledge preview" : "Pledge begun"}
       </p>
-      <h1 className="font-display text-5xl font-bold mt-4">
-        The land remembers.
-      </h1>
+      <h1 className="display-1 mt-4">Contribution preview complete.</h1>
       <p className="mt-6 text-lg text-faded leading-relaxed">
         {tribe
-          ? `Your ${tribe.taxName} now recurs to the ${tribe.name} — directly to their account, in full.`
-          : "Your land tax pledge is now recurring — directly to the tribe, in full."}{" "}
-        A receipt is on its way from Stripe, and every renewal happens without
-        you lifting a finger.
+          ? `Your ${tribe.taxName} now recurs to the ${tribe.name} through their connected account.`
+          : "Your contribution is now recurring through the organization's connected account."}{" "}
+        {demo === "1"
+          ? "In a configured deployment, Stripe Checkout creates the subscription and sends the receipt."
+          : "A receipt is on its way from Stripe, and every renewal happens without you lifting a finger."}
       </p>
-      <a href="/" className="btn btn-primary mt-10">
+      <Link href="/" className="btn btn-primary mt-10">
         Back to Tend
-      </a>
+      </Link>
     </div>
   );
 }
