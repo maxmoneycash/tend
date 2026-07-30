@@ -11,7 +11,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="font-sans">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -33,6 +33,9 @@ export default function RootLayout({
             Tend
           </a>
           <nav className="flex items-center gap-5 text-sm font-medium text-faded">
+            <a href="/variants" className="hover:text-ink">
+              Variants
+            </a>
             <a href="/dashboard" className="hover:text-ink">
               Dashboards
             </a>
