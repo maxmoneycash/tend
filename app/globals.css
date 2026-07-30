@@ -13,18 +13,18 @@
 
 :root {
   /* ── Background Depth Scale ─────────────────────── */
-  --background: #151515;
-  --background-secondary: #1a1a1a;
-  --background-tertiary: #1e1e1e;
-  --background-elevated: #1e1e1e;
-  --foreground: #eeeeee;
-  --foreground-secondary: #b4b4b4;
+  --background: #f7f7f7;
+  --background-secondary: #ffffff;
+  --background-tertiary: #f0f0f0;
+  --background-elevated: #ffffff;
+  --foreground: #111111;
+  --foreground-secondary: #555555;
 
   /* ── Surface Elevation ──────────────────────────── */
-  --card: rgba(255, 255, 255, 0.04);
-  --card-solid: #181818;
-  --card-border: rgba(255, 255, 255, 0.08);
-  --card-hover: rgba(255, 255, 255, 0.10);
+  --card: #ffffff;
+  --card-solid: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-hover: rgba(0, 0, 0, 0.04);
 
   /* ── Whop Accent — Dragon Fire Orange ───────────── */
   --accent: #FA4616;
@@ -39,8 +39,8 @@
   --brand-blue: #1754D8;
 
   /* ── Semantic ───────────────────────────────────── */
-  --muted: #7f7f7f;
-  --muted-foreground: #999999;
+  --muted: #888888;
+  --muted-foreground: #777777;
   --success: #0DA726;
   --danger: #F21A1A;
   --warning: #F5A623;
@@ -49,10 +49,10 @@
   --accent-glow: rgba(249, 115, 22, 0.08);
 
   /* ── Borders ────────────────────────────────────── */
-  --border: rgba(255, 255, 255, 0.08);
-  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border: rgba(0, 0, 0, 0.08);
+  --border-subtle: rgba(0, 0, 0, 0.05);
   --border-accent: rgba(250, 70, 22, 0.25);
-  --border-strong: rgba(255, 255, 255, 0.18);
+  --border-strong: rgba(0, 0, 0, 0.16);
 
   /* ── Radius — Whop uses 16px standard ───────────── */
   --radius: 16px;
@@ -192,11 +192,11 @@ body::after {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.25);
 }
 
 /* Selection */
@@ -212,23 +212,23 @@ body::after {
 
 /* Level 1: Primary containers, main cards */
 .surface-1 {
-  background: var(--background-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 14px;
 }
 
 /* Level 2: Nested cards, elevated surfaces */
 .surface-2 {
-  background: var(--background-tertiary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #fafafa;
+  border: 1px solid rgba(0, 0, 0, 0.07);
   border-radius: 12px;
 }
 
 /* Level 3: Interactive elements, highlighted sections */
 .surface-3 {
-  background: var(--background-elevated);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 10px;
+  background: #f4f4f4;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
 }
 
 /* ── Premium Card System (matches contentrewards.com/brand Framer cards) ──
@@ -1647,29 +1647,29 @@ input[type="range"]::-webkit-slider-thumb:hover {
   --color-primary-foreground: #0a0a0a;
   --color-secondary-foreground: var(--foreground);
   --color-destructive: var(--danger);
-  --color-input: rgba(255, 255, 255, 0.08);
+  --color-input: rgba(0, 0, 0, 0.1);
   --color-ring: var(--accent);
-  --color-popover: #181818;
+  --color-popover: #ffffff;
   --color-popover-foreground: var(--foreground);
   --color-card-foreground: var(--foreground);
 
   /* legacy Tend token names → CR dark equivalents */
-  --color-ink: #eeeeee;
-  --color-faded: #999999;
-  --color-paper: #151515;
-  --color-cream: #151515;
-  --color-parch: #1a1a1a;
-  --color-wash: #1a1a1a;
-  --color-sand: rgba(255, 255, 255, 0.08);
-  --color-mist: rgba(255, 255, 255, 0.1);
-  --color-tide: #ff9966;
+  --color-ink: #111111;
+  --color-faded: #6b6b6b;
+  --color-paper: #f7f7f7;
+  --color-cream: #f7f7f7;
+  --color-parch: #ffffff;
+  --color-wash: #ffffff;
+  --color-sand: rgba(0, 0, 0, 0.08);
+  --color-mist: rgba(0, 0, 0, 0.1);
+  --color-tide: #c2410c;
   --color-moss: #fa4616;
   --color-moss-deep: #1a1a1a;
   --color-deep: #1a1a1a;
   --color-deep-2: #0f0f0f;
   --color-clay: #fa4616;
   --color-sun: #fa4616;
-  --color-sun-deep: #ff7a4a;
+  --color-sun-deep: #b33d05;
   --color-amber: #f5a623;
 
   --animate-accordion-collapse: accordion-collapse var(--tw-duration, 200ms) ease-out;
@@ -1733,8 +1733,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* Legacy component classes → CR equivalents */
 .card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 16px;
 }
 .card-selected {
@@ -1768,23 +1768,23 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .tnd-btn-primary:active { transform: translateY(0); }
 .tnd-btn-primary:disabled { opacity: 0.55; }
 .btn-ghost {
-  background: rgba(255, 255, 255, 0.06);
-  color: #d4d4d8;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.05);
+  color: #333333;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
-.btn-ghost:hover { background: rgba(255, 255, 255, 0.1); }
+.btn-ghost:hover { background: rgba(0, 0, 0, 0.09); }
 .tnd-chip {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 9999px;
   padding: 0.4rem 0.95rem;
   font-weight: 600;
   font-size: 12px;
-  background: rgba(255, 255, 255, 0.02);
-  color: #a1a1aa;
+  background: #ffffff;
+  color: #555555;
   cursor: pointer;
   transition: all 0.15s ease-out;
 }
-.tnd-chip:hover { color: #e4e4e7; background: rgba(255, 255, 255, 0.06); }
+.tnd-chip:hover { color: #111111; background: rgba(0, 0, 0, 0.04); }
 .tnd-chip-active {
   background: rgba(250, 70, 22, 0.15);
   border-color: rgba(250, 70, 22, 0.3);
@@ -1792,8 +1792,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 .field {
   width: 100%;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   color: var(--foreground);
   padding: 0.8rem 1rem;
@@ -1828,10 +1828,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* Program card cover gradients (feature-card system) */
 .cover-orange {
-  background: linear-gradient(135deg, rgba(250, 70, 22, 0.3), rgba(250, 70, 22, 0.1), #1a1a1a);
+  background: linear-gradient(135deg, rgba(250, 70, 22, 0.3), rgba(250, 70, 22, 0.08), #f5f5f5);
 }
 .cover-purple {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(139, 92, 246, 0.1), #1a1a1a);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(139, 92, 246, 0.08), #f5f5f5);
 }
 
 /* Word reveal (variants lab) */

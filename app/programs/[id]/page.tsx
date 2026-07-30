@@ -39,28 +39,28 @@ export default async function ProgramDetail({
           <div className="animate-enter">
             <Link
               href="/programs"
-              className="text-[11px] font-medium text-zinc-500 hover:text-zinc-300"
+              className="text-[11px] font-medium text-[#6b6b6b] hover:text-[#3a3a3a]"
             >
               ← All programs
             </Link>
 
-            <div className={`mt-4 h-28 ${COVER[tribe.id]} rounded-[16px] relative border border-white/[0.06]`}>
+            <div className={`mt-4 h-28 ${COVER[tribe.id]} rounded-[16px] relative border border-black/[0.08]`}>
               <span
                 className={`absolute top-3 left-3 text-[10px] font-semibold px-2 py-0.5 rounded ${BADGE[tribe.id]}`}
               >
                 {tribe.region}
               </span>
-              <span className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-400">
+              <span className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-700">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
                 Accepting pledges
               </span>
             </div>
 
             <div className="mt-5 mb-6">
-              <h1 className="text-[22px] sm:text-[26px] font-bold text-white mb-1 tracking-[-0.02em]">
+              <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111111] mb-1 tracking-[-0.02em]">
                 {tribe.taxName}
               </h1>
-              <p className="text-[13px] text-zinc-500">
+              <p className="text-[13px] text-[#6b6b6b]">
                 {tribe.name} ·{" "}
                 <a
                   href={tribe.siteUrl}
@@ -77,50 +77,50 @@ export default async function ProgramDetail({
 
           <div className="animate-enter animate-enter-delay-1 grid gap-4 lg:grid-cols-[1.5fr_1fr]">
             <div className="surface-1 rounded-[16px] p-5">
-              <p className="text-[11px] font-display font-semibold text-zinc-500 uppercase tracking-wider">
+              <p className="text-[11px] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
                 About
               </p>
-              <p className="mt-2.5 text-[13px] leading-relaxed text-zinc-300">
+              <p className="mt-2.5 text-[13px] leading-relaxed text-[#3a3a3a]">
                 {tribe.blurb}
               </p>
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {tribeCounties.map((c) => (
                   <span
                     key={c}
-                    className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] text-zinc-500 border border-white/[0.06]"
+                    className="text-[10px] px-1.5 py-0.5 rounded bg-black/[0.03] text-[#6b6b6b] border border-black/[0.08]"
                   >
                     {c}
                   </span>
                 ))}
               </div>
               {notes.map((n) => (
-                <p key={n} className="mt-4 text-[11px] leading-relaxed text-zinc-600">
+                <p key={n} className="mt-4 text-[11px] leading-relaxed text-[#8a8a8a]">
                   {n}
                 </p>
               ))}
 
-              <div className="mt-5 pt-4 border-t border-white/[0.04] grid grid-cols-3 gap-3">
+              <div className="mt-5 pt-4 border-t border-black/[0.06] grid grid-cols-3 gap-3">
                 <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-zinc-600 uppercase tracking-wider">Fee</p>
-                  <p className="text-[15px] font-bold text-white font-display">0%</p>
+                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Fee</p>
+                  <p className="text-[15px] font-bold text-[#111111] font-display">0%</p>
                 </div>
                 <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-zinc-600 uppercase tracking-wider">Cadence</p>
-                  <p className="text-[15px] font-bold text-white font-display">mo · yr</p>
+                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Cadence</p>
+                  <p className="text-[15px] font-bold text-[#111111] font-display">mo · yr</p>
                 </div>
                 <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-zinc-600 uppercase tracking-wider">Machines</p>
-                  <p className="text-[15px] font-bold text-white font-display">MPP</p>
+                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Machines</p>
+                  <p className="text-[15px] font-bold text-[#111111] font-display">MPP</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="surface-1 rounded-[16px] p-5">
-                <p className="text-[11px] font-display font-semibold text-zinc-500 uppercase tracking-wider">
+                <p className="text-[11px] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
                   Contribute
                 </p>
-                <p className="mt-2 text-[12px] leading-relaxed text-zinc-400">
+                <p className="mt-2 text-[12px] leading-relaxed text-[#555555]">
                   Recurring pledge by card, created on the organization&apos;s
                   own Stripe account. Tend takes no platform fee.
                 </p>
@@ -133,15 +133,15 @@ export default async function ProgramDetail({
               </div>
 
               <div className="surface-1 rounded-[16px] p-5">
-                <p className="text-[11px] font-display font-semibold text-zinc-500 uppercase tracking-wider">
+                <p className="text-[11px] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
                   Machine payments
                 </p>
-                <pre className="mt-3 rounded-[10px] bg-[#0f0f0f] border border-white/[0.06] p-3 font-mono text-[10.5px] leading-relaxed text-zinc-400 overflow-x-auto">
+                <pre className="mt-3 rounded-[10px] bg-[#0f0f0f] border border-black/[0.08] p-3 font-mono text-[10.5px] leading-relaxed text-[#555555] overflow-x-auto">
                   {`POST /api/mpp/land-tax
      ?tribe=${tribe.id}
 → 402 · pay $25.00 · receipt`}
                 </pre>
-                <p className="mt-2 text-[10px] font-mono text-zinc-600">
+                <p className="mt-2 text-[10px] font-mono text-[#8a8a8a]">
                   USDC on Tempo · offramped with Stripe
                 </p>
               </div>

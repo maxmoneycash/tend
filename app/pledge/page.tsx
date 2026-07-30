@@ -49,7 +49,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative mx-auto max-w-6xl px-5 pt-20 pb-14">
         <div className="max-w-2xl">
-          <span className="animate-enter inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-400">
+          <span className="animate-enter inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-700">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
@@ -60,12 +60,12 @@ export default function Home() {
             You live on someone&apos;s ancestral land.{" "}
             <span className="text-gradient-whop">Tend it.</span>
           </h1>
-          <p className="animate-enter animate-enter-delay-2 mt-5 max-w-xl text-[15px] leading-relaxed text-zinc-400">
+          <p className="animate-enter animate-enter-delay-2 mt-5 max-w-xl text-[15px] leading-relaxed text-[#555555]">
             A voluntary land tax is a small recurring contribution from the
             people living on Ohlone land to the tribes who have belonged to it
             for ten thousand years. Type your address, find Indigenous-led
             contribution programs connected to where you live, and begin.{" "}
-            <strong className="text-zinc-200">Tend takes no platform fee.</strong>
+            <strong className="text-[#2a2a2a]">Tend takes no platform fee.</strong>
           </p>
           <div className="animate-enter animate-enter-delay-3 mt-7 flex flex-wrap gap-3">
             <a href="#pledge" className="btn tnd-btn-primary">
@@ -86,10 +86,10 @@ export default function Home() {
             { label: "MACHINE PAYERS", value: "MPP PREVIEW" },
           ].map((s) => (
             <div key={s.label} className="surface-2 rounded-[10px] p-3 text-center">
-              <p className="text-[9px] text-zinc-600 uppercase tracking-wider">
+              <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">
                 {s.label}
               </p>
-              <p className="text-[18px] font-bold text-white font-display mt-0.5">
+              <p className="text-[18px] font-bold text-[#111111] font-display mt-0.5">
                 {s.value}
               </p>
             </div>
@@ -108,7 +108,7 @@ export default function Home() {
             <Link
               key={t.id}
               href={`/programs/${t.id}`}
-              className={`animate-enter ${i === 1 ? "animate-enter-delay-1" : ""} group block bg-[#141414] border border-white/[0.06] rounded-[16px] overflow-hidden transition-all duration-300 ease-out hover:scale-[1.01] hover:border-white/[0.12] active:scale-[0.99]`}
+              className={`animate-enter ${i === 1 ? "animate-enter-delay-1" : ""} group block bg-white border border-black/[0.08] rounded-[16px] overflow-hidden transition-all duration-300 ease-out hover:scale-[1.01] hover:border-black/[0.14] active:scale-[0.99]`}
             >
               <div className={`h-28 ${COVER[t.id]} relative`}>
                 <span
@@ -116,33 +116,33 @@ export default function Home() {
                 >
                   {t.region}
                 </span>
-                <span className="absolute bottom-3 right-3 text-[10px] font-mono text-white/60">
+                <span className="absolute bottom-3 right-3 text-[10px] font-mono text-[#111111]/60">
                   {counties(t.id).length} counties
                 </span>
               </div>
               <div className="p-5">
-                <h3 className="text-[16px] font-semibold text-white group-hover:text-[#ff7a4a] transition-colors">
+                <h3 className="text-[16px] font-semibold text-[#111111] group-hover:text-[#ff7a4a] transition-colors">
                   {t.taxName}
                 </h3>
-                <p className="text-[12px] text-zinc-500 mt-0.5">{t.name}</p>
-                <p className="text-[12px] text-zinc-400 leading-relaxed mt-3 line-clamp-3">
+                <p className="text-[12px] text-[#6b6b6b] mt-0.5">{t.name}</p>
+                <p className="text-[12px] text-[#555555] leading-relaxed mt-3 line-clamp-3">
                   {t.blurb}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-1.5">
                   {counties(t.id).map((c) => (
                     <span
                       key={c}
-                      className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] text-zinc-500 border border-white/[0.06]"
+                      className="text-[10px] px-1.5 py-0.5 rounded bg-black/[0.03] text-[#6b6b6b] border border-black/[0.08]"
                     >
                       {c}
                     </span>
                   ))}
                 </div>
-                <div className="mt-4 pt-3 border-t border-white/[0.04] flex items-center justify-between">
-                  <span className="text-[11px] text-zinc-600 font-mono">
+                <div className="mt-4 pt-3 border-t border-black/[0.06] flex items-center justify-between">
+                  <span className="text-[11px] text-[#8a8a8a] font-mono">
                     0% Tend fee · Stripe fees apply
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 text-orange-400 text-[11px] font-medium group-hover:bg-orange-500/20 transition-colors">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 text-orange-700 text-[11px] font-medium group-hover:bg-orange-500/20 transition-colors">
                     View program →
                   </span>
                 </div>
@@ -150,7 +150,7 @@ export default function Home() {
             </Link>
           ))}
         </div>
-        <p className="mt-4 text-[11px] leading-relaxed text-zinc-600 max-w-2xl">
+        <p className="mt-4 text-[11px] leading-relaxed text-[#8a8a8a] max-w-2xl">
           Santa Clara County appears in both tribes&apos; published definitions
           — Tend shows both and never arbitrates boundaries. In the East Bay,
           Sogorea Te&apos; Land Trust&apos;s Shuumi Land Tax (Lisjan Ohlone) is
@@ -190,8 +190,8 @@ export default function Home() {
             },
           ].map((f) => (
             <div key={f.title} className="surface-1 rounded-[16px] p-5">
-              <h3 className="text-[15px] font-semibold text-white">{f.title}</h3>
-              <p className="mt-2.5 text-[12px] leading-relaxed text-zinc-400">
+              <h3 className="text-[15px] font-semibold text-[#111111]">{f.title}</h3>
+              <p className="mt-2.5 text-[12px] leading-relaxed text-[#555555]">
                 {f.body}
               </p>
             </div>
@@ -209,7 +209,7 @@ export default function Home() {
             </span>
           </div>
           <div className="mt-7 grid gap-8 lg:grid-cols-[1fr_1.1fr] items-start">
-            <p className="max-w-xl text-[14px] leading-relaxed text-zinc-400">
+            <p className="max-w-xl text-[14px] leading-relaxed text-[#555555]">
               Ten trillion dollars of market cap sits on Ohlone land. Its agent
               fleets pay for compute, APIs, and data over machine rails — Tend
               lets them pay for where they run. One line in your automation; an
@@ -227,7 +227,7 @@ export default function Home() {
 → pay $25.00
 ← receipt ✓ routing status recorded`}
               </pre>
-              <p className="mt-2.5 text-[10px] font-mono text-zinc-600 uppercase tracking-wider">
+              <p className="mt-2.5 text-[10px] font-mono text-[#8a8a8a] uppercase tracking-wider">
                 first call returns the challenge · second call carries the
                 credential
               </p>

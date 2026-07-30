@@ -16,7 +16,7 @@ export default function RewardsPage() {
             <span className="inline-block text-[11px] font-display font-medium px-2.5 py-1 rounded-[10px] bg-[#FA4616]/10 text-[#FA4616] border border-[#FA4616]/20 uppercase tracking-wider mb-3">
               Tend Programs
             </span>
-            <h1 className="text-[22px] sm:text-[26px] font-bold text-white mb-2 tracking-[-0.02em]">
+            <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111111] mb-2 tracking-[-0.02em]">
               Streamed donations
             </h1>
             <p className="text-[13px] sm:text-[14px] font-sans text-[#7d7d7d] max-w-xl text-pretty leading-relaxed tracking-[-0.01em]">

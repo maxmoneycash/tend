@@ -25,7 +25,7 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const isLightPage = pathname === "/" || pathname === "/onboarding/creator" || pathname === "/faqs";
+  const isLightPage = true; // original light theme carries the whole app
 
   useEffect(() => { setMounted(true); }, []);
 

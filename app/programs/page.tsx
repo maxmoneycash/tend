@@ -32,7 +32,7 @@ export default function ProgramsPage() {
             <span className="inline-block text-[11px] font-display font-medium px-2.5 py-1 rounded-[10px] bg-[#FA4616]/10 text-[#FA4616] border border-[#FA4616]/20 uppercase tracking-wider mb-3">
               Programs
             </span>
-            <h1 className="text-[22px] sm:text-[26px] font-bold text-white mb-2 tracking-[-0.02em]">
+            <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111111] mb-2 tracking-[-0.02em]">
               Indigenous-led contribution programs
             </h1>
             <p className="text-[13px] sm:text-[14px] font-sans text-[#7d7d7d] max-w-xl text-pretty leading-relaxed tracking-[-0.01em]">
@@ -47,7 +47,7 @@ export default function ProgramsPage() {
               <Link
                 key={t.id}
                 href={`/programs/${t.id}`}
-                className="group block bg-[#141414] border border-white/[0.06] rounded-[16px] overflow-hidden transition-all duration-300 ease-out hover:scale-[1.01] hover:border-white/[0.12] active:scale-[0.99]"
+                className="group block bg-white border border-black/[0.08] rounded-[16px] overflow-hidden transition-all duration-300 ease-out hover:scale-[1.01] hover:border-black/[0.14] active:scale-[0.99]"
               >
                 <div className={`h-20 ${COVER[t.id]} relative`}>
                   <span
@@ -57,29 +57,29 @@ export default function ProgramsPage() {
                   </span>
                 </div>
                 <div className="p-5">
-                  <h3 className="text-[15px] font-semibold text-white group-hover:text-[#ff7a4a] transition-colors">
+                  <h3 className="text-[15px] font-semibold text-[#111111] group-hover:text-[#ff7a4a] transition-colors">
                     {t.taxName}
                   </h3>
-                  <p className="text-[12px] text-zinc-500 mt-0.5">{t.name}</p>
-                  <p className="text-[12px] text-zinc-400 leading-relaxed mt-3 line-clamp-2">
+                  <p className="text-[12px] text-[#6b6b6b] mt-0.5">{t.name}</p>
+                  <p className="text-[12px] text-[#555555] leading-relaxed mt-3 line-clamp-2">
                     {t.blurb}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {counties(t.id).map((c) => (
                       <span
                         key={c}
-                        className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] text-zinc-500 border border-white/[0.06]"
+                        className="text-[10px] px-1.5 py-0.5 rounded bg-black/[0.03] text-[#6b6b6b] border border-black/[0.08]"
                       >
                         {c}
                       </span>
                     ))}
                   </div>
-                  <div className="mt-4 pt-3 border-t border-white/[0.04] flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-400">
+                  <div className="mt-4 pt-3 border-t border-black/[0.06] flex items-center justify-between">
+                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-700">
                       <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
                       Accepting pledges
                     </span>
-                    <span className="text-[11px] text-zinc-600 font-mono">
+                    <span className="text-[11px] text-[#8a8a8a] font-mono">
                       monthly · yearly · MPP
                     </span>
                   </div>
@@ -87,11 +87,11 @@ export default function ProgramsPage() {
               </Link>
             ))}
 
-            <div className="border border-dashed border-white/[0.1] rounded-[16px] p-5 flex flex-col items-start justify-center min-h-[180px] md:col-span-2">
-              <p className="text-[14px] font-semibold text-zinc-300">
+            <div className="border border-dashed border-black/[0.12] rounded-[16px] p-5 flex flex-col items-start justify-center min-h-[180px] md:col-span-2">
+              <p className="text-[14px] font-semibold text-[#3a3a3a]">
                 Your program here
               </p>
-              <p className="mt-2 text-[12px] leading-relaxed text-zinc-500 max-w-xl">
+              <p className="mt-2 text-[12px] leading-relaxed text-[#6b6b6b] max-w-xl">
                 Tend hosts sovereign tenants for Indigenous-led contribution
                 programs. Onboarding is a conversation, on the tribe&apos;s
                 terms.
