@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/layout/Navbar";
 import { redirect } from "next/navigation";
 import { auth0 } from "@/lib/auth0";
 import { accessibleTribes } from "@/lib/access";
@@ -7,6 +8,8 @@ import { tribes, type TribeId } from "@/lib/tribes";
 export default async function DashboardIndex() {
   if (demoMode()) {
     return (
+      <>
+      <Navbar />
       <div className="mx-auto max-w-2xl px-6 pt-24">
         <h1 className="font-display text-4xl font-bold">Tribal tenants</h1>
         <p className="mt-2 text-sm text-faded">
@@ -29,6 +32,7 @@ export default async function DashboardIndex() {
           ))}
         </div>
       </div>
+      </>
     );
   }
 
@@ -39,6 +43,8 @@ export default async function DashboardIndex() {
   if (ids.length === 1) redirect(`/dashboard/${ids[0]}`);
 
   return (
+    <>
+    <Navbar />
     <div className="mx-auto max-w-2xl px-6 pt-24">
       <h1 className="font-display text-4xl font-bold">Tribal tenants</h1>
       {ids.length === 0 ? (
@@ -61,5 +67,6 @@ export default async function DashboardIndex() {
         </div>
       )}
     </div>
+  </>
   );
 }

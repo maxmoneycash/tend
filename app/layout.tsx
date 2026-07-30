@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -26,51 +25,6 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col antialiased">
-        <header
-          className="sticky top-0 z-50"
-          style={{
-            background: "rgba(21,21,21,0.8)",
-            backdropFilter: "blur(12px)",
-            borderBottom: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
-          <div className="mx-auto w-full max-w-6xl px-5 py-3.5 flex items-center justify-between">
-            <Link
-              href="/"
-              className="font-display text-[19px] font-bold tracking-tight text-white"
-            >
-              Tend
-              <span className="text-[#FA4616]">.</span>
-            </Link>
-            <nav className="flex items-center gap-1">
-              <Link
-                href="/programs"
-                className="px-3.5 py-2 rounded-lg text-[12px] font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] transition-colors"
-              >
-                Programs
-              </Link>
-              <Link
-                href="/dashboard"
-                className="px-3.5 py-2 rounded-lg text-[12px] font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] transition-colors"
-              >
-                Dashboards
-              </Link>
-              <Link
-                href="/variants"
-                className="px-3.5 py-2 rounded-lg text-[12px] font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] transition-colors"
-              >
-                Variants
-              </Link>
-              <a
-                href="/auth/login?returnTo=/dashboard"
-                className="ml-2 bg-[#1754d8] text-white hover:bg-[#1e63e6] px-4 py-2 rounded-lg text-[12px] font-semibold transition-colors"
-              >
-                Tribal sign-in
-              </a>
-            </nav>
-          </div>
-        </header>
-
         <main className="flex-1">{children}</main>
 
         <footer className="mt-24 border-t border-white/[0.06] bg-[#0f0f0f]">

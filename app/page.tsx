@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Navbar } from "@/components/layout/Navbar";
 import { PledgeFlow } from "@/components/PledgeFlow";
 import { demoMode } from "@/lib/demo";
 import { countyTribes, tribes, type TribeId } from "@/lib/tribes";
@@ -23,6 +24,8 @@ export default function Home() {
   const orgs = Object.values(tribes);
 
   return (
+    <>
+    <Navbar />
     <div className="relative overflow-hidden">
       {/* ambient blobs */}
       <div
@@ -230,5 +233,6 @@ export default function Home() {
         </div>
       </section>
     </div>
+  </>
   );
 }

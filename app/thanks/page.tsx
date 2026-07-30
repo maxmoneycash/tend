@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/layout/Navbar";
 import Link from "next/link";
 import { getTribe } from "@/lib/tribes";
 
@@ -10,6 +11,8 @@ export default async function Thanks({
   const tribe = getTribe(tribeParam ?? "");
 
   return (
+    <>
+    <Navbar />
     <div className="mx-auto max-w-2xl px-6 pt-24 text-center">
       {demo === "1" && (
         <p className="mb-6 rounded-lg border border-amber bg-parch px-4 py-3 text-sm">
@@ -33,5 +36,6 @@ export default async function Thanks({
         Back to Tend
       </Link>
     </div>
+  </>
   );
 }

@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/layout/Navbar";
 import Link from "next/link";
 import { countyTribes, tribes, type TribeId } from "@/lib/tribes";
 
@@ -20,6 +21,8 @@ export default function ProgramsExplorer() {
   const orgs = Object.values(tribes);
 
   return (
+    <>
+    <Navbar />
     <div className="mx-auto max-w-6xl px-5 pt-12">
       <div className="flex items-end justify-between flex-wrap gap-4">
         <div>
@@ -121,5 +124,6 @@ export default function ProgramsExplorer() {
         </div>
       </div>
     </div>
+  </>
   );
 }

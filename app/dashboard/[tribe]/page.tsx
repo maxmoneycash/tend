@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/layout/Navbar";
 import { redirect } from "next/navigation";
 import type Stripe from "stripe";
 import { auth0 } from "@/lib/auth0";
@@ -53,6 +54,8 @@ export default async function TribeDashboard({
     if (!session) redirect(`/auth/login?returnTo=/dashboard/${tribe.id}`);
     if (!canAccessTribe(session.user, tribe.id as TribeId)) {
       return (
+        <>
+        <Navbar />
         <div className="mx-auto max-w-2xl px-6 pt-24">
           <h1 className="font-display text-4xl font-bold">Not your tenant</h1>
           <p className="mt-4 text-faded">
@@ -61,6 +64,7 @@ export default async function TribeDashboard({
             tribe alone.
           </p>
         </div>
+        </>
       );
     }
   }
@@ -119,6 +123,8 @@ export default async function TribeDashboard({
     .reduce((sum, m) => sum + m.amountCents, 0);
 
   return (
+    <>
+    <Navbar />
     <div className="mx-auto max-w-4xl px-6 pt-12">
       {demo && (
         <div className="mb-6 rounded-lg border border-amber bg-parch px-4 py-3 text-sm">
@@ -221,5 +227,6 @@ export default async function TribeDashboard({
         </section>
       </div>
     </div>
+  </>
   );
 }

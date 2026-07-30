@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/layout/Navbar";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { countyNotes, countyTribes, getTribe, type TribeId } from "@/lib/tribes";
@@ -28,6 +29,8 @@ export default async function ProgramDetail({
     .filter((n, i, arr) => n && arr.indexOf(n) === i);
 
   return (
+    <>
+    <Navbar />
     <div className="mx-auto max-w-4xl px-5 pt-10">
       <Link
         href="/programs"
@@ -112,5 +115,6 @@ export default async function ProgramDetail({
         </div>
       </div>
     </div>
+  </>
   );
 }
