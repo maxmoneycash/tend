@@ -200,18 +200,20 @@ export default function ExplorerPage() {
           <div className="mt-12 surface-1 rounded-[16px] p-6 flex flex-wrap items-center justify-between gap-4">
             <div>
               <p className="text-[15px] font-semibold text-[#111111]">
-                Continue with the official program sources.
+                Continue to the giving program directory.
               </p>
               <p className="text-[12px] text-[#6b6b6b] mt-1">
-                Tend explains the programs. Each official organization page
-                handles real donations.
+                The history guide cites Muwekma Ohlone Tribe pages alongside
+                other official sources. The program directory separately links
+                to giving pages from the Muwekma Ohlone Preservation Foundation
+                and Association of Ramaytush Ohlone.
               </p>
             </div>
             <Link
               href="/programs"
               className="btn-whop px-5 py-3 rounded-[12px] text-[13px] font-semibold"
             >
-              See the programs
+              See giving programs
             </Link>
           </div>
         </div>
