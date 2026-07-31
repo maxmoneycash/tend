@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const [layout, navbar, pledge, streamPanel] = await Promise.all([
+const [layout, navbar, pledge, streamPanel, styles] = await Promise.all([
   readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   readFile(new URL("../components/layout/Navbar.tsx", import.meta.url), "utf8"),
   readFile(new URL("../components/PledgeFlow.tsx", import.meta.url), "utf8"),
@@ -9,6 +9,7 @@ const [layout, navbar, pledge, streamPanel] = await Promise.all([
     new URL("../components/stream/StreamPanel.tsx", import.meta.url),
     "utf8",
   ),
+  readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
 ]);
 
 assert.match(
@@ -70,6 +71,11 @@ assert.match(
   streamPanel,
   /id="stream-checkout-error"[\s\S]*?role="alert"/,
   "The program checkout error must remain an assertive live-region message.",
+);
+assert.match(
+  styles,
+  /\.pledge-primary-button:focus-visible,\s*\.pledge-checkout-button:focus-visible\s*\{\s*box-shadow: 0 0 0 2px var\(--pledge-paper\);/,
+  "Primary pledge actions must keep a separator between their focus ring and every button state.",
 );
 
 console.log("Keyboard recovery source checks passed.");

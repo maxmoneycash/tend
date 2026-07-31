@@ -1818,6 +1818,11 @@ body {
   outline-offset: 3px;
 }
 
+.pledge-primary-button:focus-visible,
+.pledge-checkout-button:focus-visible {
+  box-shadow: 0 0 0 2px var(--pledge-paper);
+}
+
 .pledge-primary-button:active,
 .pledge-checkout-button:active,
 .pledge-program:active,
