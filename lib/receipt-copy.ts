@@ -9,3 +9,7 @@ export function terminalSettlementErrorCopy(
 
   return `${state} Use Copy session ID on the receipt and send that ID to the Tend operator running this test. Do not retry this transfer.`;
 }
+
+export function terminalPaymentFailureRecoveryCopy() {
+  return "Tend will not retry this Checkout session. Start a new test pledge to try another test payment.";
+}

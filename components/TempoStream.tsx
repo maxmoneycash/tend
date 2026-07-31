@@ -8,9 +8,13 @@ import {
   Radio,
   RotateCw,
 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DonationReceipt } from "@/components/DonationReceipt";
-import { terminalSettlementErrorCopy } from "@/lib/receipt-copy";
+import {
+  terminalPaymentFailureRecoveryCopy,
+  terminalSettlementErrorCopy,
+} from "@/lib/receipt-copy";
 
 type PreparingEvent = {
   type: "preparing";
@@ -194,7 +198,7 @@ function getViewCopy(
           "Stripe marked the test payment as failed. No Tempo testnet transfers started.",
         heading: "Test payment failed.",
         intro:
-          "Stripe marked this test payment as failed. Tend did not start Tempo testnet transfers.",
+          "Stripe marked this test payment as failed. No Tempo testnet transfers started.",
         panel: "No Tempo testnet transfers started.",
         stateLabel: "Test payment failed",
       };
@@ -343,6 +347,9 @@ export function TempoStream({
           totalSettlements,
         )
       : null;
+  const paymentFailureRecovery = paymentFailed
+    ? terminalPaymentFailureRecoveryCopy()
+    : null;
   const error =
     (requestError
       ? `Tend could not refresh this test receipt. ${requestError}`
@@ -352,6 +359,10 @@ export function TempoStream({
     (paymentFailed
       ? "Stripe marked this test payment as failed. No Tempo testnet transfers started."
       : null);
+  const errorAnnouncement =
+    error && paymentFailureRecovery
+      ? `${error} ${paymentFailureRecovery}`
+      : error;
   const canRetry = Boolean(requestError) || status === "unavailable";
   const displayState =
     status === "unavailable" || paymentFailed ? "error" : status;
@@ -428,9 +439,9 @@ export function TempoStream({
       >
         {error ? "" : viewCopy.announcement}
       </p>
-      {error && (
+      {errorAnnouncement && (
         <p className="sr-only" role="alert" aria-atomic="true">
-          {error}
+          {errorAnnouncement}
         </p>
       )}
       <header className="tempo-stream-hero">
@@ -631,8 +642,12 @@ export function TempoStream({
 
         {error && (
           <div className="tempo-stream-error">
-            <p>{error}</p>
-            {canRetry && (
+            <p>{paymentFailureRecovery ?? error}</p>
+            {paymentFailed ? (
+              <Link href="/pledge" className="btn tnd-btn-primary">
+                Start a new test pledge
+              </Link>
+            ) : canRetry ? (
               <button
                 type="button"
                 onClick={() => {
@@ -642,7 +657,7 @@ export function TempoStream({
               >
                 Check receipt again
               </button>
-            )}
+            ) : null}
           </div>
         )}
       </div>
