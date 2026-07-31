@@ -116,6 +116,7 @@ export const signals: Signal[] = [
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/history.html",
+    sourceAction: "Read the Tribe’s Bay Area history page",
   },
   {
     date: "Recognition",
