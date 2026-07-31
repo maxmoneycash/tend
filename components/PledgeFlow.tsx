@@ -15,7 +15,15 @@ import {
   consumeCheckoutIntent,
   startCheckout,
   type CheckoutIntent,
+  type CheckoutInterval,
 } from "@/lib/checkout-client";
+import {
+  buildPledgeCheckoutIntent,
+  pledgeCheckoutButtonLabel,
+  pledgeCheckoutError,
+  resolvePledgeProgram,
+  restorePledgeSelection,
+} from "@/lib/pledge-flow-state";
 import {
   DEFAULT_STREAM_DURATION_SECONDS,
   DEFAULT_STREAM_INTERVAL_SECONDS,
@@ -42,10 +50,8 @@ type Located = {
   coveredCounties: string[];
 };
 
-type Interval = "once" | "month" | "year";
-
 const AMOUNT_CHIPS = [25, 50, 100, 250];
-const INTERVAL_LABELS: Record<Interval, string> = {
+const INTERVAL_LABELS: Record<CheckoutInterval, string> = {
   once: "One time",
   month: "Monthly",
   year: "Yearly",
@@ -67,7 +73,7 @@ export function PledgeFlow({
   const [address, setAddress] = useState("");
   const [located, setLocated] = useState<Located | null>(null);
   const [tribeId, setTribeId] = useState<string | null>(null);
-  const [interval, setInterval] = useState<Interval>("once");
+  const [interval, setInterval] = useState<CheckoutInterval>("once");
   const [amount, setAmount] = useState<number>(25);
   const [custom, setCustom] = useState("");
   const [streamDurationSeconds, setStreamDurationSeconds] =
@@ -121,15 +127,7 @@ export function PledgeFlow({
     try {
       await startCheckout(intent, { resuming });
     } catch (caught) {
-      const message =
-        caught instanceof Error
-          ? caught.message
-          : "Stripe Checkout didn’t open. Check your connection.";
-      setCheckoutError(
-        demo && message === "Stripe Checkout didn’t open. Check your connection."
-          ? "The demo preview didn’t open. Check your connection and try again."
-          : message,
-      );
+      setCheckoutError(pledgeCheckoutError(caught, demo));
       setBusyAction(null);
     }
   }, [demo]);
@@ -141,12 +139,13 @@ export function PledgeFlow({
     if (!intent) return;
 
     queueMicrotask(() => {
-      setTribeId(intent.tribeId);
-      setInterval(intent.interval);
-      setAmount(intent.amountCents / 100);
-      setCustom("");
-      setStreamDurationSeconds(intent.streamDurationSeconds);
-      setStreamIntervalSeconds(intent.streamIntervalSeconds);
+      const restored = restorePledgeSelection(intent);
+      setTribeId(restored.tribeId);
+      setInterval(restored.interval);
+      setAmount(restored.amount);
+      setCustom(restored.custom);
+      setStreamDurationSeconds(restored.streamDurationSeconds);
+      setStreamIntervalSeconds(restored.streamIntervalSeconds);
       void openCheckout(intent, true);
     });
   }, [openCheckout]);
@@ -171,23 +170,27 @@ export function PledgeFlow({
     ) {
       return;
     }
-    void openCheckout({
-      tribeId,
-      amountCents: Math.round(selectedAmount * 100),
-      interval,
-      streamDurationSeconds,
-      streamIntervalSeconds,
-      returnTo: "/pledge",
-    });
+    void openCheckout(
+      buildPledgeCheckoutIntent({
+        tribeId,
+        selectedAmount,
+        interval,
+        streamDurationSeconds,
+        streamIntervalSeconds,
+        returnTo: "/pledge",
+      }),
+    );
   }
 
-  function chooseInterval(next: Interval) {
+  function chooseInterval(next: CheckoutInterval) {
     setInterval(next);
   }
 
-  const selectedTribe =
-    located?.tribes.find((tribe) => tribe.id === tribeId) ??
-    programs.find((tribe) => tribe.id === tribeId);
+  const selectedTribe = resolvePledgeProgram(
+    located?.tribes,
+    programs,
+    tribeId,
+  );
   const selectedAmount = custom ? Number(custom) : amount;
   const amountValid =
     Number.isFinite(selectedAmount) && selectedAmount >= 1 && selectedAmount <= 10000;
@@ -202,13 +205,12 @@ export function PledgeFlow({
       : busy
         ? "loading"
         : "default";
-  const checkoutButtonLabel = checkoutError
-    ? demo
-      ? "Try demo preview again"
-      : "Try Stripe test checkout again"
-    : demo
-      ? `Continue to $${amountValid ? selectedAmount.toFixed(2) : "0.00"} demo receipt preview`
-      : `Open $${amountValid ? selectedAmount.toFixed(2) : "0.00"} test checkout (no real charge)`;
+  const checkoutButtonLabel = pledgeCheckoutButtonLabel({
+    amountValid,
+    checkoutError,
+    demo,
+    selectedAmount,
+  });
 
   return (
     <section className="pledge-flow" data-state={state} aria-busy={busy}>

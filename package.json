@@ -11,6 +11,7 @@
     "test:keyboard-recovery": "node scripts/test-keyboard-recovery.mjs",
     "test:mobile-access": "node scripts/test-mobile-access.mjs",
     "test:media-budget": "node scripts/test-media-budget.mjs",
+    "test:pledge-resume": "node --test scripts/test-pledge-resume.mjs",
     "test:payments": "node scripts/test-payment-routes.mjs",
     "test:e2e": "node scripts/test-donation-journey.mjs"
   },
