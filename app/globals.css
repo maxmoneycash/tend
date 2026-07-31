@@ -1353,15 +1353,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   TEND BRIDGE — fonts via <link>, basecn compat, legacy classes
+   TEND BRIDGE: basecn compatibility and legacy classes
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
-:root {
-  --font-inter: "Inter";
-  --font-space-grotesk: "Space Grotesk";
-  --font-geist-mono: "Geist Mono";
-  --font-figtree: "Figtree";
-}
 
 /* basecn / shadcn tokens the ported theme doesn't define */
 @theme inline {
@@ -2499,6 +2492,7 @@ body {
 .tempo-stream {
   display: grid;
   gap: 1.4rem;
+  scroll-margin-top: 7rem;
 }
 
 .tempo-stream-hero {
@@ -2711,6 +2705,7 @@ body {
   font-weight: 700;
 }
 
+.tend-receipt-wrap[data-state="unverified"] .tend-receipt-status,
 .tend-receipt-wrap[data-state="processing"] .tend-receipt-status,
 .tend-receipt-wrap[data-state="streaming"] .tend-receipt-status {
   color: var(--pledge-accent);
@@ -2841,10 +2836,14 @@ body {
 .tend-receipt-explorer {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   min-height: 2.75rem;
   margin-block-start: 0.35rem;
-  color: var(--pledge-muted);
+  padding-inline: 0.9rem;
+  color: var(--pledge-paper);
+  background: var(--pledge-ink);
+  border: 1px solid var(--pledge-ink);
   border-radius: 0.5rem;
   font-size: 0.68rem;
   font-weight: 600;
@@ -3062,7 +3061,8 @@ body {
 
   .pledge-counties button:hover,
   .tend-receipt-explorer:hover {
-    color: var(--pledge-ink);
+    color: var(--pledge-paper);
+    background: color-mix(in oklch, var(--pledge-ink) 88%, var(--pledge-paper));
   }
 
   .pledge-stream-customizer > summary:hover,
@@ -3115,6 +3115,12 @@ body {
 }
 
 @media (max-width: 39.99rem) {
+  .tempo-transaction-details .tempo-transactions {
+    max-height: none;
+    overflow-y: visible;
+    overscroll-behavior: auto;
+  }
+
   .pledge-locate-heading,
   .pledge-amount-header,
   .pledge-result-heading,

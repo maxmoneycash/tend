@@ -28,8 +28,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // TypeScript is checked separately via `npx tsc --noEmit`.
-  typescript: { ignoreBuildErrors: true },
 };
 
 export default nextConfig;

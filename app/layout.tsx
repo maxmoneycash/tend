@@ -1,9 +1,26 @@
 import type { Metadata } from "next";
+import {
+  Figtree,
+  Geist_Mono,
+  Inter,
+  Space_Grotesk,
+} from "next/font/google";
 import "./globals.css";
 import { SiteFooter } from "@/components/site/SiteFooter";
 
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+});
+const figtree = Figtree({ subsets: ["latin"], variable: "--font-figtree" });
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+});
+
 export const metadata: Metadata = {
-  title: "Tend — a land tax for the land you live on",
+  title: "Tend | Ohlone giving program guide",
   description:
     "Explore demonstration listings for Indigenous-led contribution programs and preview the test-mode donation flow.",
 };
@@ -12,19 +29,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Figtree:wght@500;600&family=Geist+Mono:wght@400;500&display=swap"
-        />
-      </head>
+    <html
+      className={`${inter.variable} ${spaceGrotesk.variable} ${figtree.variable} ${geistMono.variable}`}
+      lang="en"
+    >
       <body className="min-h-screen flex flex-col antialiased">
         <main className="flex-1">{children}</main>
 

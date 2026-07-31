@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion } from "motion/react";
@@ -35,7 +36,7 @@ export function Navbar() {
   const showLogout =
     pathname.startsWith("/dashboard") || pathname.startsWith("/pledge");
 
-  // Scroll-linked glass effect — initial state handled by CSS via data-theme
+  // CSS handles the initial glass state through data-theme.
   useEffect(() => {
     const card = navCardRef.current;
     if (!card) return;
@@ -114,10 +115,13 @@ export function Navbar() {
       <nav className="navbar">
         <div className="nav-card" ref={navCardRef} data-theme={isLightPage ? "light" : "dark"}>
           <Link href="/programs" className="nav-logo">
-            <img
+            <Image
               src={isLightPage ? LOGO_DARK : LOGO_LIGHT}
               alt="Tend"
+              width={200}
+              height={90}
               className="logo-img"
+              priority
             />
           </Link>
           <div className="nav-links">
@@ -156,7 +160,7 @@ export function Navbar() {
            that break position:fixed */}
       {mounted && createPortal(
         <>
-          {/* Backdrop — box-shadow 9999px guarantees total screen coverage */}
+          {/* The large box shadow covers the screen outside the menu. */}
           <div
             style={{
               position: "fixed",
@@ -173,7 +177,7 @@ export function Navbar() {
             }}
           />
 
-          {/* Mobile menu — ALWAYS fullscreen, clipPath creates expand effect */}
+          {/* The mobile menu stays full screen while clipPath expands it. */}
           <motion.div
             animate={mobileOpen ? {
               clipPath: "inset(0px 0px 0px 0px round 0px)",
@@ -202,7 +206,7 @@ export function Navbar() {
               pointerEvents: mobileOpen ? "auto" : "none",
             }}
           >
-            {/* Header row — padded below safe area */}
+            {/* The header includes the device safe area. */}
             <div
               style={{
                 display: "flex",
@@ -212,10 +216,13 @@ export function Navbar() {
               }}
             >
               <Link href="/programs" className="nav-logo" onClick={() => setMobileOpen(false)}>
-                <img
+                <Image
                   src={isLightPage ? LOGO_DARK : LOGO_LIGHT}
                   alt="Tend"
+                  width={200}
+                  height={90}
                   style={{ height: 41, width: "auto" }}
+                  priority
                 />
               </Link>
               <button
