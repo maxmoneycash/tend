@@ -50,6 +50,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
+  if (event.livemode) {
+    return NextResponse.json(
+      { error: "Live Stripe events are not accepted." },
+      { status: 400 },
+    );
+  }
+
   let tempoSessionId: string | null = null;
   let firstDelivery: boolean;
   try {

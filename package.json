@@ -11,6 +11,7 @@
     "test:keyboard-recovery": "node scripts/test-keyboard-recovery.mjs",
     "test:mobile-access": "node scripts/test-mobile-access.mjs",
     "test:payments": "node scripts/test-payment-routes.mjs",
+    "test:stripe-boundary": "node scripts/test-stripe-boundary.mjs",
     "test:e2e": "node scripts/test-donation-journey.mjs"
   },
   "dependencies": {
