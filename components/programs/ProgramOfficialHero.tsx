@@ -58,7 +58,20 @@ export function ProgramOfficialHero({
           ))}
         </div>
 
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <p className="mt-5 flex max-w-xl items-start gap-2 text-[12px] leading-relaxed text-[#5d5650]">
+          <ShieldCheck
+            aria-hidden="true"
+            className="mt-0.5 shrink-0"
+            size={14}
+          />
+          <span>
+            <span className="font-semibold text-[#3f3934]">Program source.</span>{" "}
+            {program.name} publishes the {program.taxName} page at{" "}
+            {host(program.officialProgramUrl)}.
+          </span>
+        </p>
+
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <a
             className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[12px] bg-[#171411] px-5 text-[13px] font-semibold text-white transition hover:bg-[#38322d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
             href={program.officialDonationUrl}
@@ -81,7 +94,7 @@ export function ProgramOfficialHero({
 
         <div className="mt-3 grid max-w-xl gap-2 text-[10px] leading-relaxed text-[#777069] sm:text-[11px]">
           <p className="flex items-start gap-2">
-            <ShieldCheck
+            <ExternalLink
               aria-hidden="true"
               className="mt-0.5 shrink-0"
               size={13}
