@@ -40,7 +40,7 @@ export const timeline: TimelineEntry[] = [
   {
     date: "2002",
     title: "The federal petition is denied",
-    body: "The Tribe’s recognition page dates the BIA’s Final Determination to September 6, 2002. It says the BIA considered the Tribe previously recognized and never legally terminated.",
+    body: "The Tribe’s recognition page says the BIA issued its Final Determination on September 6, 2002. The BIA considered the Tribe previously recognized. The page says no act of Congress or executive order legally terminated the Tribe.",
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",
@@ -114,7 +114,7 @@ export const signals: Signal[] = [
   {
     date: "Recognition",
     title: "The Tribe documents the federal process",
-    detail: "The official recognition page collects the petition history, agency findings, court decisions, and the Tribe’s position.",
+    detail: "The Tribe describes its recognition petition on this page. It quotes agency findings and court decisions.",
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",

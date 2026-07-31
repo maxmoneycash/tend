@@ -18,7 +18,7 @@ function EvidenceBadge({ tier }: { tier: Evidence }) {
     analysis: "bg-black/[0.05] text-[#555555]",
   };
   return (
-    <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded whitespace-nowrap ${styles[tier]}`}>
+    <span className={`text-[11px] font-medium px-1.5 py-0.5 rounded whitespace-nowrap ${styles[tier]}`}>
       {tier}
     </span>
   );
@@ -82,9 +82,9 @@ export default function ExplorerPage() {
           <div className="animate-enter animate-enter-delay-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
             {tribeFacts.map((f) => (
               <div key={f.label} className="surface-1 rounded-[16px] p-4">
-                <p className="text-[9px] text-[#6b6b6b] uppercase tracking-wider">{f.label}</p>
+                <p className="text-[11px] text-[#6b6b6b] uppercase tracking-wider">{f.label}</p>
                 <p className="font-mono text-[26px] font-bold text-[#111111] tracking-tight">{f.value}</p>
-                <p className="text-[10px] text-[#8a8a8a] mt-0.5">{f.note}</p>
+                <p className="text-[12px] text-[#8a8a8a] mt-0.5">{f.note}</p>
                 <SourceLink name={f.sourceName} url={f.sourceUrl} />
               </div>
             ))}
