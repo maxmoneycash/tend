@@ -161,8 +161,8 @@ export function TempoStream({
     amountCents > 0 ? Math.min(100, (streamedCents / amountCents) * 100) : 0;
   const organization = ready?.organization ?? fallbackOrganization;
   const lastHash = complete?.lastHash ?? latest?.hash;
-  const visibleSettlements = useMemo(
-    () => settlements.slice(-5).reverse(),
+  const orderedSettlements = useMemo(
+    () => settlements.slice().reverse(),
     [settlements],
   );
 
@@ -201,10 +201,22 @@ export function TempoStream({
       <div className="tempo-route-steps" aria-label="Payment settlement route">
         {[
           ["Stripe", "Payment verified", true],
-          ["Tempo", `${settlements.length}/${totalSettlements} settled`, settlements.length > 0],
-          ["Receipt", status === "complete" ? "Auditable" : "Building", status === "complete"],
+          [
+            "Tempo",
+            `${settlements.length}/${totalSettlements} settled`,
+            settlements.length > 0,
+          ],
+          [
+            "Receipt",
+            status === "complete" ? "Auditable" : "Building",
+            status === "complete",
+          ],
         ].map(([label, detail, active], index) => (
-          <div key={String(label)} className="tempo-route-step" data-active={active}>
+          <div
+            key={String(label)}
+            className="tempo-route-step"
+            data-active={active}
+          >
             <span>{active ? <Check size={13} /> : index + 1}</span>
             <div>
               <strong>{label}</strong>
@@ -215,16 +227,6 @@ export function TempoStream({
       </div>
 
       <div className="tempo-receipt-grid">
-        <DonationReceipt
-          kind="donation"
-          status={ready ? "verified" : status === "error" ? "error" : "processing"}
-          amountCents={amountCents}
-          organization={organization}
-          interval={ready?.interval}
-          paymentMethod={ready?.paymentMethod}
-          reference={ready?.stripeReceipt ?? sessionId}
-          receiptUrl={ready?.stripeReceiptUrl}
-        />
         <DonationReceipt
           kind="stream"
           status={
@@ -239,6 +241,9 @@ export function TempoStream({
           amountCents={amountCents}
           streamedCents={streamedCents}
           organization={organization}
+          paymentMethod={ready?.paymentMethod}
+          reference={ready?.stripeReceipt ?? sessionId}
+          receiptUrl={ready?.stripeReceiptUrl}
           completedSettlements={settlements.length}
           settlements={totalSettlements}
           recipient={ready?.recipient ?? complete?.recipient}
@@ -275,8 +280,22 @@ export function TempoStream({
           <div style={{ transform: `scaleX(${progress / 100})` }} />
         </div>
 
-        <div className="tempo-transactions" aria-live="polite">
-          {visibleSettlements.length === 0 ? (
+        <div className="tempo-latest-settlement" aria-live="polite">
+          {latest ? (
+            <a
+              className="tempo-transaction"
+              href={`https://explore.testnet.tempo.xyz/tx/${latest.hash}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span>
+                <Check size={12} /> Latest · #{latest.index}
+              </span>
+              <strong>{cents(latest.amountCents)} pathUSD</strong>
+              <code>{shortHash(latest.hash)}</code>
+              <ExternalLink size={12} />
+            </a>
+          ) : (
             <div className="tempo-transaction-empty">
               <LoaderCircle className="pledge-spinner" size={16} />
               {status === "connecting"
@@ -285,25 +304,35 @@ export function TempoStream({
                   ? "No new settlements are arriving."
                   : "Funding the testnet stream…"}
             </div>
-          ) : (
-            visibleSettlements.map((settlement) => (
-              <a
-                key={settlement.hash}
-                className="tempo-transaction"
-                href={`https://explore.testnet.tempo.xyz/tx/${settlement.hash}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span>
-                  <Check size={12} /> #{settlement.index}
-                </span>
-                <strong>{cents(settlement.amountCents)} pathUSD</strong>
-                <code>{shortHash(settlement.hash)}</code>
-                <ExternalLink size={12} />
-              </a>
-            ))
           )}
         </div>
+
+        {orderedSettlements.length > 0 && (
+          <details className="tempo-transaction-details">
+            <summary>
+              <span>Onchain transactions</span>
+              <small>{orderedSettlements.length} confirmed</small>
+            </summary>
+            <div className="tempo-transactions">
+              {orderedSettlements.map((settlement) => (
+                <a
+                  key={settlement.hash}
+                  className="tempo-transaction"
+                  href={`https://explore.testnet.tempo.xyz/tx/${settlement.hash}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span>
+                    <Check size={12} /> #{settlement.index}
+                  </span>
+                  <strong>{cents(settlement.amountCents)} pathUSD</strong>
+                  <code>{shortHash(settlement.hash)}</code>
+                  <ExternalLink size={12} />
+                </a>
+              ))}
+            </div>
+          </details>
+        )}
 
         {error && (
           <div className="tempo-stream-error" role="alert">

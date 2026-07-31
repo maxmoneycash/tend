@@ -59,9 +59,8 @@ export default async function ProgramDetail({
               >
                 {tribe.region}
               </span>
-              <span className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-700">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                Accepting pledges
+              <span className="absolute bottom-3 right-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-medium bg-white/90 text-[#3a3a3a]">
+                Hackathon prototype
               </span>
             </div>
 
@@ -85,7 +84,7 @@ export default async function ProgramDetail({
           </div>
 
           <div className="animate-enter animate-enter-delay-1 grid gap-4 lg:grid-cols-[1.5fr_1fr]">
-            <div className="surface-1 rounded-[16px] p-5">
+            <div className="order-2 lg:order-1 surface-1 rounded-[16px] p-5">
               <p className="text-[11px] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
                 About
               </p>
@@ -110,7 +109,7 @@ export default async function ProgramDetail({
 
               <div className="mt-5 pt-4 border-t border-black/[0.06] grid grid-cols-3 gap-3">
                 <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Fee</p>
+                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Tend fee</p>
                   <p className="text-[15px] font-bold text-[#111111] font-display">0%</p>
                 </div>
                 <div className="surface-2 rounded-[10px] p-2.5 text-center">
@@ -124,11 +123,10 @@ export default async function ProgramDetail({
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="order-1 lg:order-2 space-y-4">
               <StreamPanel
                 tribeId={tribe.id}
                 tribeName={tribe.name}
-                zone={`zone://tend/${tribe.id}-donations`}
               />
               <p className="text-[11px] text-[#8a8a8a] text-center">
                 Want address matching or a recurring contribution?{" "}
@@ -147,7 +145,7 @@ export default async function ProgramDetail({
 → 402 · pay $25.00 · receipt`}
                 </pre>
                 <p className="mt-2 text-[10px] font-mono text-[#8a8a8a]">
-                  USDC on Tempo · offramped with Stripe
+                  pathUSD · Tempo Moderato testnet
                 </p>
               </div>
             </div>

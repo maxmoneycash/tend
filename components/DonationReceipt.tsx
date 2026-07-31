@@ -90,7 +90,7 @@ export function DonationReceipt({
         <ReceiptEdge />
         <div className="tend-receipt-paper">
           <header className="tend-receipt-header">
-            <span>{isStream ? "Tempo settlement stream" : "Stripe donation"}</span>
+            <span>{isStream ? "Donation stream receipt" : "Stripe donation"}</span>
             <span className="tend-receipt-status">
               {status === "processing" && <Radio size={11} />}
               {status === "streaming" && <Radio size={11} />}
@@ -119,6 +119,14 @@ export function DonationReceipt({
             {isStream ? (
               <>
                 <div>
+                  <dt>Paid with</dt>
+                  <dd>{paymentMethod}</dd>
+                </div>
+                <div>
+                  <dt>Stripe receipt</dt>
+                  <dd>{short(reference, 10, 5)}</dd>
+                </div>
+                <div>
                   <dt>Settled</dt>
                   <dd>
                     {completedSettlements} / {settlements}
@@ -136,7 +144,11 @@ export function DonationReceipt({
                   </dd>
                 </div>
                 <div>
-                  <dt>Testnet recipient</dt>
+                  <dt>Network</dt>
+                  <dd>Tempo Moderato · testnet</dd>
+                </div>
+                <div>
+                  <dt>Demo treasury</dt>
                   <dd>{short(recipient)}</dd>
                 </div>
                 <div>
@@ -189,19 +201,28 @@ export function DonationReceipt({
       </div>
 
       {(lastHash || receiptUrl) && (
-        <a
-          className="tend-receipt-explorer"
-          href={
-            lastHash
-              ? `https://explore.testnet.tempo.xyz/tx/${lastHash}`
-              : receiptUrl
-          }
-          target="_blank"
-          rel="noreferrer"
-        >
-          {lastHash ? "View on Tempo Explorer" : "View Stripe receipt"}{" "}
-          <ExternalLink size={13} />
-        </a>
+        <div className="tend-receipt-links">
+          {receiptUrl && (
+            <a
+              className="tend-receipt-explorer"
+              href={receiptUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Stripe receipt <ExternalLink size={13} />
+            </a>
+          )}
+          {lastHash && (
+            <a
+              className="tend-receipt-explorer"
+              href={`https://explore.testnet.tempo.xyz/tx/${lastHash}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Tempo transaction <ExternalLink size={13} />
+            </a>
+          )}
+        </div>
       )}
     </article>
   );

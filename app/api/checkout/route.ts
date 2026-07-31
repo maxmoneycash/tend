@@ -31,6 +31,11 @@ const Body = z.object({
     .regex(/^\/(?!\/)/)
     .max(200)
     .optional(),
+  loginReturnTo: z
+    .string()
+    .regex(/^\/(?!\/)/)
+    .max(400)
+    .optional(),
 });
 
 function requestOrigin(req: Request) {
@@ -56,6 +61,7 @@ export async function POST(req: Request) {
     streamDurationSeconds,
     streamIntervalSeconds,
     returnTo = "/pledge",
+    loginReturnTo = returnTo,
   } = parsed.data;
   if (process.env.TEND_DEMO_AUTH_BYPASS !== "1") {
     const session = await auth0.getSession();
@@ -63,7 +69,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           error: "Sign in before continuing to Stripe.",
-          loginUrl: `/auth/login?returnTo=${encodeURIComponent(returnTo)}`,
+          loginUrl: `/auth/login?returnTo=${encodeURIComponent(loginReturnTo)}`,
         },
         { status: 401 },
       );

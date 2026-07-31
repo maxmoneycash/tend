@@ -2,20 +2,24 @@
 
 import {
   ArrowRight,
-  Bot,
-  Building2,
   Check,
-  CreditCard,
   LoaderCircle,
   MapPin,
   ShieldCheck,
-  WalletCards,
+  SlidersHorizontal,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { StreamTimingControls } from "@/components/stream/StreamTimingControls";
+import {
+  consumeCheckoutIntent,
+  startCheckout,
+  type CheckoutIntent,
+} from "@/lib/checkout-client";
 import {
   DEFAULT_STREAM_DURATION_SECONDS,
   DEFAULT_STREAM_INTERVAL_SECONDS,
+  formatStreamTime,
+  streamSettlementCount,
   type StreamDurationSeconds,
   type StreamIntervalSeconds,
 } from "@/lib/stream-plan";
@@ -79,6 +83,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
     useState<StreamIntervalSeconds>(DEFAULT_STREAM_INTERVAL_SECONDS);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const resumeAttempted = useRef(false);
 
   async function locate(body: { address?: string; county?: string }) {
     setBusy(true);
@@ -102,46 +107,57 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
     }
   }
 
-  async function checkout() {
-    if (!tribeId || !amountValid) return;
+  const openCheckout = useCallback(async (
+    intent: CheckoutIntent,
+    resuming = false,
+  ) => {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tribeId,
-          amountCents: Math.round(selectedAmount * 100),
-          interval,
-          streamDurationSeconds,
-          streamIntervalSeconds,
-        }),
-      });
-      const data = (await res.json()) as {
-        url?: string;
-        error?: string;
-        loginUrl?: string;
-      };
-      if (res.status === 401 && data.loginUrl) {
-        window.location.assign(data.loginUrl);
-        return;
-      }
-      if (!res.ok || !data.url) {
-        setError(
-          data.error ??
-            "Stripe Checkout didn’t open. Check the amount and try again.",
-        );
-        setBusy(false);
-        return;
-      }
-      window.location.href = data.url;
-    } catch {
+      await startCheckout(intent, { resuming });
+    } catch (caught) {
       setError(
-        "Stripe Checkout didn’t open. Check your connection and try again.",
+        caught instanceof Error
+          ? caught.message
+          : "Stripe Checkout didn’t open. Check your connection.",
       );
       setBusy(false);
     }
+  }, []);
+
+  useEffect(() => {
+    if (resumeAttempted.current) return;
+    resumeAttempted.current = true;
+    const intent = consumeCheckoutIntent("/pledge");
+    if (!intent) return;
+
+    queueMicrotask(() => {
+      setTribeId(intent.tribeId);
+      setInterval(intent.interval);
+      setAmount(intent.amountCents / 100);
+      setCustom("");
+      setStreamDurationSeconds(intent.streamDurationSeconds);
+      setStreamIntervalSeconds(intent.streamIntervalSeconds);
+      void openCheckout(intent, true);
+    });
+  }, [openCheckout]);
+
+  function checkout() {
+    if (
+      !tribeId ||
+      (tribeId !== "ramaytush" && tribeId !== "muwekma") ||
+      !amountValid
+    ) {
+      return;
+    }
+    void openCheckout({
+      tribeId,
+      amountCents: Math.round(selectedAmount * 100),
+      interval,
+      streamDurationSeconds,
+      streamIntervalSeconds,
+      returnTo: "/pledge",
+    });
   }
 
   function chooseInterval(next: Interval) {
@@ -168,6 +184,10 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
   const selectedAmount = custom ? Number(custom) : amount;
   const amountValid =
     Number.isFinite(selectedAmount) && selectedAmount >= 1 && selectedAmount <= 10000;
+  const settlementCount = streamSettlementCount(
+    streamDurationSeconds,
+    streamIntervalSeconds,
+  );
   const state = error ? "error" : busy ? "loading" : "default";
 
   return (
@@ -395,64 +415,63 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                 </div>
               </fieldset>
 
-              <StreamTimingControls
-                amountCents={
-                  amountValid ? Math.round(selectedAmount * 100) : 0
-                }
-                durationSeconds={streamDurationSeconds}
-                intervalSeconds={streamIntervalSeconds}
-                onDurationChange={setStreamDurationSeconds}
-                onIntervalChange={setStreamIntervalSeconds}
-              />
+              <details className="pledge-stream-customizer pledge-stream-customizer-wide">
+                <summary>
+                  <span>
+                    <SlidersHorizontal size={15} aria-hidden="true" />
+                    Customize stream
+                  </span>
+                  <small>
+                    {settlementCount} transfers · every{" "}
+                    {formatStreamTime(streamIntervalSeconds)}
+                  </small>
+                </summary>
+                <StreamTimingControls
+                  amountCents={
+                    amountValid ? Math.round(selectedAmount * 100) : 0
+                  }
+                  durationSeconds={streamDurationSeconds}
+                  intervalSeconds={streamIntervalSeconds}
+                  onDurationChange={setStreamDurationSeconds}
+                  onIntervalChange={setStreamIntervalSeconds}
+                />
+              </details>
             </div>
 
             <div className="pledge-payment-panel">
               <div className="pledge-payment-heading">
                 <div>
-                  <p className="pledge-kicker">Payment stream</p>
-                  <h4>Watch every dollar move</h4>
+                  <p className="pledge-kicker">Review</p>
+                  <h4>Confirm your contribution</h4>
                 </div>
-                <span className="pledge-live-state">
-                  <i aria-hidden="true" />
-                  {busy ? "Connecting" : "Ready"}
+                <span className="pledge-test-badge">
+                  Test mode
                 </span>
               </div>
 
-              <div
-                className="pledge-route"
-                aria-label="Apple Pay or card to Stripe, then a Tempo testnet settlement stream to the organization"
-              >
-                <div className="pledge-route-node">
-                  <span>
-                    <WalletCards size={17} aria-hidden="true" />
-                  </span>
-                  <strong>You</strong>
-                  <small>Apple Pay</small>
+              <div className="pledge-payment-review">
+                <div>
+                  <span>To</span>
+                  <strong>{selectedTribe?.name ?? "Selected program"}</strong>
                 </div>
-                <div className="pledge-route-line" aria-hidden="true" />
-                <div className="pledge-route-node">
-                  <span>
-                    <CreditCard size={17} aria-hidden="true" />
-                  </span>
-                  <strong>Stripe</strong>
-                  <small>Verified</small>
+                <div>
+                  <span>Amount</span>
+                  <strong>
+                    ${amountValid ? selectedAmount.toFixed(2) : "0.00"}
+                  </strong>
                 </div>
-                <div
-                  className="pledge-route-line pledge-route-line-delay"
-                  aria-hidden="true"
-                />
-                <div className="pledge-route-node">
-                  <span>
-                    <Building2 size={17} aria-hidden="true" />
-                  </span>
-                  <strong>Tempo</strong>
-                  <small>Testnet</small>
+                <div>
+                  <span>Receipt stream</span>
+                  <strong>
+                    {settlementCount} transfers over{" "}
+                    {formatStreamTime(streamDurationSeconds)}
+                  </strong>
                 </div>
               </div>
 
               <p className="pledge-payment-note">
-                Stripe verifies the card payment, then Tend mirrors it as
-                pathUSD micropayments on Tempo testnet.
+                Stripe handles the test payment. Tend then mirrors the amount
+                as faucet-funded pathUSD on Tempo Moderato.
               </p>
 
               <button
@@ -470,7 +489,8 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                 ) : (
                   <>
                     <span>
-                      {demo ? "Preview" : "Pay"} ${amountValid ? selectedAmount : 0}
+                      {demo ? "Preview" : "Donate"} $
+                      {amountValid ? selectedAmount.toFixed(2) : "0.00"}
                     </span>
                     <ArrowRight size={17} aria-hidden="true" />
                   </>
@@ -480,12 +500,9 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                 <ShieldCheck size={13} aria-hidden="true" />
                 Apple Pay appears in Stripe Checkout on a supported iPhone.
               </p>
-
-              <div className="pledge-machine-preview">
-                <Bot size={14} aria-hidden="true" />
-                Agents can use the same route through Stripe MPP
-                <span>Preview</span>
-              </div>
+              <p className="pledge-test-disclosure">
+                Stripe test payment · pathUSD testnet receipt
+              </p>
             </div>
           </div>
         </div>

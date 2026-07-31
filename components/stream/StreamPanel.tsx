@@ -2,17 +2,22 @@
 
 import {
   ArrowRight,
-  Blocks,
-  CreditCard,
   LoaderCircle,
   ShieldCheck,
-  WalletCards,
+  SlidersHorizontal,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { StreamTimingControls } from "@/components/stream/StreamTimingControls";
+import {
+  consumeCheckoutIntent,
+  startCheckout,
+  type CheckoutIntent,
+} from "@/lib/checkout-client";
 import {
   DEFAULT_STREAM_DURATION_SECONDS,
   DEFAULT_STREAM_INTERVAL_SECONDS,
+  formatStreamTime,
+  streamSettlementCount,
   type StreamDurationSeconds,
   type StreamIntervalSeconds,
 } from "@/lib/stream-plan";
@@ -28,11 +33,9 @@ function cleanAmount(value: string) {
 export function StreamPanel({
   tribeId,
   tribeName,
-  zone,
 }: {
   tribeId: "ramaytush" | "muwekma";
   tribeName: string;
-  zone: string;
 }) {
   const [amount, setAmount] = useState(20);
   const [custom, setCustom] = useState("");
@@ -42,73 +45,91 @@ export function StreamPanel({
     useState<StreamIntervalSeconds>(DEFAULT_STREAM_INTERVAL_SECONDS);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const resumeAttempted = useRef(false);
 
   const selectedAmount = custom ? Number(custom) : amount;
   const amountValid =
     Number.isFinite(selectedAmount) &&
     selectedAmount >= 1 &&
     selectedAmount <= 10_000;
-  async function checkout() {
-    if (!amountValid) return;
+  const settlementCount = streamSettlementCount(
+    streamDurationSeconds,
+    streamIntervalSeconds,
+  );
+
+  const openCheckout = useCallback(async (
+    intent: CheckoutIntent,
+    resuming = false,
+  ) => {
     setBusy(true);
     setError(null);
-
     try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tribeId,
-          amountCents: Math.round(selectedAmount * 100),
-          interval: "once",
-          streamDurationSeconds,
-          streamIntervalSeconds,
-          returnTo: `/programs/${tribeId}`,
-        }),
-      });
-      const data = (await response.json()) as {
-        error?: string;
-        loginUrl?: string;
-        url?: string;
-      };
-      if (response.status === 401 && data.loginUrl) {
-        window.location.assign(data.loginUrl);
-        return;
-      }
-      if (!response.ok || !data.url) {
-        throw new Error(data.error ?? "Stripe Checkout could not open.");
-      }
-      window.location.assign(data.url);
+      await startCheckout(intent, { resuming });
     } catch (caught) {
       setError(
         caught instanceof Error
           ? caught.message
-          : "Stripe Checkout could not open.",
+          : "Stripe Checkout didn’t open. Check your connection.",
       );
       setBusy(false);
     }
+  }, []);
+
+  useEffect(() => {
+    if (resumeAttempted.current) return;
+    resumeAttempted.current = true;
+    const expectedPath = `/programs/${tribeId}`;
+    const intent = consumeCheckoutIntent(expectedPath);
+    if (!intent || intent.tribeId !== tribeId || intent.interval !== "once") {
+      return;
+    }
+
+    queueMicrotask(() => {
+      const dollars = intent.amountCents / 100;
+      if (AMOUNTS.includes(dollars)) {
+        setAmount(dollars);
+        setCustom("");
+      } else {
+        setCustom(String(dollars));
+      }
+      setStreamDurationSeconds(intent.streamDurationSeconds);
+      setStreamIntervalSeconds(intent.streamIntervalSeconds);
+      void openCheckout(intent, true);
+    });
+  }, [openCheckout, tribeId]);
+
+  function checkout() {
+    if (!amountValid) return;
+    void openCheckout({
+      tribeId,
+      amountCents: Math.round(selectedAmount * 100),
+      interval: "once",
+      streamDurationSeconds,
+      streamIntervalSeconds,
+      returnTo: `/programs/${tribeId}`,
+    });
   }
 
   return (
-    <section className="pledge-payment-panel" aria-labelledby="stream-title">
+    <section
+      className="pledge-payment-panel pledge-payment-panel-primary"
+      aria-labelledby="stream-title"
+      data-state={error ? "error" : busy ? "loading" : "default"}
+    >
       <div className="pledge-payment-heading">
         <div>
-          <p className="pledge-kicker">Stripe → Tempo</p>
-          <h4 id="stream-title">Make a test contribution</h4>
+          <p className="pledge-kicker">One-time contribution</p>
+          <h4 id="stream-title">Donate to {tribeName}</h4>
         </div>
-        <span className="pledge-live-state">
-          <i aria-hidden="true" />
-          {busy ? "Opening" : "Ready"}
+        <span className="pledge-test-badge">
+          Test mode
         </span>
       </div>
 
-      <div className="rounded-[10px] border border-black/[0.06] bg-black/[0.03] px-3 py-2.5">
-        <p className="font-mono text-[11px] text-[#3a3a3a]">{zone}</p>
-        <p className="mt-0.5 text-[10px] text-[#8a8a8a]">
-          Stripe test payment followed by twenty public Tempo testnet receipts
-          for {tribeName}.
-        </p>
-      </div>
+      <p className="pledge-payment-intro">
+        Choose an amount, pay through Stripe, then watch the public testnet
+        receipt stream settle.
+      </p>
 
       <fieldset className="pledge-control">
         <legend>Amount</legend>
@@ -141,45 +162,25 @@ export function StreamPanel({
         </div>
       </fieldset>
 
-      <StreamTimingControls
-        amountCents={amountValid ? Math.round(selectedAmount * 100) : 0}
-        durationSeconds={streamDurationSeconds}
-        intervalSeconds={streamIntervalSeconds}
-        onDurationChange={setStreamDurationSeconds}
-        onIntervalChange={setStreamIntervalSeconds}
-      />
-
-      <div
-        className="pledge-route"
-        aria-label="Apple Pay or card through Stripe Checkout, followed by Tempo testnet receipts"
-      >
-        <div className="pledge-route-node">
+      <details className="pledge-stream-customizer">
+        <summary>
           <span>
-            <WalletCards size={17} aria-hidden="true" />
+            <SlidersHorizontal size={15} aria-hidden="true" />
+            Customize stream
           </span>
-          <strong>You</strong>
-          <small>Apple Pay</small>
-        </div>
-        <div className="pledge-route-line" aria-hidden="true" />
-        <div className="pledge-route-node">
-          <span>
-            <CreditCard size={17} aria-hidden="true" />
-          </span>
-          <strong>Stripe</strong>
-          <small>Verified</small>
-        </div>
-        <div
-          className="pledge-route-line pledge-route-line-delay"
-          aria-hidden="true"
+          <small>
+            {settlementCount} transfers · every{" "}
+            {formatStreamTime(streamIntervalSeconds)}
+          </small>
+        </summary>
+        <StreamTimingControls
+          amountCents={amountValid ? Math.round(selectedAmount * 100) : 0}
+          durationSeconds={streamDurationSeconds}
+          intervalSeconds={streamIntervalSeconds}
+          onDurationChange={setStreamDurationSeconds}
+          onIntervalChange={setStreamIntervalSeconds}
         />
-        <div className="pledge-route-node">
-          <span>
-            <Blocks size={17} aria-hidden="true" />
-          </span>
-          <strong>Tempo</strong>
-          <small>On-chain</small>
-        </div>
-      </div>
+      </details>
 
       <button
         type="button"
@@ -195,7 +196,7 @@ export function StreamPanel({
           </>
         ) : (
           <>
-            Pay ${amountValid ? selectedAmount.toFixed(2) : "0.00"}
+            Donate ${amountValid ? selectedAmount.toFixed(2) : "0.00"}
             <ArrowRight size={17} aria-hidden="true" />
           </>
         )}
@@ -203,8 +204,7 @@ export function StreamPanel({
 
       <p className="pledge-wallet-note">
         <ShieldCheck size={13} aria-hidden="true" />
-        On a supported iPhone, Stripe Checkout presents Apple Pay. After
-        payment, Tend opens the live Stripe and Tempo receipt screen.
+        Stripe Checkout presents Apple Pay on a supported iPhone.
       </p>
 
       {error && (
@@ -212,6 +212,10 @@ export function StreamPanel({
           {error}
         </p>
       )}
+
+      <p className="pledge-test-disclosure">
+        Stripe test payment · faucet-funded pathUSD · Tempo Moderato
+      </p>
     </section>
   );
 }

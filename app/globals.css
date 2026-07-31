@@ -1871,9 +1871,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
   .animate-enter { animation: none; }
 }
 
-/* Hallmark · component: contribution flow + receipts · genre: modern-minimal · theme: Tend
- * states: default · hover · focus · active · disabled · loading · error · success
- * pre-emit critique: P5 H5 E4 S5 R4 V4
+/* Hallmark · macrostructure: donation-first progressive disclosure · genre: modern-minimal
+ * theme: Tend · anchor: safety orange · states: default · hover · focus · active · disabled · loading · error · success
+ * pre-emit critique: P5 H5 E5 S5 R5 V5 · contrast: pass (40–41) · icons: pass (30)
+ * honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · mobile: pass (34, 49–57)
  */
 html,
 body {
@@ -2042,6 +2043,8 @@ body {
 .tend-receipt button:focus-visible,
 .tend-receipt-explorer:focus-visible,
 .tempo-transaction:focus-visible,
+.pledge-stream-customizer > summary:focus-visible,
+.tempo-transaction-details > summary:focus-visible,
 .tempo-stream-error button:focus-visible {
   outline: 2px solid var(--pledge-focus);
   outline-offset: 2px;
@@ -2365,11 +2368,18 @@ body {
 }
 
 .pledge-timing-slider [data-slot="slider-thumb"] {
+  position: relative;
   width: 1rem;
   height: 1rem;
   background: var(--pledge-paper);
   border-color: var(--pledge-accent);
   transition: transform var(--pledge-dur-micro) var(--pledge-ease-out);
+}
+
+.pledge-timing-slider [data-slot="slider-thumb"]::after {
+  content: "";
+  position: absolute;
+  inset: -0.875rem;
 }
 
 .pledge-timing-slider [data-slot="slider-thumb"]:hover {
@@ -2462,7 +2472,152 @@ body {
   min-width: 0;
   padding: 1.1rem;
   background: var(--pledge-paper-soft);
+  border: 1px solid transparent;
   border-radius: 1rem;
+}
+
+.pledge-payment-panel-primary {
+  background:
+    linear-gradient(var(--pledge-paper-soft), var(--pledge-paper-soft)) padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in oklch, var(--pledge-accent) 45%, var(--pledge-rule)),
+        var(--pledge-rule)
+      )
+      border-box;
+}
+
+.pledge-test-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding-inline: 0.55rem;
+  color: var(--pledge-muted);
+  background: var(--pledge-paper);
+  border: 1px solid var(--pledge-rule);
+  border-radius: 999px;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pledge-payment-intro {
+  margin: 0.8rem 0 1.1rem;
+  color: var(--pledge-muted);
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+.pledge-stream-customizer {
+  margin-block-start: 1rem;
+  color: var(--pledge-ink);
+  background: var(--pledge-paper);
+  border: 1px solid var(--pledge-rule);
+  border-radius: 0.75rem;
+}
+
+.pledge-stream-customizer-wide {
+  grid-column: 1 / -1;
+  margin-block-start: 0;
+}
+
+.pledge-stream-customizer > summary,
+.tempo-transaction-details > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding-inline: 0.8rem;
+  border-radius: inherit;
+  cursor: pointer;
+  list-style: none;
+}
+
+.pledge-stream-customizer > summary::-webkit-details-marker,
+.tempo-transaction-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.pledge-stream-customizer > summary > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pledge-stream-customizer > summary > small,
+.tempo-transaction-details > summary > small {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--pledge-muted);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.61rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pledge-stream-customizer[open] > summary {
+  border-bottom: 1px solid var(--pledge-rule);
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.pledge-stream-customizer > .pledge-stream-timing {
+  padding: 0.9rem;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.pledge-payment-review {
+  display: grid;
+  gap: 0;
+  margin-block-start: 1rem;
+  border-block: 1px solid var(--pledge-rule);
+}
+
+.pledge-payment-review > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.75rem;
+  padding-block: 0.65rem;
+}
+
+.pledge-payment-review > div + div {
+  border-top: 1px solid var(--pledge-rule);
+}
+
+.pledge-payment-review span {
+  flex: 0 0 auto;
+  color: var(--pledge-muted);
+  font-size: 0.67rem;
+}
+
+.pledge-payment-review strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--pledge-ink);
+  font-size: 0.72rem;
+  text-align: end;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pledge-test-disclosure {
+  margin: 0.7rem 0 0;
+  color: var(--pledge-muted);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.58rem;
+  line-height: 1.45;
+  text-align: center;
 }
 
 .pledge-live-state {
@@ -2997,6 +3152,13 @@ body {
   text-decoration: none;
 }
 
+.tend-receipt-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .tempo-live-panel {
   padding: clamp(1rem, 3vw, 1.35rem);
   background: var(--pledge-paper);
@@ -3059,6 +3221,35 @@ body {
   display: grid;
   gap: 0.35rem;
   margin-block-start: 0.9rem;
+}
+
+.tempo-latest-settlement {
+  margin-block-start: 0.9rem;
+}
+
+.tempo-transaction-details {
+  margin-block-start: 0.65rem;
+  color: var(--pledge-ink);
+  border-top: 1px solid var(--pledge-rule);
+}
+
+.tempo-transaction-details > summary {
+  padding-inline: 0;
+}
+
+.tempo-transaction-details > summary > span {
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.tempo-transaction-details[open] > summary {
+  color: var(--pledge-accent);
+}
+
+.tempo-transaction-details .tempo-transactions {
+  max-height: 18rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .tempo-transaction,
@@ -3175,6 +3366,11 @@ body {
     color: var(--pledge-ink);
   }
 
+  .pledge-stream-customizer > summary:hover,
+  .tempo-transaction-details > summary:hover {
+    color: var(--pledge-accent);
+  }
+
   .pledge-program:hover,
   .pledge-amount-chip:hover,
   .pledge-segmented button:hover {
@@ -3217,10 +3413,6 @@ body {
   .pledge-amount-grid {
     grid-template-columns: minmax(0, 1.08fr) minmax(18rem, 0.92fr);
   }
-
-  .tempo-receipt-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 39.99rem) {
@@ -3249,6 +3441,13 @@ body {
   .tempo-stream-error {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .pledge-stream-customizer > summary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-block: 0.65rem;
   }
 }
 

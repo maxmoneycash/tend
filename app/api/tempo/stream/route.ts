@@ -22,6 +22,9 @@ const Body = z.object({
 const PATH_USD = "0x20c0000000000000000000000000000000000000";
 const EXPLORER_URL = "https://explore.testnet.tempo.xyz/tx/";
 const MICRO_USD_PER_CENT = 10_000;
+const DEFAULT_DEMO_RECIPIENT =
+  "0x50672E6b84B7d7a21249f9fEC0AC678f0F0C4d22";
+const TempoAddress = z.string().regex(/^0x[a-fA-F0-9]{40}$/);
 
 type StreamEvent =
   | {
@@ -122,6 +125,16 @@ function wait(milliseconds: number) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
+function tempoRecipient(tribeId: string): `0x${string}` {
+  const tribeKey = `TEND_TEMPO_RECIPIENT_${tribeId.toUpperCase()}`;
+  const configured =
+    process.env[tribeKey] ??
+    process.env.TEND_TEMPO_RECIPIENT ??
+    DEFAULT_DEMO_RECIPIENT;
+  const parsed = TempoAddress.safeParse(configured);
+  return (parsed.success ? parsed.data : DEFAULT_DEMO_RECIPIENT) as `0x${string}`;
+}
+
 async function runTempoStream(
   state: TempoStreamState,
   input: {
@@ -129,6 +142,7 @@ async function runTempoStream(
     interval: string;
     organization: string;
     paymentMethod: string;
+    recipient: `0x${string}`;
     sessionId: string;
     streamDurationSeconds: number;
     streamIntervalSeconds: number;
@@ -137,7 +151,6 @@ async function runTempoStream(
 ) {
   try {
     const sender = Account.fromSecp256k1(Secp256k1.randomPrivateKey());
-    const recipient = Account.fromSecp256k1(Secp256k1.randomPrivateKey());
     const client = createClient({
       account: sender,
       feeToken: PATH_USD,
@@ -150,7 +163,7 @@ async function runTempoStream(
       interval: input.interval,
       organization: input.organization,
       paymentMethod: input.paymentMethod,
-      recipient: recipient.address,
+      recipient: input.recipient,
       settlements: streamSettlementCount(
         input.streamDurationSeconds,
         input.streamIntervalSeconds,
@@ -192,7 +205,7 @@ async function runTempoStream(
       );
       const result = await Actions.token.transferSync(client, {
         token: PATH_USD,
-        to: recipient.address,
+        to: input.recipient,
         amount: { formatted: (amountMicros / 1_000_000).toFixed(6) },
       });
 
@@ -212,7 +225,7 @@ async function runTempoStream(
       type: "complete",
       amountCents: input.amountCents,
       lastHash,
-      recipient: recipient.address,
+      recipient: input.recipient,
       settlements: settlementCount,
     });
   } catch (error) {
@@ -260,7 +273,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const tribe = getTribe(session.metadata.tribe ?? "");
+  const tribeId = session.metadata.tribe ?? "";
+  const tribe = getTribe(tribeId);
   const organization = tribe?.name ?? "Indigenous-led organization";
   const interval = session.metadata.interval ?? "once";
   const requestedDurationSeconds = Number(
@@ -334,6 +348,7 @@ export async function POST(request: Request) {
           interval,
           organization,
           paymentMethod: paymentMethodLabel,
+          recipient: tempoRecipient(tribeId),
           sessionId: session.id,
           streamDurationSeconds,
           streamIntervalSeconds,

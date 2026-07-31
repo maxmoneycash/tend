@@ -1777,7 +1777,7 @@ export function LandingClient() {
                           <span className="dash-earnings-sub">Deposit once · streams in 250ms batches</span>
                         </div>
                         <div className="dash-earn-input-row">
-                          <input type="text" className="dash-earn-input" placeholder="Deposit amount..." readOnly value="zone://tend/yunakin-donations · $50" />
+                          <input type="text" className="dash-earn-input" placeholder="Deposit amount..." readOnly value="$50.00 · pathUSD testnet receipt" />
                           <button className="dash-earn-btn">Open stream</button>
                         </div>
                       </div>
