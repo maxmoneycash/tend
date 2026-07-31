@@ -3121,11 +3121,22 @@ body {
 }
 
 .tempo-thanks-actions {
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 0.6rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
   margin-block-start: 1.2rem;
+  padding: 0.75rem;
+  background: var(--pledge-paper);
+  border: 1px solid var(--pledge-rule);
+  border-radius: 1rem;
+}
+
+.tempo-thanks-actions .btn {
+  width: 100%;
+}
+
+.tempo-thanks-actions .tnd-btn-primary {
+  order: -1;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -3181,6 +3192,15 @@ body {
 
   .tempo-transaction code {
     display: block;
+  }
+
+  .tempo-thanks-actions {
+    grid-template-columns: repeat(2, auto);
+    justify-content: end;
+  }
+
+  .tempo-thanks-actions .tnd-btn-primary {
+    order: initial;
   }
 }
 
