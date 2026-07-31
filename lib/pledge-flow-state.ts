@@ -16,6 +16,41 @@ export type RestoredPledgeSelection = {
   tribeId: CheckoutIntent["tribeId"];
 };
 
+export function buildCheckoutResumePath(intent: CheckoutIntent): string {
+  const url = new URL(intent.returnTo, "https://tend.local");
+  url.searchParams.set("resume", "checkout");
+  url.searchParams.set("t", intent.tribeId);
+  url.searchParams.set("a", String(intent.amountCents));
+  url.searchParams.set("i", intent.interval);
+  url.searchParams.set("d", String(intent.streamDurationSeconds));
+  url.searchParams.set("c", String(intent.streamIntervalSeconds));
+  return `${url.pathname}${url.search}`;
+}
+
+export function buildCheckoutRequest(
+  intent: CheckoutIntent,
+  preserveCancelIntent: boolean,
+): CheckoutIntent & { loginReturnTo: string } {
+  const resumePath = buildCheckoutResumePath(intent);
+  return {
+    ...intent,
+    returnTo: preserveCancelIntent ? resumePath : intent.returnTo,
+    loginReturnTo: resumePath,
+  };
+}
+
+export function buildCheckoutCancelUrl(
+  origin: string,
+  returnTo: string,
+): string {
+  const hashIndex = returnTo.indexOf("#");
+  const pathAndQuery =
+    hashIndex === -1 ? returnTo : returnTo.slice(0, hashIndex);
+  const hash = hashIndex === -1 ? "" : returnTo.slice(hashIndex);
+  const separator = pathAndQuery.includes("?") ? "&" : "?";
+  return `${origin}${pathAndQuery}${separator}canceled=1${hash}`;
+}
+
 export function restorePledgeSelection(
   intent: CheckoutIntent,
 ): RestoredPledgeSelection {
@@ -49,6 +84,12 @@ export function pledgeCheckoutError(caught: unknown, demo: boolean): string {
   return demo && message === "Stripe Checkout didn’t open. Check your connection."
     ? "The demo preview didn’t open. Check your connection and try again."
     : message;
+}
+
+export function pledgeCheckoutCanceledError(demo: boolean): string {
+  return demo
+    ? "The demo preview was closed. Your saved details are ready to review."
+    : "Stripe test checkout was canceled. Your saved details are ready to review.";
 }
 
 export function pledgeCheckoutButtonLabel({

@@ -4,6 +4,7 @@ import {
   type StreamDurationSeconds,
   type StreamIntervalSeconds,
 } from "@/lib/stream-plan";
+import { buildCheckoutRequest } from "@/lib/pledge-flow-state";
 
 export type CheckoutInterval = "once" | "month" | "year";
 
@@ -22,22 +23,24 @@ type CheckoutResponse = {
   url?: string;
 };
 
-const RESUME_KEYS = ["resume", "t", "a", "i", "d", "c"] as const;
+export type CheckoutReturn = {
+  canceled: boolean;
+  intent: CheckoutIntent;
+};
 
-function buildLoginReturnTo(intent: CheckoutIntent) {
-  const url = new URL(intent.returnTo, "https://tend.local");
-  url.searchParams.set("resume", "checkout");
-  url.searchParams.set("t", intent.tribeId);
-  url.searchParams.set("a", String(intent.amountCents));
-  url.searchParams.set("i", intent.interval);
-  url.searchParams.set("d", String(intent.streamDurationSeconds));
-  url.searchParams.set("c", String(intent.streamIntervalSeconds));
-  return `${url.pathname}${url.search}`;
-}
+const RESUME_KEYS = [
+  "resume",
+  "t",
+  "a",
+  "i",
+  "d",
+  "c",
+  "canceled",
+] as const;
 
-export function consumeCheckoutIntent(
+export function consumeCheckoutReturn(
   expectedPath: string,
-): CheckoutIntent | null {
+): CheckoutReturn | null {
   const url = new URL(window.location.href);
   if (
     url.pathname !== expectedPath ||
@@ -51,6 +54,7 @@ export function consumeCheckoutIntent(
   const interval = url.searchParams.get("i");
   const durationSeconds = Number(url.searchParams.get("d"));
   const cadenceSeconds = Number(url.searchParams.get("c"));
+  const canceled = url.searchParams.get("canceled") === "1";
 
   for (const key of RESUME_KEYS) url.searchParams.delete(key);
   window.history.replaceState(
@@ -72,26 +76,34 @@ export function consumeCheckoutIntent(
   }
 
   return {
-    tribeId,
-    amountCents,
-    interval,
-    streamDurationSeconds: durationSeconds,
-    streamIntervalSeconds: cadenceSeconds,
-    returnTo: expectedPath,
+    canceled,
+    intent: {
+      tribeId,
+      amountCents,
+      interval,
+      streamDurationSeconds: durationSeconds,
+      streamIntervalSeconds: cadenceSeconds,
+      returnTo: expectedPath,
+    },
   };
+}
+
+export function consumeCheckoutIntent(
+  expectedPath: string,
+): CheckoutIntent | null {
+  return consumeCheckoutReturn(expectedPath)?.intent ?? null;
 }
 
 export async function startCheckout(
   intent: CheckoutIntent,
-  options: { resuming?: boolean } = {},
+  options: { preserveCancelIntent?: boolean; resuming?: boolean } = {},
 ) {
   const response = await fetch("/api/checkout", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      ...intent,
-      loginReturnTo: buildLoginReturnTo(intent),
-    }),
+    body: JSON.stringify(
+      buildCheckoutRequest(intent, options.preserveCancelIntent === true),
+    ),
   });
   const data = (await response.json()) as CheckoutResponse;
 

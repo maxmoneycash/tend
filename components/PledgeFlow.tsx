@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { StreamTimingControls } from "@/components/stream/StreamTimingControls";
 import {
-  consumeCheckoutIntent,
+  consumeCheckoutReturn,
   startCheckout,
   type CheckoutIntent,
   type CheckoutInterval,
@@ -20,6 +20,7 @@ import {
 import {
   buildPledgeCheckoutIntent,
   pledgeCheckoutButtonLabel,
+  pledgeCheckoutCanceledError,
   pledgeCheckoutError,
   resolvePledgeProgram,
   restorePledgeSelection,
@@ -117,7 +118,7 @@ export function PledgeFlow({
     setBusyAction("checkout");
     setCheckoutError(null);
     try {
-      await startCheckout(intent, { resuming });
+      await startCheckout(intent, { preserveCancelIntent: true, resuming });
     } catch (caught) {
       setCheckoutError(pledgeCheckoutError(caught, demo));
       setBusyAction(null);
@@ -127,10 +128,11 @@ export function PledgeFlow({
   useEffect(() => {
     if (resumeAttempted.current) return;
     resumeAttempted.current = true;
-    const intent = consumeCheckoutIntent("/pledge");
-    if (!intent) return;
+    const checkoutReturn = consumeCheckoutReturn("/pledge");
+    if (!checkoutReturn) return;
 
     queueMicrotask(() => {
+      const { canceled, intent } = checkoutReturn;
       const restored = restorePledgeSelection(intent);
       setTribeId(restored.tribeId);
       setInterval(restored.interval);
@@ -138,9 +140,13 @@ export function PledgeFlow({
       setCustom(restored.custom);
       setStreamDurationSeconds(restored.streamDurationSeconds);
       setStreamIntervalSeconds(restored.streamIntervalSeconds);
-      void openCheckout(intent, true);
+      if (canceled) {
+        setCheckoutError(pledgeCheckoutCanceledError(demo));
+      } else {
+        void openCheckout(intent, true);
+      }
     });
-  }, [openCheckout]);
+  }, [demo, openCheckout]);
 
   function checkout() {
     if (

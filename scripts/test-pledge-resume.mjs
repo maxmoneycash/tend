@@ -1,8 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  buildCheckoutCancelUrl,
+  buildCheckoutRequest,
+  buildCheckoutResumePath,
   buildPledgeCheckoutIntent,
   pledgeCheckoutButtonLabel,
+  pledgeCheckoutCanceledError,
   pledgeCheckoutError,
   resolvePledgeProgram,
   restorePledgeSelection,
@@ -63,5 +67,40 @@ test("a restored pledge keeps its selection, failure, and retry action", () => {
       tribeId: restored.tribeId,
     }),
     intent,
+  );
+});
+
+test("a canceled checkout returns to a visible retry with its intent", () => {
+  const intent = {
+    tribeId: "ramaytush",
+    amountCents: 5000,
+    interval: "year",
+    streamDurationSeconds: 30,
+    streamIntervalSeconds: 2,
+    returnTo: "/pledge",
+  };
+  const resumePath = buildCheckoutResumePath(intent);
+
+  assert.deepEqual(buildCheckoutRequest(intent, true), {
+    ...intent,
+    returnTo: resumePath,
+    loginReturnTo: resumePath,
+  });
+  assert.equal(
+    buildCheckoutCancelUrl("https://tend.example", resumePath),
+    "https://tend.example/pledge?resume=checkout&t=ramaytush&a=5000&i=year&d=30&c=2&canceled=1",
+  );
+  assert.equal(
+    pledgeCheckoutCanceledError(false),
+    "Stripe test checkout was canceled. Your saved details are ready to review.",
+  );
+  assert.equal(
+    pledgeCheckoutButtonLabel({
+      amountValid: true,
+      checkoutError: pledgeCheckoutCanceledError(false),
+      demo: false,
+      selectedAmount: intent.amountCents / 100,
+    }),
+    "Try Stripe test checkout again",
   );
 });
