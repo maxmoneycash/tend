@@ -15,6 +15,10 @@ const TONE: Record<TribeId, { cover: string; badge: string; accent: string }> = 
   },
 };
 
+function host(url: string) {
+  return new URL(url).hostname.replace(/^www\./, "");
+}
+
 export function ProgramCard({
   counties,
   program,
@@ -57,21 +61,25 @@ export function ProgramCard({
           {program.taxName}
         </p>
 
-        <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto]">
+        <p className="mt-4 text-[12px] leading-relaxed text-[#625c56]">
+          Opens {host(program.officialDonationUrl)} for {program.name}.
+        </p>
+
+        <div className="mt-2 grid gap-2 sm:grid-cols-[1fr_auto]">
           <a
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[11px] bg-[#171411] px-4 text-center text-[12px] font-semibold text-white transition hover:bg-[#38322d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
             href={program.officialDonationUrl}
             rel="noreferrer"
             target="_blank"
           >
-            Open official donation page
+            Donate on the official site
             <ExternalLink aria-hidden="true" size={14} />
           </a>
           <Link
             className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-[11px] border border-black/[0.12] bg-white px-4 text-[12px] font-semibold text-[#3f3934] transition hover:border-black/25 hover:bg-[#faf8f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
             href={`/programs/${program.id}`}
           >
-            View details
+            View Tend details
             <ArrowRight aria-hidden="true" size={14} />
           </Link>
         </div>
