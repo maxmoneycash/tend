@@ -1629,7 +1629,7 @@ export function LandingClient() {
                 <h1 className="hero-h1 hero-h1--mobile"><span className="hero-h1-line">Tend The Land</span><br /><span className="hero-h1-line">You Live On</span></h1>
                 <p className="hero-sub hero-sub--mobile">Find your tribe's program and begin in ninety seconds. It's that simple.</p>
                 <div className="hero-ctas">
-                  <a href="/pledge" className="btn-orange"><span className="btn-orange-glow"></span><span className="btn-orange-label">Start a pledge</span></a>
+                  <a href="/programs" className="btn-orange"><span className="btn-orange-glow"></span><span className="btn-orange-label">Start a pledge</span></a>
                   <a href="#" className="btn-white">Explore programs</a>
                 </div>
               </div>
@@ -2104,7 +2104,7 @@ export function LandingClient() {
               </div>
 
               <div className="hiw-cta">
-                <a href="/pledge" className="btn-orange"><span className="btn-orange-glow"></span><span className="btn-orange-label">Start a pledge</span></a>
+                <a href="/programs" className="btn-orange"><span className="btn-orange-glow"></span><span className="btn-orange-label">Start a pledge</span></a>
               </div>
 
               <div className="trusted-avatars-row">

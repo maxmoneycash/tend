@@ -130,7 +130,7 @@ export function Navbar() {
               </a>
             )}
           </div>
-          <Link href="/pledge" className="btn-nav-cta">
+          <Link href="/programs" className="btn-nav-cta">
             Start a pledge <span className="arrow">→</span>
           </Link>
           <button

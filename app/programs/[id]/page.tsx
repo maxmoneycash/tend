@@ -55,7 +55,7 @@ export default async function ProgramDetail({
                 className="absolute inset-0 h-full w-full object-cover"
               />
               <span
-                className={`absolute top-3 left-3 z-10 text-[10px] font-semibold px-2 py-0.5 rounded backdrop-blur ${BADGE[tribe.id]}`}
+                className={`absolute bottom-3 left-3 z-10 text-[10px] font-semibold px-2 py-0.5 rounded backdrop-blur ${BADGE[tribe.id]}`}
               >
                 {tribe.region}
               </span>

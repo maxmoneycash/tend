@@ -47,6 +47,17 @@
       "providerName": "Auth0",
       "resourceId": "fres_61V8SKuc4zWiSJ8Mw16V8QoxU1SQjUOItTabFjLYO3mq",
       "serviceId": "free"
+    },
+    "auth0-plan-2": {
+      "configuration": {},
+      "createdAt": "2026-07-31T00:32:51.142Z",
+      "lastRevealedAt": null,
+      "lastStatus": "complete",
+      "name": "auth0-plan-2",
+      "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
+      "providerName": "Auth0",
+      "resourceId": "fres_61V8SKuCiK0KUD6jz16V8QoxU1SQjUOItTabFjLYOJaa",
+      "serviceId": "free"
     }
   }
 }

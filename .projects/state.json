@@ -15,6 +15,11 @@
       "name": "auth0-plan",
       "providerName": "Auth0",
       "serviceId": "free"
+    },
+    "auth0-plan-2": {
+      "name": "auth0-plan-2",
+      "providerName": "Auth0",
+      "serviceId": "free"
     }
   }
 }
