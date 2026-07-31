@@ -93,11 +93,20 @@ export default function ProgramsPage() {
               {relatedGivingPrograms.map((program) => (
                 <div className="contents" key={program.programUrl}>
                   <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
+                      Program
+                    </p>
                     <p className="text-[15px] font-semibold text-[#111111]">
                       {program.taxName}
                     </p>
-                    <p className="mt-0.5 text-[12px] text-[#666666]">
-                      {program.name}, {program.people}
+                    <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
+                      Organization
+                    </p>
+                    <p className="mt-0.5 text-[12px] font-semibold text-[#4e4944]">
+                      {program.name}
+                    </p>
+                    <p className="mt-1 text-[12px] text-[#666666]">
+                      Source area: {program.people} land
                     </p>
                     <p className="mt-3 max-w-2xl text-pretty text-[12px] leading-relaxed text-[#555555]">
                       {program.summary}
@@ -109,7 +118,7 @@ export default function ProgramsPage() {
                     rel="noreferrer"
                     target="_blank"
                   >
-                    Open the official program
+                    {program.programAction}
                   </a>
                 </div>
               ))}

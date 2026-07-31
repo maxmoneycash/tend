@@ -56,6 +56,7 @@ export const relatedGivingPrograms = [
       "Sogorea Te’ Land Trust runs a separate Shuumi Land Tax for people who live or do business on Lisjan Ohlone land.",
     programUrl:
       "https://sogoreate-landtrust.org/pay-the-shuumi-land-tax/",
+    programAction: "Open Sogorea Te’ Shuumi page",
     faqUrl: "https://sogoreate-landtrust.org/shuumi-land-tax-faqs/",
   },
 ] as const;
