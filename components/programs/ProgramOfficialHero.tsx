@@ -57,7 +57,7 @@ export function ProgramOfficialHero({
             rel="noreferrer"
             target="_blank"
           >
-            Donate on the official site
+            Open official donation page
             <ExternalLink aria-hidden="true" size={15} />
           </a>
           <a

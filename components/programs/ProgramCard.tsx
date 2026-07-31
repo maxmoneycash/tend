@@ -64,7 +64,7 @@ export function ProgramCard({
             rel="noreferrer"
             target="_blank"
           >
-            Donate on the official site
+            Open official donation page
             <ExternalLink aria-hidden="true" size={14} />
           </a>
           <Link

@@ -27,7 +27,7 @@ export default function ProgramsPage() {
           <section className="animate-enter mb-7 grid gap-4 border-b border-black/[0.09] pb-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)] lg:items-end lg:gap-10">
             <div>
               <span className="inline-flex items-center rounded-full border border-[#fa4616]/20 bg-[#fff1eb] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#b72e00]">
-                Official giving, clearly marked
+                Official donation links
               </span>
               <h1 className="mt-4 max-w-3xl text-balance text-[32px] font-bold leading-[1.06] tracking-[-0.04em] text-[#171411] sm:text-[42px] lg:text-[48px]">
                 Choose the organization you want to support.
