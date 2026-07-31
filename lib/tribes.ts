@@ -8,6 +8,8 @@ export type Tribe = {
   /** Short framing drawn from the tribe's own public materials. */
   blurb: string;
   siteUrl: string;
+  officialProgramUrl: string;
+  officialDonationUrl: string;
   /** Env var that holds this tribe's Stripe connected account id. */
   accountEnv: string;
   /** One-time annual land tax for machine (MPP) payers, in cents. */
@@ -23,6 +25,9 @@ export const tribes: Record<TribeId, Tribe> = {
     blurb:
       "The Ramaytush Ohlone are the original peoples of the San Francisco Peninsula. Yunakin — from the Ramaytush word for village — is their voluntary land tax for people living on the Peninsula.",
     siteUrl: "https://www.ramaytush.org",
+    officialProgramUrl: "https://www.ramaytush.org/donate.html",
+    officialDonationUrl:
+      "https://ramaytush.kindful.com/?campaign=1199658",
     accountEnv: "TEND_ACCT_RAMAYTUSH",
     annualMachineTaxCents: 2500,
   },
@@ -34,10 +39,26 @@ export const tribes: Record<TribeId, Tribe> = {
     blurb:
       "The Muwekma Ohlone Preservation Foundation supports cultural revitalization, community education, land access, and the Tribe's work toward restored federal recognition.",
     siteUrl: "https://www.muwekmafoundation.org/home",
+    officialProgramUrl: "https://www.muwekmafoundation.org/shuumi",
+    officialDonationUrl: "https://www.muwekmafoundation.org/donate",
     accountEnv: "TEND_ACCT_MUWEKMA",
     annualMachineTaxCents: 2500,
   },
 };
+
+export const relatedGivingPrograms = [
+  {
+    name: "Sogorea Te’ Land Trust",
+    taxName: "Shuumi Land Tax",
+    people: "Lisjan Ohlone",
+    region: "East Bay",
+    summary:
+      "Sogorea Te’ Land Trust runs a separate Shuumi Land Tax for people who live or do business on Lisjan Ohlone land.",
+    programUrl:
+      "https://sogoreate-landtrust.org/pay-the-shuumi-land-tax/",
+    faqUrl: "https://sogoreate-landtrust.org/shuumi-land-tax-faqs/",
+  },
+] as const;
 
 /**
  * County → tribes whose published territorial definitions include it.

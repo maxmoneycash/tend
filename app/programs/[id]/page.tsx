@@ -69,17 +69,26 @@ export default async function ProgramDetail({
                 {tribe.taxName}
               </h1>
               <p className="text-[13px] text-[#6b6b6b]">
-                {tribe.name} ·{" "}
-                <a
-                  href={tribe.siteUrl}
-                  className="text-blue-400 hover:text-blue-300 underline underline-offset-4 decoration-white/20"
-                >
-                  {tribe.siteUrl
-                    .replace("https://www.", "")
-                    .replace("https://", "")
-                    .replace(/\/.*$/, "")}
-                </a>
+                {tribe.name}
               </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <a
+                  href={tribe.officialDonationUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center rounded-[10px] bg-[#111111] px-4 text-[12px] font-semibold text-white hover:bg-[#333333] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                  Donate on the official site
+                </a>
+                <a
+                  href={tribe.officialProgramUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center rounded-[10px] border border-black/[0.12] bg-white px-4 text-[12px] font-semibold text-[#333333] hover:border-black/[0.25] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                  Read the official program page
+                </a>
+              </div>
             </div>
           </div>
 
@@ -145,7 +154,7 @@ export default async function ProgramDetail({
 → 402 · pay $25.00 · receipt`}
                 </pre>
                 <p className="mt-2 text-[10px] font-mono text-[#8a8a8a]">
-                  Demonstration only · pathUSD · Tempo Moderato testnet
+                  Demonstration only. pathUSD on Tempo Moderato testnet.
                 </p>
               </div>
             </div>

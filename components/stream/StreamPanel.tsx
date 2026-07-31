@@ -118,8 +118,8 @@ export function StreamPanel({
     >
       <div className="pledge-payment-heading">
         <div>
-          <p className="pledge-kicker">One-time contribution</p>
-          <h4 id="stream-title">Donate to {tribeName}</h4>
+          <p className="pledge-kicker">Tend checkout preview</p>
+          <h4 id="stream-title">Test the flow for {tribeName}</h4>
         </div>
         <span className="pledge-test-badge">
           Test mode
@@ -127,8 +127,8 @@ export function StreamPanel({
       </div>
 
       <p className="pledge-payment-intro">
-        Choose an amount, pay through Stripe, then watch the public testnet
-        receipt stream settle.
+        Choose a test amount. Stripe creates a test session, then Tend shows
+        the receipt settle on a public testnet.
       </p>
 
       <fieldset className="pledge-control">
@@ -169,7 +169,7 @@ export function StreamPanel({
             Customize stream
           </span>
           <small>
-            {settlementCount} transfers · every{" "}
+            {settlementCount} transfers, every{" "}
             {formatStreamTime(streamIntervalSeconds)}
           </small>
         </summary>
@@ -196,7 +196,7 @@ export function StreamPanel({
           </>
         ) : (
           <>
-            Donate ${amountValid ? selectedAmount.toFixed(2) : "0.00"}
+            Open ${amountValid ? selectedAmount.toFixed(2) : "0.00"} test checkout
             <ArrowRight size={17} aria-hidden="true" />
           </>
         )}
@@ -214,7 +214,7 @@ export function StreamPanel({
       )}
 
       <p className="pledge-test-disclosure">
-        Stripe test payment · faucet-funded pathUSD · Tempo Moderato
+        Stripe test payment with faucet-funded pathUSD on Tempo Moderato
       </p>
     </section>
   );

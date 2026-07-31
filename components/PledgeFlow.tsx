@@ -43,24 +43,7 @@ type Located = {
 
 type Interval = "once" | "month" | "year";
 
-const AMOUNT_CHIPS = [10, 20, 25, 50, 100];
-const YEARLY_CHIPS = [100, 200, 250, 500, 1000];
-
-function suggest(housing: string, bracket: string): number {
-  if (housing === "rent") {
-    return bracket === "low" ? 15 : bracket === "mid" ? 25 : 40;
-  }
-  return bracket === "low" ? 30 : bracket === "mid" ? 50 : 75;
-}
-
-function suggestedAmount(
-  housing: string,
-  bracket: string,
-  interval: Interval,
-) {
-  const monthly = suggest(housing, bracket);
-  return interval === "year" ? monthly * 10 : monthly;
-}
+const AMOUNT_CHIPS = [25, 50, 100, 250];
 
 function cleanAmount(value: string) {
   const clean = value.replace(/[^0-9.]/g, "");
@@ -75,8 +58,6 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
   const [interval, setInterval] = useState<Interval>("once");
   const [amount, setAmount] = useState<number>(25);
   const [custom, setCustom] = useState("");
-  const [housing, setHousing] = useState("rent");
-  const [bracket, setBracket] = useState("mid");
   const [streamDurationSeconds, setStreamDurationSeconds] =
     useState<StreamDurationSeconds>(DEFAULT_STREAM_DURATION_SECONDS);
   const [streamIntervalSeconds, setStreamIntervalSeconds] =
@@ -162,24 +143,8 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
 
   function chooseInterval(next: Interval) {
     setInterval(next);
-    setAmount(suggestedAmount(housing, bracket, next));
-    setCustom("");
   }
 
-  function chooseHousing(next: string) {
-    setHousing(next);
-    setAmount(suggestedAmount(next, bracket, interval));
-    setCustom("");
-  }
-
-  function chooseBracket(next: string) {
-    setBracket(next);
-    setAmount(suggestedAmount(housing, next, interval));
-    setCustom("");
-  }
-
-  const chips = interval === "year" ? YEARLY_CHIPS : AMOUNT_CHIPS;
-  const suggested = suggestedAmount(housing, bracket, interval);
   const selectedTribe = located?.tribes.find((tribe) => tribe.id === tribeId);
   const selectedAmount = custom ? Number(custom) : amount;
   const amountValid =
@@ -195,7 +160,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
       {demo && (
         <div className="pledge-demo-note">
           <ShieldCheck size={15} aria-hidden="true" />
-          Demo preview — no card charge will be created
+          Demo preview. No card charge will be created.
         </div>
       )}
 
@@ -275,7 +240,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
               <p>
                 {located.tribes.length === 1
                   ? "One matching Indigenous-led program"
-                  : `${located.tribes.length} matching programs — you choose`}
+                  : `${located.tribes.length} matching programs. Choose one.`}
               </p>
             </div>
           )}
@@ -312,54 +277,13 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
               <h3>{selectedTribe.taxName}</h3>
             </div>
             <div className="pledge-suggestion">
-              <span>Suggested</span>
-              <strong>${suggested}</strong>
+              <span>Test amount</span>
+              <strong>${selectedAmount}</strong>
             </div>
           </div>
 
           <div className="pledge-amount-grid">
             <div className="pledge-controls">
-              <fieldset className="pledge-control">
-                <legend>Housing</legend>
-                <div className="pledge-segmented">
-                  {[
-                    ["rent", "I rent"],
-                    ["own", "I own"],
-                  ].map(([value, label]) => (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => chooseHousing(value)}
-                      aria-pressed={housing === value}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
-
-              <label className="pledge-control">
-                <span>Housing cost</span>
-                <select
-                  value={bracket}
-                  onChange={(event) => chooseBracket(event.target.value)}
-                >
-                  {housing === "rent" ? (
-                    <>
-                      <option value="low">Under $2k / month</option>
-                      <option value="mid">$2k–4k / month</option>
-                      <option value="high">Over $4k / month</option>
-                    </>
-                  ) : (
-                    <>
-                      <option value="low">Under $1M home</option>
-                      <option value="mid">$1–2M home</option>
-                      <option value="high">Over $2M home</option>
-                    </>
-                  )}
-                </select>
-              </label>
-
               <fieldset className="pledge-control">
                 <legend>Frequency</legend>
                 <div className="pledge-segmented pledge-frequency">
@@ -385,7 +309,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
               <fieldset className="pledge-control">
                 <legend>Amount</legend>
                 <div className="pledge-amount-row">
-                  {chips.map((chip) => (
+                  {AMOUNT_CHIPS.map((chip) => (
                     <button
                       key={chip}
                       type="button"
@@ -422,7 +346,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                     Customize stream
                   </span>
                   <small>
-                    {settlementCount} transfers · every{" "}
+                    {settlementCount} transfers, every{" "}
                     {formatStreamTime(streamIntervalSeconds)}
                   </small>
                 </summary>
@@ -489,8 +413,8 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                 ) : (
                   <>
                     <span>
-                      {demo ? "Preview" : "Donate"} $
-                      {amountValid ? selectedAmount.toFixed(2) : "0.00"}
+                      Open ${amountValid ? selectedAmount.toFixed(2) : "0.00"}{" "}
+                      test checkout
                     </span>
                     <ArrowRight size={17} aria-hidden="true" />
                   </>
@@ -501,7 +425,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                 Apple Pay appears in Stripe Checkout on a supported iPhone.
               </p>
               <p className="pledge-test-disclosure">
-                Stripe test payment · pathUSD testnet receipt
+                Stripe test payment with a pathUSD testnet receipt
               </p>
             </div>
           </div>
