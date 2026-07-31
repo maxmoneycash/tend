@@ -23,10 +23,24 @@ type CheckoutResponse = {
   url?: string;
 };
 
-export type CheckoutReturn = {
-  canceled: boolean;
-  intent: CheckoutIntent;
+export type CheckoutReturnDraft = {
+  amountCents: number | null;
+  interval: CheckoutInterval | null;
+  streamDurationSeconds: StreamDurationSeconds | null;
+  streamIntervalSeconds: StreamIntervalSeconds | null;
+  tribeId: CheckoutIntent["tribeId"] | null;
 };
+
+export type CheckoutReturn =
+  | {
+      canceled: boolean;
+      intent: CheckoutIntent;
+      status: "valid";
+    }
+  | {
+      draft: CheckoutReturnDraft;
+      status: "invalid";
+    };
 
 const RESUME_KEYS = [
   "resume",
@@ -49,12 +63,37 @@ export function consumeCheckoutReturn(
     return null;
   }
 
-  const tribeId = url.searchParams.get("t");
-  const amountCents = Number(url.searchParams.get("a"));
-  const interval = url.searchParams.get("i");
-  const durationSeconds = Number(url.searchParams.get("d"));
-  const cadenceSeconds = Number(url.searchParams.get("c"));
+  const savedTribeId = url.searchParams.get("t");
+  const savedAmountCents = Number(url.searchParams.get("a"));
+  const savedInterval = url.searchParams.get("i");
+  const savedDurationSeconds = Number(url.searchParams.get("d"));
+  const savedCadenceSeconds = Number(url.searchParams.get("c"));
   const canceled = url.searchParams.get("canceled") === "1";
+
+  const draft: CheckoutReturnDraft = {
+    amountCents:
+      Number.isInteger(savedAmountCents) &&
+      savedAmountCents >= 100 &&
+      savedAmountCents <= 1_000_000
+        ? savedAmountCents
+        : null,
+    interval:
+      savedInterval === "once" ||
+      savedInterval === "month" ||
+      savedInterval === "year"
+        ? savedInterval
+        : null,
+    streamDurationSeconds: isStreamDurationSeconds(savedDurationSeconds)
+      ? savedDurationSeconds
+      : null,
+    streamIntervalSeconds: isStreamIntervalSeconds(savedCadenceSeconds)
+      ? savedCadenceSeconds
+      : null,
+    tribeId:
+      savedTribeId === "ramaytush" || savedTribeId === "muwekma"
+        ? savedTribeId
+        : null,
+  };
 
   for (const key of RESUME_KEYS) url.searchParams.delete(key);
   window.history.replaceState(
@@ -64,34 +103,34 @@ export function consumeCheckoutReturn(
   );
 
   if (
-    (tribeId !== "ramaytush" && tribeId !== "muwekma") ||
-    !Number.isInteger(amountCents) ||
-    amountCents < 100 ||
-    amountCents > 1_000_000 ||
-    (interval !== "once" && interval !== "month" && interval !== "year") ||
-    !isStreamDurationSeconds(durationSeconds) ||
-    !isStreamIntervalSeconds(cadenceSeconds)
+    draft.tribeId === null ||
+    draft.amountCents === null ||
+    draft.interval === null ||
+    draft.streamDurationSeconds === null ||
+    draft.streamIntervalSeconds === null
   ) {
-    return null;
+    return { draft, status: "invalid" };
   }
 
   return {
     canceled,
     intent: {
-      tribeId,
-      amountCents,
-      interval,
-      streamDurationSeconds: durationSeconds,
-      streamIntervalSeconds: cadenceSeconds,
+      tribeId: draft.tribeId,
+      amountCents: draft.amountCents,
+      interval: draft.interval,
+      streamDurationSeconds: draft.streamDurationSeconds,
+      streamIntervalSeconds: draft.streamIntervalSeconds,
       returnTo: expectedPath,
     },
+    status: "valid",
   };
 }
 
 export function consumeCheckoutIntent(
   expectedPath: string,
 ): CheckoutIntent | null {
-  return consumeCheckoutReturn(expectedPath)?.intent ?? null;
+  const checkoutReturn = consumeCheckoutReturn(expectedPath);
+  return checkoutReturn?.status === "valid" ? checkoutReturn.intent : null;
 }
 
 export async function startCheckout(

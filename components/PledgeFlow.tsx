@@ -22,7 +22,9 @@ import {
   pledgeCheckoutButtonLabel,
   pledgeCheckoutCanceledError,
   pledgeCheckoutError,
+  pledgeResumeError,
   resolvePledgeProgram,
+  restorePledgeDraft,
   restorePledgeSelection,
 } from "@/lib/pledge-flow-state";
 import {
@@ -86,12 +88,14 @@ export function PledgeFlow({
   >(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [resumeError, setResumeError] = useState<string | null>(null);
   const resumeAttempted = useRef(false);
 
   async function locate(body: { address?: string; county?: string }) {
     setBusyAction("locate");
     setLocationError(null);
     setCheckoutError(null);
+    setResumeError(null);
     try {
       const res = await fetch("/api/geocode", {
         method: "POST",
@@ -132,6 +136,31 @@ export function PledgeFlow({
     if (!checkoutReturn) return;
 
     queueMicrotask(() => {
+      if (checkoutReturn.status === "invalid") {
+        const restored = restorePledgeDraft(checkoutReturn.draft);
+        if (restored.tribeId !== undefined) setTribeId(restored.tribeId);
+        if (restored.interval !== undefined) setInterval(restored.interval);
+        if (restored.amount !== undefined) setAmount(restored.amount);
+        if (restored.custom !== undefined) setCustom(restored.custom);
+        if (restored.streamDurationSeconds !== undefined) {
+          setStreamDurationSeconds(restored.streamDurationSeconds);
+        }
+        if (restored.streamIntervalSeconds !== undefined) {
+          setStreamIntervalSeconds(restored.streamIntervalSeconds);
+        }
+
+        const error = pledgeResumeError({
+          demo,
+          hasProgram: restored.tribeId !== undefined,
+        });
+        if (restored.tribeId !== undefined) {
+          setCheckoutError(error);
+        } else {
+          setResumeError(error);
+        }
+        return;
+      }
+
       const { canceled, intent } = checkoutReturn;
       const restored = restorePledgeSelection(intent);
       setTribeId(restored.tribeId);
@@ -186,7 +215,7 @@ export function PledgeFlow({
   );
   const busy = busyAction !== null;
   const state =
-    locationError || checkoutError
+    locationError || checkoutError || resumeError
       ? "error"
       : busy
         ? "loading"
@@ -284,6 +313,12 @@ export function PledgeFlow({
           </button>
         ))}
       </div>
+
+      {resumeError && (
+        <p className="pledge-error" role="alert">
+          {resumeError}
+        </p>
+      )}
 
       {locationError && (
         <p
@@ -536,6 +571,9 @@ export function PledgeFlow({
                 disabled={busy || !amountValid}
                 className="pledge-checkout-button"
                 data-state={state}
+                aria-describedby={
+                  checkoutError ? "pledge-checkout-error" : undefined
+                }
               >
                 {busyAction === "checkout" ? (
                   <>

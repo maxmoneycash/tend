@@ -8,7 +8,9 @@ import {
   pledgeCheckoutButtonLabel,
   pledgeCheckoutCanceledError,
   pledgeCheckoutError,
+  pledgeResumeError,
   resolvePledgeProgram,
+  restorePledgeDraft,
   restorePledgeSelection,
 } from "../lib/pledge-flow-state.ts";
 
@@ -111,5 +113,58 @@ test("a canceled checkout returns to a visible retry with its intent", () => {
       selectedAmount: intent.amountCents / 100,
     }),
     "Try Stripe test checkout again",
+  );
+});
+
+test("a rejected checkout return keeps valid details and gives a recovery action", () => {
+  const restored = restorePledgeDraft({
+    amountCents: 7350,
+    interval: null,
+    streamDurationSeconds: 60,
+    streamIntervalSeconds: 5,
+    tribeId: "muwekma",
+  });
+
+  assert.deepEqual(restored, {
+    amount: 73.5,
+    custom: "",
+    streamDurationSeconds: 60,
+    streamIntervalSeconds: 5,
+    tribeId: "muwekma",
+  });
+  assert.equal(
+    pledgeResumeError({ demo: false, hasProgram: true }),
+    "We couldn’t restore every saved checkout detail. Review the amount and timing below, then try Stripe test checkout again.",
+  );
+  assert.equal(
+    pledgeCheckoutButtonLabel({
+      amountValid: true,
+      checkoutError: pledgeResumeError({ demo: false, hasProgram: true }),
+      demo: false,
+      selectedAmount: restored.amount,
+    }),
+    "Try Stripe test checkout again",
+  );
+  assert.deepEqual(
+    buildPledgeCheckoutIntent({
+      interval: "once",
+      returnTo: "/pledge",
+      selectedAmount: restored.amount,
+      streamDurationSeconds: restored.streamDurationSeconds,
+      streamIntervalSeconds: restored.streamIntervalSeconds,
+      tribeId: restored.tribeId,
+    }),
+    {
+      amountCents: 7350,
+      interval: "once",
+      returnTo: "/pledge",
+      streamDurationSeconds: 60,
+      streamIntervalSeconds: 5,
+      tribeId: "muwekma",
+    },
+  );
+  assert.equal(
+    pledgeResumeError({ demo: false, hasProgram: false }),
+    "We couldn’t restore the saved program. Enter your address or choose a county to rebuild the test checkout.",
   );
 });

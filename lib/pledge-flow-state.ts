@@ -1,6 +1,7 @@
 import type {
   CheckoutIntent,
   CheckoutInterval,
+  CheckoutReturnDraft,
 } from "@/lib/checkout-client";
 import type {
   StreamDurationSeconds,
@@ -64,6 +65,27 @@ export function restorePledgeSelection(
   };
 }
 
+export function restorePledgeDraft(
+  draft: CheckoutReturnDraft,
+): Partial<RestoredPledgeSelection> {
+  const restored: Partial<RestoredPledgeSelection> = {};
+
+  if (draft.amountCents !== null) {
+    restored.amount = draft.amountCents / 100;
+    restored.custom = "";
+  }
+  if (draft.interval !== null) restored.interval = draft.interval;
+  if (draft.streamDurationSeconds !== null) {
+    restored.streamDurationSeconds = draft.streamDurationSeconds;
+  }
+  if (draft.streamIntervalSeconds !== null) {
+    restored.streamIntervalSeconds = draft.streamIntervalSeconds;
+  }
+  if (draft.tribeId !== null) restored.tribeId = draft.tribeId;
+
+  return restored;
+}
+
 export function resolvePledgeProgram<T extends { id: string }>(
   locatedPrograms: readonly T[] | null | undefined,
   programs: readonly T[],
@@ -90,6 +112,24 @@ export function pledgeCheckoutCanceledError(demo: boolean): string {
   return demo
     ? "The demo preview was closed. Your saved details are ready to review."
     : "Stripe test checkout was canceled. Your saved details are ready to review.";
+}
+
+export function pledgeResumeError({
+  demo,
+  hasProgram,
+}: {
+  demo: boolean;
+  hasProgram: boolean;
+}): string {
+  if (!hasProgram) {
+    return demo
+      ? "We couldn’t restore the saved program. Enter your address or choose a county to rebuild the demo preview."
+      : "We couldn’t restore the saved program. Enter your address or choose a county to rebuild the test checkout.";
+  }
+
+  return demo
+    ? "We couldn’t restore every saved preview detail. Review the amount and timing below, then try the demo preview again."
+    : "We couldn’t restore every saved checkout detail. Review the amount and timing below, then try Stripe test checkout again.";
 }
 
 export function pledgeCheckoutButtonLabel({
