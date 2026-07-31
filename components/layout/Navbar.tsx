@@ -124,6 +124,11 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            {pathname.startsWith("/dashboard") && (
+              <a href="/auth/logout" className="nav-link">
+                Log out
+              </a>
+            )}
           </div>
           <Link href="/pledge" className="btn-nav-cta">
             Start a pledge <span className="arrow">→</span>
@@ -274,6 +279,39 @@ export function Navbar() {
                   </Link>
                 </motion.div>
               ))}
+              {pathname.startsWith("/dashboard") && (
+                <motion.div
+                  animate={
+                    mobileOpen
+                      ? { opacity: 1, y: 0 }
+                      : { opacity: 0, y: 16 }
+                  }
+                  transition={
+                    mobileOpen
+                      ? {
+                          type: "spring",
+                          damping: 25,
+                          stiffness: 250,
+                          delay: 0.15 + NAV_LINKS.length * 0.035,
+                        }
+                      : { duration: 0 }
+                  }
+                >
+                  <a
+                    href="/auth/logout"
+                    style={{
+                      color: menuText,
+                      display: "block",
+                      fontSize: 34,
+                      fontWeight: 500,
+                      lineHeight: "51px",
+                      textDecoration: "none",
+                    }}
+                  >
+                    LOG OUT
+                  </a>
+                </motion.div>
+              )}
 
               {/* CTA button */}
               <motion.div
