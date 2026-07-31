@@ -32,7 +32,7 @@ export function ProgramCard({
     ? "Continue to Yunakin on Kindful"
     : "Open the Foundation donation form";
   const donationHandoff = isYunakinKindfulCampaign
-    ? `Opens the ${program.taxName} campaign at ${host(program.officialDonationUrl)} in a new tab.`
+    ? `Opens the ${program.name}’s ${program.taxName} campaign at ${host(program.officialDonationUrl)} in a new tab.`
     : `Opens the donation form published by ${program.name} at ${host(program.officialDonationUrl)} in a new tab.`;
 
   return (
