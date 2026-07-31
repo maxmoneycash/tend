@@ -28,3 +28,11 @@ export function awaitingPaymentUpdateCopy() {
     stateLabel: "Waiting for Stripe update",
   } as const;
 }
+
+export function receiptRefreshRecoveryCopy(hasConfirmedDetails: boolean) {
+  const state = hasConfirmedDetails
+    ? "Tend could not refresh this test receipt. The last confirmed details remain below."
+    : "Tend could not load this test receipt.";
+
+  return `${state} Use Check receipt again to request the latest saved status. Payment and Tempo transfer retries stay disabled.`;
+}

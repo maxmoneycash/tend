@@ -13,6 +13,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { DonationReceipt } from "@/components/DonationReceipt";
 import {
   awaitingPaymentUpdateCopy,
+  receiptRefreshRecoveryCopy,
   terminalPaymentFailureRecoveryCopy,
   terminalSettlementErrorCopy,
 } from "@/lib/receipt-copy";
@@ -196,20 +197,20 @@ function getViewCopy(
         panel: "No Tempo testnet transfers started.",
         stateLabel: "Test payment failed",
       };
-    case "unavailable":
+    case "unavailable": {
+      const recovery = receiptRefreshRecoveryCopy(hasVerifiedPayment);
       return {
-        announcement: hasVerifiedPayment
-          ? "Receipt refresh failed. Showing the last confirmed test receipt details."
-          : "The latest test receipt status is unavailable.",
+        announcement: recovery,
         heading: "Receipt status unavailable.",
         intro: hasVerifiedPayment
           ? "Tend could not refresh this test receipt. The last confirmed details remain below."
-          : "Tend could not load the latest status for this test receipt. Check it again.",
+          : "Tend could not load the latest saved status for this test receipt.",
         panel: hasVerifiedPayment
           ? "Showing the last confirmed testnet settlement status."
           : "The latest test receipt status is unavailable.",
         stateLabel: "Receipt unavailable",
       };
+    }
   }
 }
 
@@ -247,7 +248,7 @@ export function TempoStream({
         while (!stopped) {
           const response = await fetch(
             `/api/tempo/stream?sessionId=${encodeURIComponent(sessionId)}`,
-            { signal: abort.signal },
+            { method: "GET", signal: abort.signal },
           );
           const data = (await response.json().catch(() => ({}))) as {
             status?: unknown;
@@ -344,10 +345,12 @@ export function TempoStream({
   const paymentFailureRecovery = paymentFailed
     ? terminalPaymentFailureRecoveryCopy()
     : null;
+  const unavailableRecovery =
+    status === "unavailable"
+      ? receiptRefreshRecoveryCopy(stripeVerified)
+      : null;
   const error =
-    (requestError
-      ? `Tend could not refresh this test receipt. ${requestError}`
-      : null) ??
+    unavailableRecovery ??
     terminalSettlementError ??
     eventError?.message ??
     (paymentFailed

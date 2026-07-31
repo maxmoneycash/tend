@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import {
   awaitingPaymentUpdateCopy,
+  receiptRefreshRecoveryCopy,
   terminalPaymentFailureRecoveryCopy,
   terminalSettlementErrorCopy,
 } from "../lib/receipt-copy.ts";
@@ -53,6 +54,16 @@ assert.deepEqual(awaitingPaymentUpdateCopy(), {
   receiptStatusLabel: "Waiting for update",
   stateLabel: "Waiting for Stripe update",
 });
+assert.equal(
+  receiptRefreshRecoveryCopy(true),
+  "Tend could not refresh this test receipt. The last confirmed details remain below. Use Check receipt again to request the latest saved status. Payment and Tempo transfer retries stay disabled.",
+  "A failed refresh must preserve confirmed details and name the read-only recovery action.",
+);
+assert.equal(
+  receiptRefreshRecoveryCopy(false),
+  "Tend could not load this test receipt. Use Check receipt again to request the latest saved status. Payment and Tempo transfer retries stay disabled.",
+  "An unavailable first load must name the read-only recovery action without claiming saved details.",
+);
 assert.match(
   route,
   /if \(!state\)[\s\S]*?status: "awaiting-confirmation", events: \[\]/,
@@ -97,6 +108,21 @@ assert.match(
   stream,
   /const canRetry = Boolean\(requestError\) \|\| status === "unavailable";/,
   "Only transient receipt failures may expose the retry action.",
+);
+assert.match(
+  stream,
+  /fetch\([\s\S]*?\/api\/tempo\/stream\?sessionId=[\s\S]*?method: "GET"/,
+  "Checking the receipt again must remain a read-only status request.",
+);
+assert.match(
+  stream,
+  /const unavailableRecovery =[\s\S]*?status === "unavailable"[\s\S]*?receiptRefreshRecoveryCopy\(stripeVerified\)[\s\S]*?const error =\s*unavailableRecovery \?\?/,
+  "The unavailable state must use the exact recovery message for its visible error.",
+);
+assert.match(
+  stream,
+  /canRetry \? \([\s\S]*?<button[\s\S]*?setStatus\("connecting"\)[\s\S]*?setRetryKey[\s\S]*?Check receipt again/,
+  "The unavailable recovery action must request the receipt status again.",
 );
 assert.match(
   stream,
