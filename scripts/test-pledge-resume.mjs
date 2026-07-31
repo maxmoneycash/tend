@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   buildCheckoutCancelUrl,
@@ -15,6 +16,11 @@ import {
   restorePledgeDraft,
   restorePledgeSelection,
 } from "../lib/pledge-flow-state.ts";
+
+const pledgeFlowSource = readFileSync(
+  new URL("../components/PledgeFlow.tsx", import.meta.url),
+  "utf8",
+);
 
 test("a restored pledge keeps its selection, failure, and retry action", () => {
   const intent = {
@@ -197,5 +203,24 @@ test("the pledge names the Stripe record and Tempo boundary before checkout", ()
   assert.equal(
     pledgeTempoPlanExplanation("month"),
     "Stripe creates a monthly test subscription after you complete checkout. Tend attempts this Tempo testnet plan after Stripe confirms the first payment; later subscription invoices do not trigger another attempt.",
+  );
+});
+
+test("checkout errors focus the enabled retry linked to the alert", () => {
+  assert.match(
+    pledgeFlowSource,
+    /const checkoutButtonRef = useRef<HTMLButtonElement>\(null\);/,
+  );
+  assert.match(
+    pledgeFlowSource,
+    /if \(!checkoutError \|\| busyAction !== null\) return;\s+checkoutButtonRef\.current\?\.focus\(\);/,
+  );
+  assert.match(
+    pledgeFlowSource,
+    /<button\s+ref=\{checkoutButtonRef\}\s+type="button"\s+onClick=\{checkout\}\s+disabled=\{busy \|\| !amountValid\}\s+className="pledge-checkout-button"/,
+  );
+  assert.match(
+    pledgeFlowSource,
+    /className="pledge-checkout-button"[\s\S]{0,250}checkoutError \? "pledge-checkout-error" : undefined/,
   );
 });

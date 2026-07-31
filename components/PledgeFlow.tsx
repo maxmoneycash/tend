@@ -85,6 +85,7 @@ export function PledgeFlow({
   const [locationError, setLocationError] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [resumeError, setResumeError] = useState<string | null>(null);
+  const checkoutButtonRef = useRef<HTMLButtonElement>(null);
   const resumeAttempted = useRef(false);
 
   async function locate(body: { address?: string; county?: string }) {
@@ -172,6 +173,11 @@ export function PledgeFlow({
       }
     });
   }, [demo, openCheckout]);
+
+  useEffect(() => {
+    if (!checkoutError || busyAction !== null) return;
+    checkoutButtonRef.current?.focus();
+  }, [busyAction, checkoutError]);
 
   function checkout() {
     if (
@@ -569,6 +575,7 @@ export function PledgeFlow({
               </p>
 
               <button
+                ref={checkoutButtonRef}
                 type="button"
                 onClick={checkout}
                 disabled={busy || !amountValid}
