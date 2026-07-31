@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { z } from "zod";
 import { auth0 } from "@/lib/auth0";
+import { destinationChargeData, destinationChargesEnabled } from "@/lib/connect";
 import { demoMode } from "@/lib/demo";
 import { getStripe } from "@/lib/stripe";
 import {
@@ -101,6 +102,10 @@ export async function POST(req: Request) {
     stream_duration_seconds: String(streamDurationSeconds),
     stream_interval_seconds: String(streamIntervalSeconds),
   };
+  // Destination-charge scaffolding (TEND_CONNECT_DESTINATION_CHARGES=1,
+  // default off): charge on the platform account, full amount transferred to
+  // the tribe's connected account. Off means today's direct-charge behavior.
+  const useDestinationCharge = destinationChargesEnabled() && !!account;
   const params: Stripe.Checkout.SessionCreateParams = {
     mode: interval === "once" ? "payment" : "subscription",
     line_items: [
@@ -122,18 +127,35 @@ export async function POST(req: Request) {
     ],
     metadata,
     ...(interval === "once"
-      ? { payment_intent_data: { metadata } }
-      : { subscription_data: { metadata } }),
+      ? {
+          payment_intent_data: {
+            metadata,
+            ...(useDestinationCharge && account
+              ? destinationChargeData(account)
+              : {}),
+          },
+        }
+      : {
+          subscription_data: {
+            metadata,
+            ...(useDestinationCharge && account
+              ? destinationChargeData(account)
+              : {}),
+          },
+        }),
     success_url: `${origin}/thanks?tribe=${tribeId}&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}${returnTo}?canceled=1`,
   };
 
-  // Sovereignty by architecture: with a connected account configured, the
-  // subscription is created directly ON the tribe's own Stripe account —
-  // their customers, their data, their payout. Zero platform fee.
-  const session = account
-    ? await stripe.checkout.sessions.create(params, { stripeAccount: account })
-    : await stripe.checkout.sessions.create(params);
+  // Sovereignty by architecture: with a connected account configured (and
+  // destination charges off), the subscription is created directly ON the
+  // tribe's own Stripe account — their customers, their data, their payout.
+  // Zero platform fee. Destination-charge mode instead creates the session on
+  // the platform account with an immediate full transfer to the tribe.
+  const session =
+    account && !useDestinationCharge
+      ? await stripe.checkout.sessions.create(params, { stripeAccount: account })
+      : await stripe.checkout.sessions.create(params);
 
   return NextResponse.json({ url: session.url });
 }
