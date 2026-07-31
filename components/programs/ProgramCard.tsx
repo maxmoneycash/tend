@@ -1,5 +1,6 @@
 import { ArrowRight, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { ProgramVideo } from "@/components/programs/ProgramVideo";
 import type { Tribe, TribeId } from "@/lib/tribes";
 
 const TONE: Record<TribeId, { cover: string; badge: string; accent: string }> = {
@@ -31,15 +32,9 @@ export function ProgramCard({
   return (
     <article className="group relative overflow-hidden rounded-[20px] border border-black/[0.1] bg-white shadow-[0_18px_48px_rgba(28,20,14,0.06)] transition duration-300 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-[0_22px_58px_rgba(28,20,14,0.1)]">
       <div className={`relative h-24 overflow-hidden sm:h-32 ${tone.cover}`}>
-        <video
-          aria-hidden="true"
-          autoPlay
-          className="absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
-          loop
-          muted
-          playsInline
+        <ProgramVideo
+          className="absolute inset-0 h-full w-full object-cover"
           poster={`/videos/${program.id}-poster.jpg`}
-          preload="metadata"
           src={`/videos/${program.id}.mp4`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />

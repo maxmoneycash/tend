@@ -4,6 +4,7 @@ import {
   Landmark,
   ShieldCheck,
 } from "lucide-react";
+import { ProgramVideo } from "@/components/programs/ProgramVideo";
 import type { Tribe, TribeId } from "@/lib/tribes";
 
 const COVER: Record<TribeId, string> = {
@@ -102,15 +103,9 @@ export function ProgramOfficialHero({
       <div
         className={`relative min-h-40 overflow-hidden lg:min-h-full ${COVER[program.id]}`}
       >
-        <video
-          aria-hidden="true"
-          autoPlay
-          className="absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
-          loop
-          muted
-          playsInline
+        <ProgramVideo
+          className="absolute inset-0 h-full w-full object-cover"
           poster={`/videos/${program.id}-poster.jpg`}
-          preload="metadata"
           src={`/videos/${program.id}.mp4`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
