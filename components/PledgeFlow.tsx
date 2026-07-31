@@ -57,7 +57,13 @@ function cleanAmount(value: string) {
   return decimals.length ? `${whole}.${decimals.join("").slice(0, 2)}` : whole;
 }
 
-export function PledgeFlow({ demo = false }: { demo?: boolean }) {
+export function PledgeFlow({
+  demo = false,
+  programs,
+}: {
+  demo?: boolean;
+  programs: TribeCard[];
+}) {
   const [address, setAddress] = useState("");
   const [located, setLocated] = useState<Located | null>(null);
   const [tribeId, setTribeId] = useState<string | null>(null);
@@ -107,14 +113,18 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
     try {
       await startCheckout(intent, { resuming });
     } catch (caught) {
-      setCheckoutError(
+      const message =
         caught instanceof Error
           ? caught.message
-          : "Stripe Checkout didn’t open. Check your connection.",
+          : "Stripe Checkout didn’t open. Check your connection.";
+      setCheckoutError(
+        demo && message === "Stripe Checkout didn’t open. Check your connection."
+          ? "The demo preview didn’t open. Check your connection and try again."
+          : message,
       );
       setBusyAction(null);
     }
-  }, []);
+  }, [demo]);
 
   useEffect(() => {
     if (resumeAttempted.current) return;
@@ -155,7 +165,9 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
     setInterval(next);
   }
 
-  const selectedTribe = located?.tribes.find((tribe) => tribe.id === tribeId);
+  const selectedTribe =
+    located?.tribes.find((tribe) => tribe.id === tribeId) ??
+    programs.find((tribe) => tribe.id === tribeId);
   const selectedAmount = custom ? Number(custom) : amount;
   const amountValid =
     Number.isFinite(selectedAmount) && selectedAmount >= 1 && selectedAmount <= 10000;
@@ -170,22 +182,31 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
       : busy
         ? "loading"
         : "default";
+  const checkoutButtonLabel = checkoutError
+    ? demo
+      ? "Try demo preview again"
+      : "Try Stripe test checkout again"
+    : demo
+      ? `Continue to $${amountValid ? selectedAmount.toFixed(2) : "0.00"} demo receipt preview`
+      : `Open $${amountValid ? selectedAmount.toFixed(2) : "0.00"} test checkout (no real charge)`;
 
   return (
     <section className="pledge-flow" data-state={state} aria-busy={busy}>
       {demo && (
         <div className="pledge-demo-note">
           <ShieldCheck size={15} aria-hidden="true" />
-          Demo preview. No card charge will be created.
+          Demo mode. Stripe Checkout and Tempo stay idle.
         </div>
       )}
 
       <div className="pledge-locate-heading">
         <div>
           <p className="pledge-kicker">Test program finder</p>
-          <h3>See programs listed for your address</h3>
+          <h2 className="m-0 mt-[0.2rem] font-display text-[clamp(1.2rem,2vw,1.55rem)] font-bold tracking-[-0.025em] text-[var(--pledge-ink)]">
+            See programs listed for your address
+          </h2>
         </div>
-        <span>Stripe test mode</span>
+        <span>{demo ? "Demo mode" : "Stripe test mode"}</span>
       </div>
       <p id="pledge-location-help" className="pledge-location-note">
         Tend uses public program information and may show more than one
@@ -203,6 +224,8 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
           <span className="sr-only">Street address</span>
           <MapPin size={17} aria-hidden="true" />
           <input
+            name="address"
+            autoComplete="street-address"
             placeholder="Street address in the Bay Area"
             value={address}
             onChange={(event) => setAddress(event.target.value)}
@@ -307,7 +330,9 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
         <div className="pledge-amount-stage">
           <div className="pledge-amount-header">
             <div>
-              <p className="pledge-kicker">Tend test checkout</p>
+              <p className="pledge-kicker">
+                {demo ? "Tend demo preview" : "Tend test checkout"}
+              </p>
               <h3>Choose a test amount for {selectedTribe.taxName}</h3>
             </div>
             <div className="pledge-suggestion">
@@ -323,13 +348,18 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
             >
               official donation links for {selectedTribe.name}
             </Link>
-            . Tend&apos;s checkout below uses test funds.
+            .{" "}
+            {demo
+              ? "The demo below shows a sample receipt. Stripe and Tempo stay idle."
+              : "Tend’s checkout below uses test funds."}
           </p>
 
           <div className="pledge-amount-grid">
             <div className="pledge-controls">
               <fieldset className="pledge-control">
-                <legend>Test payment frequency</legend>
+                <legend>
+                  {demo ? "Preview frequency" : "Test payment frequency"}
+                </legend>
                 <div className="pledge-segmented pledge-frequency">
                   {(
                     [
@@ -391,10 +421,13 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                 <summary>
                   <span>
                     <SlidersHorizontal size={15} aria-hidden="true" />
-                    Set Tempo testnet transfer timing
+                    {demo
+                      ? "Set demo receipt timing"
+                      : "Set Tempo testnet transfer timing"}
                   </span>
                   <small>
-                    {settlementCount} testnet transfers, every{" "}
+                    {settlementCount}{" "}
+                    {demo ? "preview transfers" : "testnet transfers"}, every{" "}
                     {formatStreamTime(streamIntervalSeconds)}
                   </small>
                 </summary>
@@ -406,6 +439,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                   intervalSeconds={streamIntervalSeconds}
                   onDurationChange={setStreamDurationSeconds}
                   onIntervalChange={setStreamIntervalSeconds}
+                  preview={demo}
                 />
               </details>
             </div>
@@ -414,10 +448,12 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
               <div className="pledge-payment-heading">
                 <div>
                   <p className="pledge-kicker">Review</p>
-                  <h4>Review the test checkout</h4>
+                  <h4>
+                    {demo ? "Review the demo preview" : "Review the test checkout"}
+                  </h4>
                 </div>
                 <span className="pledge-test-badge">
-                  Test mode
+                  {demo ? "Demo mode" : "Test mode"}
                 </span>
               </div>
 
@@ -437,7 +473,9 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                   <strong>{INTERVAL_LABELS[interval]}</strong>
                 </div>
                 <div>
-                  <span>Tempo testnet transfers</span>
+                  <span>
+                    {demo ? "Preview transfers" : "Tempo testnet transfers"}
+                  </span>
                   <strong>{settlementCount}</strong>
                 </div>
                 <div>
@@ -453,9 +491,19 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
               </div>
 
               <p className="pledge-payment-note">
-                Stripe processes a test payment. This prototype can then
-                create test pathUSD transfers on the Tempo Moderato testnet.
-                No real money reaches {selectedTribe.name}.
+                {demo ? (
+                  <>
+                    This page shows a sample amount and timing plan. Stripe
+                    Checkout and Tempo stay idle. {selectedTribe.name} receives
+                    no money.
+                  </>
+                ) : (
+                  <>
+                    Stripe processes a test payment. This prototype can then
+                    create test pathUSD transfers on the Tempo Moderato
+                    testnet. No real money reaches {selectedTribe.name}.
+                  </>
+                )}
               </p>
 
               <button
@@ -468,22 +516,23 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                 {busyAction === "checkout" ? (
                   <>
                     <LoaderCircle className="pledge-spinner" size={17} />
-                    Opening Stripe test checkout
+                    {demo
+                      ? "Opening demo receipt preview"
+                      : "Opening Stripe test checkout"}
                   </>
                 ) : (
                   <>
-                    <span>
-                      Open ${amountValid ? selectedAmount.toFixed(2) : "0.00"}{" "}
-                      test checkout (no real charge)
-                    </span>
+                    <span>{checkoutButtonLabel}</span>
                     <ArrowRight size={17} aria-hidden="true" />
                   </>
                 )}
               </button>
-              <p className="pledge-wallet-note">
-                <ShieldCheck size={13} aria-hidden="true" />
-                Stripe may offer Apple Pay on a supported iPhone.
-              </p>
+              {!demo && (
+                <p className="pledge-wallet-note">
+                  <ShieldCheck size={13} aria-hidden="true" />
+                  Stripe may offer Apple Pay on a supported iPhone.
+                </p>
+              )}
               {checkoutError && (
                 <p
                   id="pledge-checkout-error"
@@ -494,8 +543,9 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                 </p>
               )}
               <p className="pledge-test-disclosure">
-                Stripe test payment with a Tempo Moderato testnet transfer
-                record. No real funds move.
+                {demo
+                  ? "Demo preview only. Stripe Checkout and Tempo stay idle."
+                  : "Stripe test payment with a Tempo Moderato testnet transfer record. No real funds move."}
               </p>
             </div>
           </div>

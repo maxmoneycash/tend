@@ -31,9 +31,11 @@ function cleanAmount(value: string) {
 }
 
 export function StreamPanel({
+  demo = false,
   tribeId,
   tribeName,
 }: {
+  demo?: boolean;
   tribeId: "ramaytush" | "muwekma";
   tribeName: string;
 }) {
@@ -66,10 +68,14 @@ export function StreamPanel({
     try {
       await startCheckout(intent, { resuming });
     } catch (caught) {
-      setError(
+      const message =
         caught instanceof Error
           ? caught.message
-          : "Stripe Checkout didn’t open. Check your connection.",
+          : "The checkout preview didn’t open. Check your connection.";
+      setError(
+        message === "Stripe Checkout didn’t open. Check your connection."
+          ? "The checkout preview didn’t open. Check your connection."
+          : message,
       );
       setBusy(false);
     }
@@ -120,16 +126,21 @@ export function StreamPanel({
       <div className="pledge-payment-heading">
         <div>
           <p className="pledge-kicker">Tend checkout preview</p>
-          <h4 id="stream-title">Preview Tend&apos;s Stripe test checkout</h4>
+          <h4 id="stream-title">
+            {demo
+              ? "Preview a sample contribution"
+              : "Preview Tend’s Stripe test checkout"}
+          </h4>
         </div>
         <span className="pledge-test-badge">
-          Test mode
+          {demo ? "Demo mode" : "Stripe test mode"}
         </span>
       </div>
 
       <p className="pledge-payment-intro">
-        Choose a sample amount, then open Stripe&apos;s test checkout. No real
-        payment is created, and no money reaches {tribeName}.
+        {demo
+          ? `Choose a sample amount to preview a receipt while Stripe and Tempo stay idle. ${tribeName} receives no money.`
+          : `Choose a test amount, then open Stripe Checkout in test mode. No real money reaches ${tribeName}.`}
       </p>
 
       <fieldset className="pledge-control">
@@ -171,10 +182,12 @@ export function StreamPanel({
         <summary>
           <span>
             <SlidersHorizontal size={15} aria-hidden="true" />
-            Set Tempo testnet transfer timing
+            {demo
+              ? "Set demo receipt timing"
+              : "Set Tempo testnet transfer timing"}
           </span>
           <small>
-            {settlementCount} testnet transfers, every{" "}
+            {settlementCount} {demo ? "receipt steps" : "testnet transfers"}, every{" "}
             {formatStreamTime(streamIntervalSeconds)}
           </small>
         </summary>
@@ -184,6 +197,7 @@ export function StreamPanel({
           intervalSeconds={streamIntervalSeconds}
           onDurationChange={setStreamDurationSeconds}
           onIntervalChange={setStreamIntervalSeconds}
+          preview={demo}
         />
       </details>
 
@@ -197,21 +211,30 @@ export function StreamPanel({
         {busy ? (
           <>
             <LoaderCircle className="pledge-spinner" size={17} />
-            Opening Stripe test checkout
+            {demo
+              ? "Opening demo receipt preview"
+              : "Opening Stripe test checkout"}
           </>
         ) : (
           <>
-            Open ${amountValid ? selectedAmount.toFixed(2) : "0.00"} test
-            checkout (no real charge)
+            {error
+              ? demo
+                ? "Try demo receipt preview again"
+                : "Try Stripe test checkout again"
+              : demo
+                ? `Preview a $${amountValid ? selectedAmount.toFixed(2) : "0.00"} demo receipt`
+                : `Open a $${amountValid ? selectedAmount.toFixed(2) : "0.00"} Stripe test checkout`}
             <ArrowRight size={17} aria-hidden="true" />
           </>
         )}
       </button>
 
-      <p className="pledge-wallet-note">
-        <ShieldCheck size={13} aria-hidden="true" />
-        Stripe may offer Apple Pay on a supported iPhone.
-      </p>
+      {!demo && (
+        <p className="pledge-wallet-note">
+          <ShieldCheck size={13} aria-hidden="true" />
+          Stripe may offer Apple Pay on a supported iPhone.
+        </p>
+      )}
 
       {error && (
         <p className="pledge-error" role="alert">
@@ -220,8 +243,9 @@ export function StreamPanel({
       )}
 
       <p className="pledge-test-disclosure">
-        Test only. This uses faucet-funded pathUSD on the Tempo Moderato
-        testnet. Use the official donation link above for a real contribution.
+        {demo
+          ? "Demo receipt only. Stripe Checkout and Tempo stay idle. Use the official donation link above to contribute."
+          : "Test only. Stripe Checkout can start faucet-funded pathUSD transfers on the Tempo Moderato testnet. Use the official donation link above to contribute real funds."}
       </p>
     </section>
   );

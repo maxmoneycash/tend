@@ -16,12 +16,14 @@ export function StreamTimingControls({
   intervalSeconds,
   onDurationChange,
   onIntervalChange,
+  preview = false,
 }: {
   amountCents: number;
   durationSeconds: StreamDurationSeconds;
   intervalSeconds: StreamIntervalSeconds;
   onDurationChange: (value: StreamDurationSeconds) => void;
   onIntervalChange: (value: StreamIntervalSeconds) => void;
+  preview?: boolean;
 }) {
   const intervalIndex = STREAM_INTERVALS_SECONDS.indexOf(intervalSeconds);
   const settlements = streamSettlementCount(
@@ -34,7 +36,9 @@ export function StreamTimingControls({
   return (
     <div className="pledge-stream-timing">
       <fieldset className="pledge-control">
-        <legend>Tempo testnet transfer window</legend>
+        <legend>
+          {preview ? "Demo receipt window" : "Tempo testnet transfer window"}
+        </legend>
         <div className="pledge-segmented pledge-duration">
           {STREAM_DURATIONS_SECONDS.map((seconds) => (
             <button
@@ -50,15 +54,21 @@ export function StreamTimingControls({
       </fieldset>
 
       <fieldset className="pledge-control pledge-cadence">
-        <legend className="sr-only">Tempo testnet transfer interval</legend>
+        <legend className="sr-only">
+          {preview ? "Demo receipt interval" : "Tempo testnet transfer interval"}
+        </legend>
         <div className="pledge-cadence-heading">
-          <span aria-hidden="true">Tempo testnet transfer interval</span>
+          <span aria-hidden="true">
+            {preview ? "Demo receipt interval" : "Tempo testnet transfer interval"}
+          </span>
           <output aria-live="polite">
             Every {formatStreamTime(intervalSeconds)}
           </output>
         </div>
         <Slider
-          aria-label="Tempo testnet transfer interval"
+          aria-label={
+            preview ? "Demo receipt interval" : "Tempo testnet transfer interval"
+          }
           className="pledge-timing-slider"
           min={0}
           max={STREAM_INTERVALS_SECONDS.length - 1}
@@ -79,7 +89,8 @@ export function StreamTimingControls({
 
       <div className="pledge-stream-preview" aria-live="polite">
         <span>
-          <strong>{settlements}</strong> Tempo testnet transfers
+          <strong>{settlements}</strong>{" "}
+          {preview ? "receipt steps" : "Tempo testnet transfers"}
         </span>
         <span>
           <strong>
@@ -89,7 +100,7 @@ export function StreamTimingControls({
               maximumFractionDigits: 6,
             })}
           </strong>{" "}
-          per testnet transfer
+          per {preview ? "receipt step" : "testnet transfer"}
         </span>
         <span>
           <strong>{formatStreamTime(durationSeconds)}</strong> total window

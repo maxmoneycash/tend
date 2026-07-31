@@ -6,6 +6,7 @@ import { AmbientBlobs } from "@/components/layout/AmbientBlobs";
 import { countyNotes, countyTribes, getTribe } from "@/lib/tribes";
 import { StreamPanel } from "@/components/stream/StreamPanel";
 import { ProgramOfficialHero } from "@/components/programs/ProgramOfficialHero";
+import { demoMode } from "@/lib/demo";
 
 export default async function ProgramDetail({
   params,
@@ -15,6 +16,7 @@ export default async function ProgramDetail({
   const { id } = await params;
   const tribe = getTribe(id);
   if (!tribe) notFound();
+  const demo = demoMode();
 
   const tribeCounties = Object.entries(countyTribes)
     .filter(([, ids]) => ids.includes(tribe.id))
@@ -65,7 +67,11 @@ export default async function ProgramDetail({
               </p>
             </aside>
 
-            <StreamPanel tribeId={tribe.id} tribeName={tribe.name} />
+            <StreamPanel
+              demo={demo}
+              tribeId={tribe.id}
+              tribeName={tribe.name}
+            />
           </section>
 
           <div className="mt-5 grid gap-4 lg:grid-cols-[1.5fr_1fr]">

@@ -2,9 +2,20 @@ import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { PledgeFlow } from "@/components/PledgeFlow";
 import { demoMode } from "@/lib/demo";
+import { tribes } from "@/lib/tribes";
 
 export default function PledgePage() {
   const demo = demoMode();
+  const programs = Object.values(tribes).map(
+    ({ id, name, taxName, region, blurb, siteUrl }) => ({
+      id,
+      name,
+      taxName,
+      region,
+      blurb,
+      siteUrl,
+    }),
+  );
 
   return (
     <>
@@ -31,7 +42,9 @@ export default function PledgePage() {
 
         <section className="relative mx-auto max-w-6xl px-5 pb-12 pt-8 sm:pt-12">
           <div className="max-w-2xl">
-            <p className="note">Tend test checkout</p>
+            <p className="note">
+              {demo ? "Tend demo preview" : "Tend test checkout"}
+            </p>
             <h1 className="display-1 mt-3">Find a program by address or county</h1>
             <p className="mt-4 max-w-xl text-[14px] leading-relaxed text-[#555555]">
               Tend matches your county with public information from each
@@ -40,7 +53,7 @@ export default function PledgePage() {
           </div>
 
           <div className="mt-7">
-            <PledgeFlow demo={demo} />
+            <PledgeFlow demo={demo} programs={programs} />
           </div>
         </section>
 
@@ -52,7 +65,7 @@ export default function PledgePage() {
               </h2>
               <p className="mt-2 max-w-2xl text-[12px] leading-relaxed text-[#555555]">
                 Each program page keeps its official donation links separate
-                from Tend&apos;s Stripe test checkout.
+                from Tend&apos;s {demo ? "demo preview" : "Stripe test checkout"}.
               </p>
             </div>
             <Link
