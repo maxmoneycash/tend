@@ -2911,11 +2911,14 @@ body {
 
 .tend-receipt-explorer {
   display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
   min-height: 2.75rem;
   margin-block-start: 0.35rem;
+  padding-block: 0.55rem;
   padding-inline: 0.9rem;
   color: var(--pledge-paper);
   background: var(--pledge-ink);
@@ -2923,7 +2926,11 @@ body {
   border-radius: 0.5rem;
   font-size: 0.68rem;
   font-weight: 600;
+  overflow-wrap: anywhere;
+  text-align: center;
   text-decoration: none;
+  white-space: normal;
+  touch-action: manipulation;
 }
 
 .tend-receipt-links {
