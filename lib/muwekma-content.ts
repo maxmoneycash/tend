@@ -24,7 +24,7 @@ export const timeline: TimelineEntry[] = [
   {
     date: "1914 to 1927",
     title: "The Verona Band in federal records",
-    body: "The Muwekma recognition history quotes a 1996 Bureau of Indian Affairs finding that the Pleasanton or Verona Band was previously acknowledged during this period.",
+    body: "The Tribe’s recognition page quotes a May 24, 1996 preliminary finding by the Bureau of Indian Affairs (BIA) that the Pleasanton or Verona Band of Alameda County was previously acknowledged between 1914 and 1927.",
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",
@@ -32,7 +32,7 @@ export const timeline: TimelineEntry[] = [
   {
     date: "1995",
     title: "A recognition petition reaches the White House",
-    body: "The Muwekma Tribal Council delivered its federal acknowledgment petition during a White House meeting on January 25.",
+    body: "The Tribe says its historical petition was submitted during a White House meeting of California Indian leaders on January 25, 1995.",
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",
@@ -40,10 +40,18 @@ export const timeline: TimelineEntry[] = [
   {
     date: "2002",
     title: "The federal petition is denied",
-    body: "The Tribe’s account records the Bureau of Indian Affairs final determination and explains which acknowledgment criteria the agency found satisfied.",
+    body: "The Tribe’s recognition page dates the BIA’s Final Determination to September 6, 2002. It says the BIA considered the Tribe previously recognized and never legally terminated.",
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",
+  },
+  {
+    date: "2002 and 2004",
+    title: "The Tribe records Chochenyo language work",
+    body: "The Tribe says it established its Language Committee in 2002. Its language page records a March 2004 workshop and lists a Let’s Speak Chochenyo series and a Let’s Listen to Chochenyo lesson.",
+    evidence: "documented",
+    sourceName: "Muwekma Ohlone Tribe",
+    sourceUrl: "https://www.muwekma.org/language-revitalization.html",
   },
   {
     date: "2022",
@@ -53,14 +61,6 @@ export const timeline: TimelineEntry[] = [
     sourceName: "Stanford Report",
     sourceUrl:
       "https://news.stanford.edu/stories/2022/03/genomic-analysis-supports-ancient-muwekma-ohlone-connection",
-  },
-  {
-    date: "Today",
-    title: "Chochenyo language work continues",
-    body: "The Muwekma Language Committee teaches Chochenyo and publishes language materials under the Tribe’s authority.",
-    evidence: "documented",
-    sourceName: "Muwekma Ohlone Tribe",
-    sourceUrl: "https://www.muwekma.org/language-revitalization.html",
   },
 ];
 
@@ -87,7 +87,7 @@ export const presidioSites: OhloneSite[] = [
   },
   {
     name: "Fort Mason",
-    subtitle: "Ohlone cooking hearths show human presence before Spanish colonization",
+    subtitle: "Cooking-hearth remains near the fort predate the Spanish arrival in 1776",
     evidence: "documented",
     sourceName: "National Park Service",
     sourceUrl:
@@ -106,7 +106,7 @@ export const signals: Signal[] = [
   {
     date: "Territory",
     title: "The Tribe publishes its own Bay Area description",
-    detail: "The official history names San Francisco, San Mateo, most of Santa Clara, Alameda, and Contra Costa, with portions of four other counties.",
+    detail: "The official history names San Francisco, San Mateo, most of Santa Clara, Alameda, and Contra Costa, with portions of Napa, Santa Cruz, Solano, and San Joaquin.",
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/history.html",
@@ -122,7 +122,7 @@ export const signals: Signal[] = [
   {
     date: "Research",
     title: "The 2022 study was built with tribal participation",
-    detail: "Stanford describes a collaboration involving Muwekma leadership from the research request through publication.",
+    detail: "Stanford describes a collaboration with Muwekma leadership from the Tribe’s first research request through publication.",
     evidence: "documented",
     sourceName: "Stanford Report",
     sourceUrl:
@@ -130,32 +130,47 @@ export const signals: Signal[] = [
   },
 ];
 
-export const tribeFacts = [
+interface TribeFact extends SourcedEntry {
+  label: string;
+  value: string;
+  note: string;
+}
+
+export const tribeFacts: TribeFact[] = [
   {
     label: "Previous acknowledgment",
     value: "1914–1927",
     note: "period quoted in the Tribe’s recognition record",
+    sourceName: "Muwekma Ohlone Tribe",
+    sourceUrl: "https://www.muwekma.org/recognition-process.html",
   },
   {
     label: "Petition delivered",
     value: "1995",
     note: "federal acknowledgment petition",
+    sourceName: "Muwekma Ohlone Tribe",
+    sourceUrl: "https://www.muwekma.org/recognition-process.html",
   },
   {
     label: "Genomic study",
     value: "2022",
     note: "published in PNAS",
+    sourceName: "Stanford Report",
+    sourceUrl:
+      "https://news.stanford.edu/stories/2022/03/genomic-analysis-supports-ancient-muwekma-ohlone-connection",
   },
   {
     label: "Core counties named",
     value: "5",
     note: "plus portions of four others",
+    sourceName: "Muwekma Ohlone Tribe",
+    sourceUrl: "https://www.muwekma.org/history.html",
   },
 ];
 
 export const languageFacts = {
   headline: "Chochenyo language work",
-  body: "The Muwekma Language Committee began its revitalization program in 2002. Tribal members continue to teach, speak, and publish Chochenyo language materials.",
+  body: "The Tribe says it established its Language Committee in 2002 and spoke Chochenyo after the language had been silent for more than 65 years. Its page records a March 2004 workshop at San Jose State University and lists workshop and listening-lesson material.",
   evidence: "documented" as Evidence,
   sourceName: "Muwekma Ohlone Tribe",
   sourceUrl: "https://www.muwekma.org/language-revitalization.html",

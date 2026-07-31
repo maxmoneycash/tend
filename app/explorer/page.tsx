@@ -24,6 +24,22 @@ function EvidenceBadge({ tier }: { tier: Evidence }) {
   );
 }
 
+function SourceLink({ name, url }: { name: string; url: string }) {
+  const host = new URL(url).host.replace(/^www\./, "");
+  return (
+    <a
+      className="mt-3 inline-flex min-h-11 max-w-full flex-wrap items-center gap-x-1.5 gap-y-0.5 rounded-[9px] border border-black/10 bg-black/[0.03] px-3 py-2 text-[12px] font-medium leading-snug text-[#3a3a3a] transition-colors hover:border-black/20 hover:bg-black/[0.05] hover:text-[#111111] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+      href={url}
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <span>Source: {name}</span>
+      <span className="font-mono text-[12px] text-[#666666]">{host} ↗</span>
+      <span className="sr-only">(opens in a new tab)</span>
+    </a>
+  );
+}
+
 function PartHeader({ title, sub }: { title: string; sub: string }) {
   return (
     <div className="mb-5 mt-12">
@@ -56,19 +72,20 @@ export default function ExplorerPage() {
               The Land Beneath the Bay
             </h1>
             <p className="text-[13px] sm:text-[14px] text-[#7d7d7d] max-w-xl text-pretty leading-relaxed">
-              A source-labeled prototype about Muwekma history, language, and
-              the federal recognition case. The evidence labels show how the
-              research team classified each entry.
+              This guide follows Muwekma history through the Tribe’s records
+              and other official sources. A “documented” badge means the linked
+              page supports the entry.
             </p>
           </div>
 
           {/* Fact row */}
-          <div className="animate-enter animate-enter-delay-1 grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          <div className="animate-enter animate-enter-delay-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
             {tribeFacts.map((f) => (
               <div key={f.label} className="surface-1 rounded-[16px] p-4">
                 <p className="text-[9px] text-[#6b6b6b] uppercase tracking-wider">{f.label}</p>
                 <p className="font-mono text-[26px] font-bold text-[#111111] tracking-tight">{f.value}</p>
                 <p className="text-[10px] text-[#8a8a8a] mt-0.5">{f.note}</p>
+                <SourceLink name={f.sourceName} url={f.sourceUrl} />
               </div>
             ))}
           </div>
@@ -76,28 +93,28 @@ export default function ExplorerPage() {
           {/* Sourced timeline */}
           <PartHeader
             title="A short sourced timeline"
-            sub="The prototype follows the research record from deep history through the 2022 Stanford genomics study."
+            sub="From Yelamu villages to the 2022 Stanford genomics study, each entry names its source."
           />
           <div className="space-y-2">
             {timeline.map((t) => (
               <div
                 key={t.title}
-                className="surface-1 rounded-[12px] p-4 grid grid-cols-[92px_1fr_auto] gap-3 items-baseline"
+                className="surface-1 rounded-[12px] p-4 sm:grid sm:grid-cols-[110px_1fr_auto] sm:items-baseline sm:gap-3"
               >
-                <span className="font-mono text-[11px] text-[#FA4616]">{t.date}</span>
+                <div className="mb-1.5 flex items-center justify-between gap-2 sm:mb-0 sm:block">
+                  <span className="font-mono text-[11px] text-[#FA4616]">{t.date}</span>
+                  <span className="sm:hidden">
+                    <EvidenceBadge tier={t.evidence} />
+                  </span>
+                </div>
                 <div>
                   <p className="text-[13px] font-semibold text-[#111111]">{t.title}</p>
                   <p className="text-[12px] text-[#555555] leading-relaxed mt-1">{t.body}</p>
-                  <a
-                    className="mt-2 inline-block text-[11px] font-medium text-[#555555] underline underline-offset-4 hover:text-[#111111]"
-                    href={t.sourceUrl}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    Source: {t.sourceName}
-                  </a>
+                  <SourceLink name={t.sourceName} url={t.sourceUrl} />
                 </div>
-                <EvidenceBadge tier={t.evidence} />
+                <span className="hidden sm:block">
+                  <EvidenceBadge tier={t.evidence} />
+                </span>
               </div>
             ))}
           </div>
@@ -105,7 +122,7 @@ export default function ExplorerPage() {
           {/* Source guide */}
           <PartHeader
             title="Read each claim at its source"
-            sub="These cards point to the Tribe’s history, recognition record, and research collaboration."
+            sub="These cards link to the official pages behind the entries."
           />
           <div className="grid gap-3 sm:grid-cols-3">
             {signals.map((s) => (
@@ -116,14 +133,7 @@ export default function ExplorerPage() {
                 </div>
                 <p className="text-[13px] font-semibold text-[#111111]">{s.title}</p>
                 <p className="text-[12px] text-[#555555] leading-relaxed mt-1.5">{s.detail}</p>
-                <a
-                  className="mt-2 inline-block text-[11px] font-medium text-[#555555] underline underline-offset-4 hover:text-[#111111]"
-                  href={s.sourceUrl}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Source: {s.sourceName}
-                </a>
+                <SourceLink name={s.sourceName} url={s.sourceUrl} />
               </div>
             ))}
           </div>
@@ -141,33 +151,21 @@ export default function ExplorerPage() {
                   <EvidenceBadge tier={site.evidence} />
                 </div>
                 <p className="text-[11px] text-[#6b6b6b] leading-relaxed mt-1">{site.subtitle}</p>
-                <a
-                  className="mt-2 inline-block text-[11px] font-medium text-[#555555] underline underline-offset-4 hover:text-[#111111]"
-                  href={site.sourceUrl}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Source: {site.sourceName}
-                </a>
+                <SourceLink name={site.sourceName} url={site.sourceUrl} />
               </div>
             ))}
           </div>
 
           {/* Language source */}
           <PartHeader title={languageFacts.headline} sub="" />
-          <div className="surface-1 rounded-[16px] p-5 flex items-start justify-between gap-4">
-            <p className="text-[13px] text-[#3a3a3a] leading-relaxed max-w-2xl">
-              {languageFacts.body}{" "}
-              <a
-                className="font-medium text-[#555555] underline underline-offset-4 hover:text-[#111111]"
-                href={languageFacts.sourceUrl}
-                rel="noreferrer"
-                target="_blank"
-              >
-                Source: {languageFacts.sourceName}
-              </a>
-            </p>
-            <EvidenceBadge tier={languageFacts.evidence} />
+          <div className="surface-1 rounded-[16px] p-5">
+            <div className="flex items-start justify-between gap-4">
+              <p className="text-[13px] text-[#3a3a3a] leading-relaxed max-w-2xl">
+                {languageFacts.body}
+              </p>
+              <EvidenceBadge tier={languageFacts.evidence} />
+            </div>
+            <SourceLink name={languageFacts.sourceName} url={languageFacts.sourceUrl} />
           </div>
 
           {/* CTA */}
