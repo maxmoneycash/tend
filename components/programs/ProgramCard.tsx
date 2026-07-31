@@ -39,7 +39,7 @@ export function ProgramCard({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
         <span
-          className={`absolute left-4 top-4 inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold ${tone.badge}`}
+          className={`absolute left-4 top-4 inline-flex rounded-full border px-2.5 py-1 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold ${tone.badge}`}
         >
           {program.region}
         </span>
@@ -47,7 +47,7 @@ export function ProgramCard({
 
       <div className="p-4 sm:p-5">
         <div className={`mb-4 h-1 w-10 rounded-full ${tone.accent}`} />
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
+        <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
           Organization
         </p>
         <h2 className="mt-1 text-balance text-[17px] font-bold leading-tight tracking-[-0.02em] text-[#171411]">
@@ -90,7 +90,7 @@ export function ProgramCard({
         >
           {counties.map((county) => (
             <span
-              className="rounded-full border border-black/[0.08] bg-[#f7f5f2] px-2 py-0.5 text-[10px] text-[#625c56]"
+              className="rounded-full border border-black/[0.08] bg-[#f7f5f2] px-2 py-0.5 text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#625c56]"
               key={county}
             >
               {county}
@@ -98,7 +98,7 @@ export function ProgramCard({
           ))}
         </div>
 
-        <p className="mt-3 border-t border-black/[0.07] pt-3 text-[10px] leading-relaxed text-[#7c756e]">
+        <p className="mt-3 border-t border-black/[0.07] pt-3 text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#7c756e]">
           Tend listing: public information and test checkout only.
         </p>
       </div>

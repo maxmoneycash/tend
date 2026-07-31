@@ -35,7 +35,7 @@ export default async function ProgramDetail({
           <div className="animate-enter">
             <Link
               href="/programs"
-              className="inline-flex min-h-11 items-center text-[11px] font-semibold text-[#6b6b6b] hover:text-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
+              className="inline-flex min-h-11 items-center text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold text-[#6b6b6b] hover:text-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
             >
               ← All programs
             </Link>
@@ -49,7 +49,7 @@ export default async function ProgramDetail({
             <aside className="h-fit rounded-[20px] border-2 border-[#d99445]/35 bg-[#fff8ed] p-5 sm:p-6">
               <div className="flex items-center gap-2 text-[#9b5a0a]">
                 <FlaskConical aria-hidden="true" size={17} />
-                <p className="text-[10px] font-semibold uppercase tracking-[0.14em]">
+                <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold uppercase tracking-[0.14em]">
                   Tend preview
                 </p>
               </div>
@@ -61,7 +61,7 @@ export default async function ProgramDetail({
                 and the receipt settles with faucet-funded pathUSD on Tempo
                 Moderato testnet.
               </p>
-              <p className="mt-4 border-t border-[#d99445]/25 pt-4 text-[11px] font-semibold leading-relaxed text-[#4c3d2d]">
+              <p className="mt-4 border-t border-[#d99445]/25 pt-4 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold text-[#4c3d2d]">
                 Use the official donation button above for real giving. Use
                 this panel only to preview the flow.
               </p>
@@ -79,7 +79,7 @@ export default async function ProgramDetail({
               aria-labelledby="about-program"
               className="surface-1 rounded-[16px] p-5 sm:p-6"
             >
-              <p className="flex items-center gap-2 text-[11px] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
+              <p className="flex items-center gap-2 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
                 <Info aria-hidden="true" size={14} />
                 About this program
               </p>
@@ -93,7 +93,7 @@ export default async function ProgramDetail({
                 {tribeCounties.map((c) => (
                   <span
                     key={c}
-                    className="text-[10px] px-1.5 py-0.5 rounded bg-black/[0.03] text-[#6b6b6b] border border-black/[0.08]"
+                    className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] px-1.5 py-0.5 rounded bg-black/[0.03] text-[#6b6b6b] border border-black/[0.08]"
                   >
                     {c}
                   </span>
@@ -101,7 +101,7 @@ export default async function ProgramDetail({
               </div>
               {notes.map((n) => (
                 <p
-                  className="mt-4 text-[11px] leading-relaxed text-[#8a8a8a]"
+                  className="mt-4 text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#8a8a8a]"
                   key={n}
                 >
                   {n}
@@ -137,7 +137,7 @@ export default async function ProgramDetail({
             </section>
 
             <div className="space-y-4">
-              <p className="text-[11px] text-[#8a8a8a] text-center">
+              <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#8a8a8a] text-center">
                 Want to try address matching?{" "}
                 <Link
                   className="underline underline-offset-4 text-[#555555] hover:text-[#111111]"
@@ -148,15 +148,15 @@ export default async function ProgramDetail({
               </p>
 
               <div className="surface-1 rounded-[16px] p-5">
-                <p className="text-[11px] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
+                <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
                   Machine payments
                 </p>
-                <pre className="mt-3 rounded-[10px] bg-[#0f0f0f] border border-black/[0.08] p-3 font-mono text-[10.5px] leading-relaxed text-[#555555] overflow-x-auto">
+                <pre className="mt-3 rounded-[10px] bg-[#0f0f0f] border border-black/[0.08] p-3 font-mono text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#555555] overflow-x-auto">
                   {`POST /api/mpp/land-tax
      ?tribe=${tribe.id}
 → 402 · pay $25.00 · receipt`}
                 </pre>
-                <p className="mt-2 text-[10px] font-mono text-[#8a8a8a]">
+                <p className="mt-2 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-mono text-[#8a8a8a]">
                   Demonstration only. pathUSD on Tempo Moderato testnet.
                 </p>
               </div>

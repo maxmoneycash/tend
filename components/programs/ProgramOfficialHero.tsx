@@ -34,7 +34,7 @@ export function ProgramOfficialHero({
   return (
     <section className="overflow-hidden rounded-[24px] border border-black/[0.1] bg-white shadow-[0_24px_70px_rgba(28,20,14,0.08)] lg:grid lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
       <div className="p-5 sm:p-8 lg:p-10">
-        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#7a736c]">
+        <div className="flex items-center gap-2 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold uppercase tracking-[0.14em] text-[#7a736c]">
           <Landmark aria-hidden="true" size={14} />
           Organization
         </div>
@@ -51,7 +51,7 @@ export function ProgramOfficialHero({
         <div className="mt-4 flex flex-wrap gap-1.5">
           {counties.map((county) => (
             <span
-              className="rounded-full border border-black/[0.08] bg-[#f7f5f2] px-2.5 py-1 text-[10px] text-[#625c56]"
+              className="rounded-full border border-black/[0.08] bg-[#f7f5f2] px-2.5 py-1 text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#625c56]"
               key={county}
             >
               {county}
@@ -110,7 +110,7 @@ export function ProgramOfficialHero({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/75">
+          <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold uppercase tracking-[0.14em] text-white/75">
             Program region
           </p>
           <p className="mt-1 text-[14px] font-semibold">{program.region}</p>
