@@ -114,7 +114,7 @@ export const signals: Signal[] = [
   {
     date: "Recognition",
     title: "The Tribe documents the federal process",
-    detail: "The Tribe describes its recognition petition on this page. It quotes agency findings and court decisions.",
+    detail: "The page quotes agency findings and court decisions. Tend links to this page; the underlying records are outside this guide.",
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",
