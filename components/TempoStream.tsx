@@ -82,42 +82,37 @@ export function TempoStream({
   const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
+    // Display-only: the Stripe webhook triggers all Tempo settlement work.
+    // This component just polls the durable receipt state and renders it.
     const abort = new AbortController();
+    let stopped = false;
 
-    async function connect() {
+    async function poll() {
       setError(null);
       try {
-        const response = await fetch("/api/tempo/stream", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId }),
-          signal: abort.signal,
-        });
-        if (!response.ok || !response.body) {
-          const data = (await response.json().catch(() => ({}))) as {
+        while (!stopped) {
+          const response = await fetch(
+            `/api/tempo/stream?sessionId=${encodeURIComponent(sessionId)}`,
+            { signal: abort.signal },
+          );
+          const data = (await response.json()) as {
+            status?: string;
+            events?: TempoEvent[];
             error?: string;
           };
-          throw new Error(data.error ?? "The settlement stream could not start.");
-        }
+          if (!response.ok) {
+            throw new Error(data.error ?? "The receipt state is unavailable.");
+          }
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
+          if (data.status === "payment-failed") {
+            setError(
+              "Stripe reported this payment as failed. No settlements will stream.",
+            );
+            setStatus("error");
+            return;
+          }
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          const packets = buffer.split("\n\n");
-          buffer = packets.pop() ?? "";
-
-          for (const packet of packets) {
-            const line = packet
-              .split("\n")
-              .find((candidate) => candidate.startsWith("data: "));
-            if (!line) continue;
-            const event = JSON.parse(line.slice(6)) as TempoEvent;
-
+          for (const event of data.events ?? []) {
             if (event.type === "preparing") {
               setStatus("preparing");
             } else if (event.type === "ready") {
@@ -137,20 +132,26 @@ export function TempoStream({
               setStatus("error");
             }
           }
+
+          if (data.status === "complete" || data.status === "error") return;
+          await new Promise((resolve) => setTimeout(resolve, 1200));
         }
       } catch (caught) {
         if (abort.signal.aborted) return;
         setError(
           caught instanceof Error
             ? caught.message
-            : "The settlement stream could not start.",
+            : "The receipt state is unavailable.",
         );
         setStatus("error");
       }
     }
 
-    void connect();
-    return () => abort.abort();
+    void poll();
+    return () => {
+      stopped = true;
+      abort.abort();
+    };
   }, [retryKey, sessionId]);
 
   const latest = settlements.at(-1);
