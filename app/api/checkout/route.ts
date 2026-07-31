@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { z } from "zod";
+import { auth0 } from "@/lib/auth0";
 import { demoMode } from "@/lib/demo";
 import { getStripe } from "@/lib/stripe";
 import { getTribe, getTribeAccount, type TribeId } from "@/lib/tribes";
@@ -33,6 +34,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid pledge" }, { status: 400 });
   }
   const { tribeId, amountCents, interval, returnTo = "/pledge" } = parsed.data;
+  if (process.env.TEND_DEMO_AUTH_BYPASS !== "1") {
+    const session = await auth0.getSession();
+    if (!session) {
+      return NextResponse.json(
+        {
+          error: "Sign in before continuing to Stripe.",
+          loginUrl: `/auth/login?returnTo=${encodeURIComponent(returnTo)}`,
+        },
+        { status: 401 },
+      );
+    }
+  }
+
   const tribe = getTribe(tribeId)!;
   const account = getTribeAccount(tribeId as TribeId);
   const origin = requestOrigin(req);

@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
 import { PledgeFlow } from "@/components/PledgeFlow";
+import { auth0 } from "@/lib/auth0";
 import { demoMode } from "@/lib/demo";
 import { countyTribes, tribes, type TribeId } from "@/lib/tribes";
 
@@ -19,7 +21,12 @@ function counties(id: string) {
     .map(([county]) => county);
 }
 
-export default function Home() {
+export default async function Home() {
+  if (process.env.TEND_DEMO_AUTH_BYPASS !== "1") {
+    const session = await auth0.getSession();
+    if (!session) redirect("/auth/login?returnTo=/pledge");
+  }
+
   const demo = demoMode();
   const orgs = Object.values(tribes);
 
@@ -61,7 +68,7 @@ export default function Home() {
             <span className="text-gradient-whop">Tend it.</span>
           </h1>
           <p className="animate-enter animate-enter-delay-2 mt-5 max-w-xl text-[15px] leading-relaxed text-[#555555]">
-            A small recurring contribution to the tribes whose land you live on. Type your address and begin — <strong className="text-[#2a2a2a]">no platform fee.</strong>
+            A small recurring contribution to the tribes whose land you live on. Sign in, type your address, and begin — <strong className="text-[#2a2a2a]">no platform fee.</strong>
           </p>
           <div className="animate-enter animate-enter-delay-3 mt-7 flex flex-wrap gap-3">
             <a href="#pledge" className="btn tnd-btn-primary">
@@ -155,7 +162,7 @@ export default function Home() {
       <section id="pledge" className="relative mx-auto max-w-6xl px-5 mt-16">
         <div className="rule-row">
           <h2 className="display-2">Begin</h2>
-          <span className="note">about ninety seconds · no account needed</span>
+          <span className="note">about ninety seconds · secured by Auth0</span>
         </div>
         <div className="mt-6">
           <PledgeFlow demo={demo} />

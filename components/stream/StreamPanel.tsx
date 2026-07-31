@@ -55,7 +55,15 @@ export function StreamPanel({
           returnTo: `/programs/${tribeId}`,
         }),
       });
-      const data = (await response.json()) as { error?: string; url?: string };
+      const data = (await response.json()) as {
+        error?: string;
+        loginUrl?: string;
+        url?: string;
+      };
+      if (response.status === 401 && data.loginUrl) {
+        window.location.assign(data.loginUrl);
+        return;
+      }
       if (!response.ok || !data.url) {
         throw new Error(data.error ?? "Stripe Checkout could not open.");
       }

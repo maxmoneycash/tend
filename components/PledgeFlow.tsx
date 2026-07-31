@@ -105,7 +105,15 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
           interval,
         }),
       });
-      const data = (await res.json()) as { url?: string; error?: string };
+      const data = (await res.json()) as {
+        url?: string;
+        error?: string;
+        loginUrl?: string;
+      };
+      if (res.status === 401 && data.loginUrl) {
+        window.location.assign(data.loginUrl);
+        return;
+      }
       if (!res.ok || !data.url) {
         setError(
           data.error ??
