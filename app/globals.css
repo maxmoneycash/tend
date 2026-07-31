@@ -1517,20 +1517,27 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 .btn {
   display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   font-weight: 600;
   min-height: var(--space-control);
   font-size: 0.875rem;
+  line-height: 1.25;
   padding: 0.8rem 1.35rem;
   border-radius: 12px;
+  overflow-wrap: anywhere;
+  text-align: center;
+  white-space: normal;
   transition:
     background-color var(--duration-short) var(--ease-out),
     border-color var(--duration-short) var(--ease-out),
     box-shadow var(--duration-short) var(--ease-out),
     color var(--duration-short) var(--ease-out),
     transform var(--duration-micro) var(--ease-out);
+  touch-action: manipulation;
 }
 .tnd-btn-primary {
   background: #fa4616;
