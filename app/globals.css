@@ -3402,6 +3402,18 @@ html:has(.landing-page) body {
     border-radius: 1rem;
   }
 
+  .pledge-flow .pledge-primary-button,
+  .pledge-flow .pledge-checkout-button {
+    min-width: 0;
+    padding-block: 0.65rem;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  .pledge-flow :is(.pledge-primary-button, .pledge-checkout-button) svg {
+    flex: 0 0 auto;
+  }
+
   section[class~="pt-20"] {
     padding-top: 3rem;
   }
