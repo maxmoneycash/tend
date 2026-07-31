@@ -58,9 +58,29 @@ export function ProgramCard({
         <h2 className="mt-1 text-balance text-[17px] font-bold leading-tight tracking-[-0.02em] text-[#171411]">
           {program.name}
         </h2>
-        <p className="mt-2 text-[13px] font-semibold text-[#4e4944]">
+        <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
+          Program
+        </p>
+        <p className="mt-1 text-[13px] font-semibold text-[#4e4944]">
           {program.taxName}
         </p>
+        <p className="mt-2 line-clamp-3 text-[12px] leading-relaxed text-[#68625c]">
+          {program.blurb}
+        </p>
+
+        <div
+          aria-label="Counties listed for this program"
+          className="mt-3 flex flex-wrap gap-1.5"
+        >
+          {counties.map((county) => (
+            <span
+              className="rounded-full border border-black/[0.08] bg-[#f7f5f2] px-2 py-0.5 text-[10px] text-[#625c56]"
+              key={county}
+            >
+              {county}
+            </span>
+          ))}
+        </div>
 
         <p className="mt-4 text-[12px] leading-relaxed text-[#625c56]">
           Opens {host(program.officialDonationUrl)} for {program.name}.
@@ -83,24 +103,6 @@ export function ProgramCard({
             View Tend details
             <ArrowRight aria-hidden="true" size={14} />
           </Link>
-        </div>
-
-        <p className="mt-2 line-clamp-2 text-[12px] leading-relaxed text-[#68625c]">
-          {program.blurb}
-        </p>
-
-        <div
-          aria-label="Counties listed for this program"
-          className="mt-3 flex flex-wrap gap-1.5"
-        >
-          {counties.map((county) => (
-            <span
-              className="rounded-full border border-black/[0.08] bg-[#f7f5f2] px-2 py-0.5 text-[10px] text-[#625c56]"
-              key={county}
-            >
-              {county}
-            </span>
-          ))}
         </div>
 
         <p className="mt-3 border-t border-black/[0.07] pt-3 text-[10px] leading-relaxed text-[#7c756e]">
