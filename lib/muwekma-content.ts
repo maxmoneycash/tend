@@ -160,9 +160,9 @@ export const tribeFacts: TribeFact[] = [
       "https://news.stanford.edu/stories/2022/03/genomic-analysis-supports-ancient-muwekma-ohlone-connection",
   },
   {
-    label: "Core counties named",
-    value: "5",
-    note: "plus portions of four others",
+    label: "Counties named",
+    value: "9",
+    note: "four are listed only in part",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/history.html",
   },
