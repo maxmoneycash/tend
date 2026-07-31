@@ -23,7 +23,7 @@ export const tribes: Record<TribeId, Tribe> = {
     taxName: "Yunakin Land Tax",
     region: "San Francisco Peninsula",
     blurb:
-      'Yunakin means "village" in the Ramaytush language. It is a financial contribution for people in San Francisco, San Mateo, and part of Santa Clara County. Supporters can give once or set a recurring contribution.',
+      'The Association of Ramaytush Ohlone describes Yunakin Land Tax as a financial contribution. The program is for people in San Francisco, San Mateo, and part of Santa Clara County. Its page says Yunakin is the Ramaytush word for "village." Contributions can be one-time or recurring.',
     siteUrl: "https://www.ramaytush.org",
     officialProgramUrl: "https://www.ramaytush.org/donate.html",
     officialDonationUrl:
