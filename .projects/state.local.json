@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "project": {
+    "catalog": "prod",
+    "initializedAt": "2026-07-31T00:30:57.192Z",
+    "merchantDisplayName": "Muwekma",
+    "merchantId": "acct_1Tz2raRsNlwqH0RM",
+    "projectId": "project_61V8SJ7HyMCrHU16Q16V8QoxU1SQjUOItTabFjLYOSSu",
+    "projectName": "tend"
+  },
+  "providers": {
+    "auth0": {
+      "accountRequestId": "facctrq_61V8SKhbwaXTlOyQv16V8QoxU1SQjUOItTabFjLYOTGK",
+      "configuration": {
+        "locality": "us",
+        "naming_prefix": "tend-zionbet"
+      },
+      "linkedAt": "2026-07-31T00:32:39.371Z",
+      "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
+      "providerName": "Auth0",
+      "redirectUrl": null,
+      "requestedAt": "2026-07-31T00:32:39.371Z",
+      "status": "complete"
+    }
+  },
+  "resources": {
+    "auth0-client": {
+      "configuration": {
+        "name": "tend"
+      },
+      "createdAt": "2026-07-31T00:32:57.450Z",
+      "lastRevealedAt": "2026-07-31T00:32:57.792Z",
+      "lastStatus": "complete",
+      "name": "auth0-client",
+      "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
+      "providerName": "Auth0",
+      "resourceId": "fres_61V8SL0051lnGl7KR16V8QoxU1SQjUOItTabFjLYOWt6",
+      "serviceId": "client"
+    },
+    "auth0-client-2": {
+      "configuration": {
+        "name": "tend"
+      },
+      "createdAt": "2026-07-31T00:33:04.483Z",
+      "lastRevealedAt": "2026-07-31T00:33:04.830Z",
+      "lastStatus": "complete",
+      "name": "auth0-client-2",
+      "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
+      "providerName": "Auth0",
+      "resourceId": "fres_61V8SL7BVp6RDos7v16V8QoxU1SQjUOItTabFjLYOIfA",
+      "serviceId": "client"
+    },
+    "auth0-plan": {
+      "configuration": {},
+      "createdAt": "2026-07-31T00:32:51.124Z",
+      "lastRevealedAt": "2026-07-31T00:32:51.449Z",
+      "lastStatus": "complete",
+      "name": "auth0-plan",
+      "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
+      "providerName": "Auth0",
+      "resourceId": "fres_61V8SKuc4zWiSJ8Mw16V8QoxU1SQjUOItTabFjLYO3mq",
+      "serviceId": "free"
+    }
+  }
+}
