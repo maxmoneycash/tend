@@ -98,6 +98,7 @@ export function ProgramOfficialHero({
           loop
           muted
           playsInline
+          poster={`/videos/${program.id}-poster.jpg`}
           preload="metadata"
           src={`/videos/${program.id}.mp4`}
         />
