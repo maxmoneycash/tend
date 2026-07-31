@@ -143,7 +143,7 @@ export default async function ProgramDetail({
                   className="underline underline-offset-4 text-[#555555] hover:text-[#111111]"
                   href="/pledge"
                 >
-                  Open the test flow
+                  Find a program by address or county
                 </Link>
               </p>
 
