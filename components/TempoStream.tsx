@@ -14,9 +14,11 @@ type ReadyEvent = {
   amountCents: number;
   interval: string;
   organization: string;
+  paymentMethod: string;
   recipient: string;
   settlements: number;
   stripeReceipt: string;
+  stripeReceiptUrl?: string;
 };
 
 type SettlementEvent = {
@@ -211,7 +213,9 @@ export function TempoStream({
           amountCents={amountCents}
           organization={organization}
           interval={ready?.interval}
+          paymentMethod={ready?.paymentMethod}
           reference={ready?.stripeReceipt ?? sessionId}
+          receiptUrl={ready?.stripeReceiptUrl}
         />
         <DonationReceipt
           kind="stream"
@@ -275,7 +279,7 @@ export function TempoStream({
               <a
                 key={settlement.hash}
                 className="tempo-transaction"
-                href={`https://explore.testnet.tempo.xyz/tx/${settlement.hash}`}
+                href={`https://explore.tempo.xyz/tx/${settlement.hash}`}
                 target="_blank"
                 rel="noreferrer"
               >

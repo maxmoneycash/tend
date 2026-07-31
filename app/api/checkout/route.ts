@@ -9,6 +9,11 @@ const Body = z.object({
   tribeId: z.enum(["ramaytush", "muwekma"]),
   amountCents: z.number().int().min(100).max(1_000_000),
   interval: z.enum(["once", "month", "year"]),
+  returnTo: z
+    .string()
+    .regex(/^\/(?!\/)/)
+    .max(200)
+    .optional(),
 });
 
 function requestOrigin(req: Request) {
@@ -27,7 +32,7 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid pledge" }, { status: 400 });
   }
-  const { tribeId, amountCents, interval } = parsed.data;
+  const { tribeId, amountCents, interval, returnTo = "/pledge" } = parsed.data;
   const tribe = getTribe(tribeId)!;
   const account = getTribeAccount(tribeId as TribeId);
   const origin = requestOrigin(req);
@@ -75,7 +80,7 @@ export async function POST(req: Request) {
       ? { payment_intent_data: { metadata } }
       : { subscription_data: { metadata } }),
     success_url: `${origin}/thanks?tribe=${tribeId}&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origin}/pledge?canceled=1`,
+    cancel_url: `${origin}${returnTo}?canceled=1`,
   };
 
   // Sovereignty by architecture: with a connected account configured, the

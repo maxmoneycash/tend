@@ -1,4 +1,5 @@
 import { Account, Actions, Secp256k1, createClient } from "viem/tempo";
+import type Stripe from "stripe";
 import { z } from "zod";
 import { getStripe } from "@/lib/stripe";
 import { getTribe } from "@/lib/tribes";
@@ -11,7 +12,7 @@ const Body = z.object({
 });
 
 const ALPHA_USD = "0x20c0000000000000000000000000000000000001";
-const EXPLORER_URL = "https://explore.testnet.tempo.xyz/tx/";
+const EXPLORER_URL = "https://explore.tempo.xyz/tx/";
 const SETTLEMENT_COUNT = 20;
 
 type StreamEvent =
@@ -26,7 +27,9 @@ type StreamEvent =
       organization: string;
       recipient: string;
       settlements: number;
+      paymentMethod: string;
       stripeReceipt: string;
+      stripeReceiptUrl?: string;
     }
   | {
       type: "settlement";
@@ -107,7 +110,9 @@ async function runTempoStream(
     amountCents: number;
     interval: string;
     organization: string;
+    paymentMethod: string;
     sessionId: string;
+    stripeReceiptUrl?: string;
   },
 ) {
   try {
@@ -124,9 +129,11 @@ async function runTempoStream(
       amountCents: input.amountCents,
       interval: input.interval,
       organization: input.organization,
+      paymentMethod: input.paymentMethod,
       recipient: recipient.address,
       settlements: SETTLEMENT_COUNT,
       stripeReceipt: input.sessionId,
+      stripeReceiptUrl: input.stripeReceiptUrl,
     });
 
     emit(state, {
@@ -188,7 +195,12 @@ export async function POST(request: Request) {
 
   let session;
   try {
-    session = await getStripe().checkout.sessions.retrieve(parsed.data.sessionId);
+    session = await getStripe().checkout.sessions.retrieve(
+      parsed.data.sessionId,
+      {
+        expand: ["payment_intent.latest_charge", "payment_intent.payment_method"],
+      },
+    );
   } catch {
     return Response.json(
       { error: "Stripe could not verify this receipt." },
@@ -211,6 +223,30 @@ export async function POST(request: Request) {
   const tribe = getTribe(session.metadata.tribe ?? "");
   const organization = tribe?.name ?? "Indigenous-led organization";
   const interval = session.metadata.interval ?? "once";
+  const paymentIntent =
+    session.payment_intent && typeof session.payment_intent !== "string"
+      ? session.payment_intent
+      : null;
+  const paymentMethod =
+    paymentIntent?.payment_method &&
+    typeof paymentIntent.payment_method !== "string"
+      ? paymentIntent.payment_method
+      : null;
+  const walletType =
+    paymentMethod?.type === "card" ? paymentMethod.card?.wallet?.type : undefined;
+  const paymentMethodLabel =
+    walletType === "apple_pay"
+      ? "Apple Pay"
+      : walletType === "google_pay"
+        ? "Google Pay"
+        : paymentMethod?.type === "card"
+          ? "Card"
+          : "Stripe Checkout";
+  const latestCharge =
+    paymentIntent?.latest_charge &&
+    typeof paymentIntent.latest_charge !== "string"
+      ? (paymentIntent.latest_charge as Stripe.Charge)
+      : null;
   const key = session.id;
   let state = streamStates.get(key);
 
@@ -241,7 +277,9 @@ export async function POST(request: Request) {
           amountCents: session.amount_total!,
           interval,
           organization,
+          paymentMethod: paymentMethodLabel,
           sessionId: session.id,
+          stripeReceiptUrl: latestCharge?.receipt_url ?? undefined,
         });
       }
     },

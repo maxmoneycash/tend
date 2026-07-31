@@ -12,8 +12,10 @@ type Props = {
   kind: "donation" | "stream";
   lastHash?: string;
   organization: string;
+  paymentMethod?: string;
   recipient?: string;
   reference?: string;
+  receiptUrl?: string;
   settlements?: number;
   status: ReceiptStatus;
   streamedCents?: number;
@@ -52,8 +54,10 @@ export function DonationReceipt({
   kind,
   lastHash,
   organization,
+  paymentMethod = "Stripe Checkout",
   recipient,
   reference,
+  receiptUrl,
   settlements = 20,
   status,
   streamedCents = 0,
@@ -129,7 +133,7 @@ export function DonationReceipt({
               <>
                 <div>
                   <dt>Paid with</dt>
-                  <dd>Apple Pay or card</dd>
+                  <dd>{paymentMethod}</dd>
                 </div>
                 <div>
                   <dt>Processor</dt>
@@ -169,14 +173,19 @@ export function DonationReceipt({
         <ReceiptEdge bottom />
       </div>
 
-      {lastHash && (
+      {(lastHash || receiptUrl) && (
         <a
           className="tend-receipt-explorer"
-          href={`https://explore.testnet.tempo.xyz/tx/${lastHash}`}
+          href={
+            lastHash
+              ? `https://explore.tempo.xyz/tx/${lastHash}`
+              : receiptUrl
+          }
           target="_blank"
           rel="noreferrer"
         >
-          View on Tempo Explorer <ExternalLink size={13} />
+          {lastHash ? "View on Tempo Explorer" : "View Stripe receipt"}{" "}
+          <ExternalLink size={13} />
         </a>
       )}
     </article>

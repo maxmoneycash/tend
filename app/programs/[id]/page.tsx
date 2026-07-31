@@ -126,13 +126,14 @@ export default async function ProgramDetail({
 
             <div className="space-y-4">
               <StreamPanel
+                tribeId={tribe.id}
                 tribeName={tribe.name}
                 zone={`zone://tend/${tribe.id}-donations`}
               />
               <p className="text-[11px] text-[#8a8a8a] text-center">
-                prefer a classic recurring card pledge?{" "}
+                Want address matching or a recurring contribution?{" "}
                 <Link href="/pledge" className="underline underline-offset-4 text-[#555555] hover:text-[#111111]">
-                  Start one here
+                  Open the full pledge flow
                 </Link>
               </p>
 
