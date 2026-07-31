@@ -125,6 +125,11 @@ export default function ExplorerPage() {
                 <div>
                   <p className="text-[13px] font-semibold text-[#111111]">{t.title}</p>
                   <p className="text-[12px] text-[#555555] leading-relaxed mt-1">{t.body}</p>
+                  {t.evidenceNote && (
+                    <p className="mt-3 text-[12px] leading-[1.45] text-[#6b6b6b]">
+                      {t.evidenceNote}
+                    </p>
+                  )}
                   <SourceLink name={t.sourceName} url={t.sourceUrl} />
                 </div>
                 <span className="hidden sm:block">

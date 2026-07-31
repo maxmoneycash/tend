@@ -4,6 +4,7 @@ type SourcedEntry = {
   sourceName: string;
   sourceUrl: string;
   sourceAction?: string;
+  evidenceNote?: string;
 };
 
 export interface TimelineEntry extends SourcedEntry {
@@ -62,6 +63,8 @@ export const timeline: TimelineEntry[] = [
     sourceName: "Stanford Report",
     sourceUrl:
       "https://news.stanford.edu/stories/2022/03/genomic-analysis-supports-ancient-muwekma-ohlone-connection",
+    evidenceNote:
+      "Evidence limit: Tend links to Stanford’s summary. The PNAS paper and study data are outside this guide.",
   },
 ];
 
