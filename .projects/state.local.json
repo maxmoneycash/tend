@@ -37,19 +37,6 @@
       "resourceId": "fres_61V8SL0051lnGl7KR16V8QoxU1SQjUOItTabFjLYOWt6",
       "serviceId": "client"
     },
-    "auth0-client-2": {
-      "configuration": {
-        "name": "tend"
-      },
-      "createdAt": "2026-07-31T00:33:04.483Z",
-      "lastRevealedAt": "2026-07-31T00:33:04.830Z",
-      "lastStatus": "complete",
-      "name": "auth0-client-2",
-      "providerId": "prvdr_61UVctyxfLOj4FpVw5Bmi",
-      "providerName": "Auth0",
-      "resourceId": "fres_61V8SL7BVp6RDos7v16V8QoxU1SQjUOItTabFjLYOIfA",
-      "serviceId": "client"
-    },
     "auth0-plan": {
       "configuration": {},
       "createdAt": "2026-07-31T00:32:51.124Z",
