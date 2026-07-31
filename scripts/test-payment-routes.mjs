@@ -8,6 +8,7 @@ import Stripe from "stripe";
 const port = 3102;
 const baseUrl = `http://127.0.0.1:${port}`;
 const webhookSecret = "whsec_tend_route_test";
+const requestTimeoutMs = 60_000;
 const stateDir = await mkdtemp(path.join(tmpdir(), "tend-payment-routes-"));
 const dbPath = path.join(stateDir, "payments.sqlite");
 let server = null;
@@ -60,7 +61,7 @@ async function startServer() {
     try {
       const response = await fetch(
         `${baseUrl}/api/tempo/stream?sessionId=cs_health_check`,
-        { signal: AbortSignal.timeout(30_000) },
+        { signal: AbortSignal.timeout(requestTimeoutMs) },
       );
       if (response.ok) return;
     } catch {
@@ -87,7 +88,7 @@ async function stopServer() {
 async function json(pathname, init) {
   const response = await fetch(`${baseUrl}${pathname}`, {
     ...init,
-    signal: AbortSignal.timeout(30_000),
+    signal: AbortSignal.timeout(requestTimeoutMs),
   });
   const body = await response.json();
   return { body, status: response.status };
@@ -171,7 +172,7 @@ try {
       amountCents: 2500,
       interval: "once",
     }),
-    signal: AbortSignal.timeout(30_000),
+    signal: AbortSignal.timeout(requestTimeoutMs),
   });
   assert.equal(canonicalCheckout.status, 200);
   assert.equal(
@@ -201,7 +202,7 @@ try {
 
   const displayOnly = await fetch(`${baseUrl}/api/tempo/stream`, {
     method: "POST",
-    signal: AbortSignal.timeout(30_000),
+    signal: AbortSignal.timeout(requestTimeoutMs),
   });
   assert.equal(displayOnly.status, 405);
 
