@@ -98,7 +98,7 @@ export function ProgramOfficialHero({
             rel="noreferrer"
             target="_blank"
           >
-            Read the official program page
+            Read the official {program.taxName} page
             <ExternalLink aria-hidden="true" size={15} />
           </a>
         </div>
