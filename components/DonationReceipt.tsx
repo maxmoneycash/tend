@@ -85,10 +85,13 @@ export function DonationReceipt({
   const isUnavailableAmount = isUnavailable && amountCents === 0;
   const hasStreamDetails = isStream && amountCents > 0;
   const displayAmount = isStream ? streamedCents : amountCents;
-  const copyValue = lastHash ?? reference ?? "";
-  const copyObject = lastHash
-    ? "Tempo transaction ID"
-    : "Stripe Checkout session ID";
+  const copyValue = reference ?? lastHash ?? "";
+  const copyObject = reference
+    ? "Stripe Checkout session ID"
+    : "Tempo transaction ID";
+  const copyButtonLabel = reference
+    ? "Copy session ID"
+    : "Copy transaction ID";
   const statusLabel = {
     unverified: "Awaiting Stripe",
     processing: "Preparing",
@@ -185,7 +188,7 @@ export function DonationReceipt({
                   <dd>{paymentMethod}</dd>
                 </div>
                 <div>
-                  <dt>Stripe receipt</dt>
+                  <dt>Checkout session ID</dt>
                   <dd>{short(reference, 10, 5)}</dd>
                 </div>
                 <div>
@@ -230,13 +233,13 @@ export function DonationReceipt({
                   <dd>Stripe Checkout</dd>
                 </div>
                 <div>
-                  <dt>Receipt</dt>
+                  <dt>Checkout session ID</dt>
                   <dd>{short(reference, 10, 5)}</dd>
                 </div>
               </>
             ) : (
               <div>
-                <dt>Checkout session</dt>
+                <dt>Checkout session ID</dt>
                 <dd>{short(reference, 10, 5)}</dd>
               </div>
             )}
@@ -256,7 +259,9 @@ export function DonationReceipt({
                 aria-label={
                   copyStatus === "failed"
                     ? `Try to copy ${copyObject} again`
-                    : `Copy ${copyObject}`
+                    : copyStatus === "copied"
+                      ? `${copyObject} copied`
+                      : `Copy ${copyObject}`
                 }
               >
                 {copyStatus === "copied" ? (
@@ -265,10 +270,12 @@ export function DonationReceipt({
                   <Copy size={12} aria-hidden="true" />
                 )}
                 {copyStatus === "copied"
-                  ? "Copied"
+                  ? reference
+                    ? "Session ID copied"
+                    : "Transaction ID copied"
                   : copyStatus === "failed"
-                    ? "Retry copy"
-                    : "Copy ID"}
+                    ? `${copyButtonLabel} again`
+                    : copyButtonLabel}
               </button>
             )}
             <div
