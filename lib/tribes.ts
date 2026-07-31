@@ -37,7 +37,7 @@ export const tribes: Record<TribeId, Tribe> = {
     taxName: "Shuumi Land Tax",
     region: "San Francisco Bay Area",
     blurb:
-      'The foundation’s Shuumi Land Tax is a voluntary annual contribution. Shuumi means "gift" in Chochenyo.',
+      'The Shuumi Land Tax page describes a voluntary annual contribution that supports the work of the Muwekma Ohlone Preservation Foundation. The page says Shuumi means "gift" in Chochenyo.',
     siteUrl: "https://www.muwekmafoundation.org/home",
     officialProgramUrl: "https://www.muwekmafoundation.org/shuumi",
     officialDonationUrl: "https://www.muwekmafoundation.org/donate",
