@@ -29,6 +29,12 @@ export function Navbar() {
 
   const isLightPage = true; // original light theme carries the whole app
 
+  // Session-gated surfaces (see proxy.ts + auth0.getSession() callers):
+  // /pledge and /dashboard(/[tribe]) both require login, so both get a
+  // visible logout affordance.
+  const showLogout =
+    pathname.startsWith("/dashboard") || pathname.startsWith("/pledge");
+
   // Scroll-linked glass effect — initial state handled by CSS via data-theme
   useEffect(() => {
     const card = navCardRef.current;
@@ -124,7 +130,7 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            {pathname.startsWith("/dashboard") && (
+            {showLogout && (
               <a href="/auth/logout" className="nav-link">
                 Log out
               </a>
@@ -279,7 +285,7 @@ export function Navbar() {
                   </Link>
                 </motion.div>
               ))}
-              {pathname.startsWith("/dashboard") && (
+              {showLogout && (
                 <motion.div
                   animate={
                     mobileOpen
