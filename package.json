@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test:pledge-resume": "node --test scripts/test-pledge-resume.mjs",
     "test:payments": "node scripts/test-payment-routes.mjs",
     "test:e2e": "node scripts/test-donation-journey.mjs"
   },
