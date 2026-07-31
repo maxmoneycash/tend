@@ -205,8 +205,35 @@ export function PledgeFlow({
     );
   }
 
+  function chooseProgram(next: string) {
+    setCheckoutError(null);
+    setTribeId(next);
+  }
+
   function chooseInterval(next: CheckoutInterval) {
+    setCheckoutError(null);
     setInterval(next);
+  }
+
+  function chooseAmount(next: number) {
+    setCheckoutError(null);
+    setAmount(next);
+    setCustom("");
+  }
+
+  function changeCustomAmount(next: string) {
+    setCheckoutError(null);
+    setCustom(cleanAmount(next));
+  }
+
+  function chooseStreamDuration(next: StreamDurationSeconds) {
+    setCheckoutError(null);
+    setStreamDurationSeconds(next);
+  }
+
+  function chooseStreamInterval(next: StreamIntervalSeconds) {
+    setCheckoutError(null);
+    setStreamIntervalSeconds(next);
   }
 
   const selectedTribe = resolvePledgeProgram(
@@ -363,7 +390,7 @@ export function PledgeFlow({
               <button
                 type="button"
                 key={tribe.id}
-                onClick={() => setTribeId(tribe.id)}
+                onClick={() => chooseProgram(tribe.id)}
                 className="pledge-program"
                 aria-pressed={tribeId === tribe.id}
               >
@@ -447,10 +474,7 @@ export function PledgeFlow({
                     <button
                       key={chip}
                       type="button"
-                      onClick={() => {
-                        setAmount(chip);
-                        setCustom("");
-                      }}
+                      onClick={() => chooseAmount(chip)}
                       className="pledge-amount-chip"
                       aria-pressed={amount === chip && !custom}
                     >
@@ -464,7 +488,7 @@ export function PledgeFlow({
                       inputMode="decimal"
                       value={custom}
                       onChange={(event) =>
-                        setCustom(cleanAmount(event.target.value))
+                        changeCustomAmount(event.target.value)
                       }
                       aria-label={
                         demo
@@ -502,8 +526,8 @@ export function PledgeFlow({
                   }
                   durationSeconds={streamDurationSeconds}
                   intervalSeconds={streamIntervalSeconds}
-                  onDurationChange={setStreamDurationSeconds}
-                  onIntervalChange={setStreamIntervalSeconds}
+                  onDurationChange={chooseStreamDuration}
+                  onIntervalChange={chooseStreamInterval}
                   preview={demo}
                 />
               </details>

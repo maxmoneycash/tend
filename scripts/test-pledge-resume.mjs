@@ -245,3 +245,30 @@ test("a rejected return without a program focuses its recovery field", () => {
     /<p id="pledge-resume-error" className="pledge-error" role="alert">/,
   );
 });
+
+test("editing a failed pledge clears stale recovery before changing intent", () => {
+  for (const handler of [
+    "chooseProgram",
+    "chooseInterval",
+    "chooseAmount",
+    "changeCustomAmount",
+    "chooseStreamDuration",
+    "chooseStreamInterval",
+  ]) {
+    assert.match(
+      pledgeFlowSource,
+      new RegExp(
+        `function ${handler}\\([^)]*\\) \\{\\s+setCheckoutError\\(null\\);`,
+      ),
+    );
+  }
+
+  assert.match(pledgeFlowSource, /onClick=\{\(\) => chooseProgram\(tribe\.id\)\}/);
+  assert.match(pledgeFlowSource, /onClick=\{\(\) => chooseAmount\(chip\)\}/);
+  assert.match(
+    pledgeFlowSource,
+    /onChange=\{\(event\) =>\s+changeCustomAmount\(event\.target\.value\)\s+\}/,
+  );
+  assert.match(pledgeFlowSource, /onDurationChange=\{chooseStreamDuration\}/);
+  assert.match(pledgeFlowSource, /onIntervalChange=\{chooseStreamInterval\}/);
+});
