@@ -1,233 +1,69 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
 import { PledgeFlow } from "@/components/PledgeFlow";
-import { auth0 } from "@/lib/auth0";
 import { demoMode } from "@/lib/demo";
-import { countyTribes, tribes, type TribeId } from "@/lib/tribes";
 
-const COVER: Record<TribeId, string> = {
-  ramaytush: "cover-orange",
-  muwekma: "cover-purple",
-};
-const BADGE: Record<TribeId, string> = {
-  ramaytush: "text-[#FA4616] bg-[#FA4616]/10",
-  muwekma: "text-[#8B5CF6] bg-[#8B5CF6]/10",
-};
-
-function counties(id: string) {
-  return Object.entries(countyTribes)
-    .filter(([, ids]) => ids.includes(id as never))
-    .map(([county]) => county);
-}
-
-export default async function Home() {
-  if (process.env.TEND_DEMO_AUTH_BYPASS !== "1") {
-    const session = await auth0.getSession();
-    if (!session) redirect("/auth/login?returnTo=/pledge");
-  }
-
+export default function PledgePage() {
   const demo = demoMode();
-  const orgs = Object.values(tribes);
 
   return (
     <>
-    <Navbar />
-    <div style={{ paddingTop: "108px" }} />
-    <div className="relative overflow-hidden">
-      {/* ambient blobs */}
-      <div
-        className="pointer-events-none absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full opacity-60"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(250,70,22,0.14), transparent 65%)",
-          filter: "blur(120px)",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute top-[30%] -right-52 w-[560px] h-[560px] rounded-full opacity-50"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(139,92,246,0.12), transparent 65%)",
-          filter: "blur(120px)",
-        }}
-      />
+      <Navbar />
+      <div style={{ paddingTop: "108px" }} />
 
-      {/* Hero */}
-      <section className="relative mx-auto max-w-6xl px-5 pt-20 pb-14">
-        <div className="max-w-2xl">
-          <span className="animate-enter inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-700">
-            Prototype · Stripe test mode
-          </span>
-          <h1 className="animate-enter animate-enter-delay-1 display-1 mt-5">
-            You live on someone&apos;s ancestral land.{" "}
-            <span className="text-gradient-whop">Tend it.</span>
-          </h1>
-          <p className="animate-enter animate-enter-delay-2 mt-5 max-w-xl text-[15px] leading-relaxed text-[#555555]">
-            Try the contribution flow with demonstration programs based on
-            public information. <strong className="text-[#2a2a2a]">No real
-            contribution reaches an organization in this prototype.</strong>
-          </p>
-          <div className="animate-enter animate-enter-delay-3 mt-7 flex flex-wrap gap-3">
-            <a href="#pledge" className="btn tnd-btn-primary">
-              Find my land tax
-            </a>
-            <Link href="/programs" className="btn btn-ghost">
-              Explore programs
-            </Link>
-          </div>
-        </div>
+      <div className="relative overflow-hidden pb-20">
+        <div
+          className="pointer-events-none absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full opacity-60"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(250,70,22,0.14), transparent 65%)",
+            filter: "blur(120px)",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute -right-52 top-[30%] h-[560px] w-[560px] rounded-full opacity-50"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(139,92,246,0.12), transparent 65%)",
+            filter: "blur(120px)",
+          }}
+        />
 
-        {/* stats row */}
-        <div className="animate-enter animate-enter-delay-3 mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { label: "DEMO PROGRAMS", value: "2" },
-            { label: "REAL FUNDS SENT", value: "$0" },
-            { label: "COUNTIES COVERED", value: "5" },
-            { label: "MACHINE PAYERS", value: "MPP PREVIEW" },
-          ].map((s) => (
-            <div key={s.label} className="surface-2 rounded-[10px] p-3 text-center">
-              <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">
-                {s.label}
-              </p>
-              <p className="text-[18px] font-bold text-[#111111] font-display mt-0.5">
-                {s.value}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Featured programs */}
-      <section className="relative mx-auto max-w-6xl px-5 mt-6">
-        <div className="rule-row">
-          <h2 className="display-2">Programs</h2>
-          <span className="note">by each tribe&apos;s own published definition</span>
-        </div>
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {orgs.map((t, i) => (
-            <Link
-              key={t.id}
-              href={`/programs/${t.id}`}
-              className={`animate-enter ${i === 1 ? "animate-enter-delay-1" : ""} group block bg-white border border-black/[0.08] rounded-[16px] overflow-hidden transition-all duration-300 ease-out hover:scale-[1.01] hover:border-black/[0.14] active:scale-[0.99]`}
-            >
-              <div className={`h-28 ${COVER[t.id]} relative`}>
-                <span
-                  className={`absolute top-3 left-3 text-[10px] font-semibold px-2 py-0.5 rounded ${BADGE[t.id]}`}
-                >
-                  {t.region}
-                </span>
-                <span className="absolute bottom-3 right-3 text-[10px] font-mono text-[#111111]/60">
-                  {counties(t.id).length} counties
-                </span>
-              </div>
-              <div className="p-5">
-                <h3 className="text-[16px] font-semibold text-[#111111] group-hover:text-[#ff7a4a] transition-colors">
-                  {t.taxName}
-                </h3>
-                <p className="text-[12px] text-[#6b6b6b] mt-0.5">{t.name}</p>
-                <p className="text-[12px] text-[#555555] leading-relaxed mt-3 line-clamp-3">
-                  {t.blurb}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {counties(t.id).map((c) => (
-                    <span
-                      key={c}
-                      className="text-[10px] px-1.5 py-0.5 rounded bg-black/[0.03] text-[#6b6b6b] border border-black/[0.08]"
-                    >
-                      {c}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-4 pt-3 border-t border-black/[0.06] flex items-center justify-between">
-                  <span className="text-[11px] text-[#8a8a8a] font-mono">
-                    0% Tend fee · Stripe fees apply
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 text-orange-700 text-[11px] font-medium group-hover:bg-orange-500/20 transition-colors">
-                    View program →
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-        <p className="mt-4 text-[11px] leading-relaxed text-[#8a8a8a] max-w-2xl">
-          Santa Clara appears in more than one published description. Tend
-          shows every possible match for the county.
-        </p>
-      </section>
-
-      {/* Pledge */}
-      <section id="pledge" className="relative mx-auto max-w-6xl px-5 mt-16">
-        <div className="rule-row">
-          <h2 className="display-2">Begin</h2>
-          <span className="note">about ninety seconds · secured by Auth0</span>
-        </div>
-        <div className="mt-6">
-          <PledgeFlow demo={demo} />
-        </div>
-      </section>
-
-      {/* How it holds together */}
-      <section className="relative mx-auto max-w-6xl px-5 mt-16">
-        <div className="rule-row">
-          <h2 className="display-2">What holds this together</h2>
-        </div>
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          {[
-            {
-              title: "A proven practice",
-              body: "Yunakin and Shuumi are real programs run by their respective organizations. Their presence here does not mean those organizations use or endorse Tend.",
-            },
-            {
-              title: "Test mode only",
-              body: "No real funds move in this prototype. Beneficiary-managed Stripe accounts require each organization to onboard and approve the arrangement.",
-            },
-            {
-              title: "A model for beneficiary control",
-              body: "A production tenant would let each approved organization manage its own words, settings, accounts, and access.",
-            },
-          ].map((f) => (
-            <div key={f.title} className="surface-1 rounded-[16px] p-5">
-              <h3 className="text-[15px] font-semibold text-[#111111]">{f.title}</h3>
-              <p className="mt-2.5 text-[12px] leading-relaxed text-[#555555]">
-                {f.body}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Machine section */}
-      <section className="relative mx-auto max-w-6xl px-5 mt-16">
-        <div>
-          <div className="rule-row">
-            <h2 className="display-2">Machines pay rent here.</h2>
-            <span className="note">
-              Stripe MPP prototype · crypto preview access required
-            </span>
-          </div>
-          <div className="mt-7 grid gap-8 lg:grid-cols-[1fr_1.1fr] items-start">
-            <p className="text-[14px] leading-relaxed text-[#3a3a3a] max-w-md">
-              The machine-payment prototype accepts one test request from an
-              automated client.
+        <section className="relative mx-auto max-w-6xl px-5 pb-12 pt-8 sm:pt-12">
+          <div className="max-w-2xl">
+            <p className="note">Tend test checkout</p>
+            <h1 className="display-1 mt-3">Find a program by address or county</h1>
+            <p className="mt-4 max-w-xl text-[14px] leading-relaxed text-[#555555]">
+              Tend matches your county with public information from each
+              listed program. A result may include more than one listing.
             </p>
-            <div>
-              <pre className="terminal">
-                {`$ `}
-                <span className="cmd">
-                  npx mppx https://tend.example/api/mpp/land-tax?tribe=ramaytush --method POST
-                </span>
-                {`
-← 402 Payment Required · tempo, card
-→ pay $25.00
-← receipt ✓ routing status recorded`}
-              </pre>
-            </div>
           </div>
-        </div>
-      </section>
-    </div>
-  </>
+
+          <div className="mt-7">
+            <PledgeFlow demo={demo} />
+          </div>
+        </section>
+
+        <section className="relative mx-auto max-w-6xl px-5">
+          <div className="surface-1 rounded-[16px] p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+            <div>
+              <h2 className="text-[16px] font-semibold text-[#111111]">
+                Looking for the real donation page?
+              </h2>
+              <p className="mt-2 max-w-2xl text-[12px] leading-relaxed text-[#555555]">
+                Each program page keeps its official donation links separate
+                from Tend&apos;s Stripe test checkout.
+              </p>
+            </div>
+            <Link
+              href="/programs"
+              className="btn btn-ghost mt-4 shrink-0 sm:mt-0"
+            >
+              View official donation links
+            </Link>
+          </div>
+        </section>
+      </div>
+    </>
   );
 }

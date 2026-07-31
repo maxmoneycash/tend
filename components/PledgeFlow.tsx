@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   SlidersHorizontal,
 } from "lucide-react";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { StreamTimingControls } from "@/components/stream/StreamTimingControls";
 import {
@@ -44,6 +45,11 @@ type Located = {
 type Interval = "once" | "month" | "year";
 
 const AMOUNT_CHIPS = [25, 50, 100, 250];
+const INTERVAL_LABELS: Record<Interval, string> = {
+  once: "One time",
+  month: "Monthly",
+  year: "Yearly",
+};
 
 function cleanAmount(value: string) {
   const clean = value.replace(/[^0-9.]/g, "");
@@ -62,13 +68,17 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
     useState<StreamDurationSeconds>(DEFAULT_STREAM_DURATION_SECONDS);
   const [streamIntervalSeconds, setStreamIntervalSeconds] =
     useState<StreamIntervalSeconds>(DEFAULT_STREAM_INTERVAL_SECONDS);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [busyAction, setBusyAction] = useState<
+    "locate" | "checkout" | null
+  >(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const resumeAttempted = useRef(false);
 
   async function locate(body: { address?: string; county?: string }) {
-    setBusy(true);
-    setError(null);
+    setBusyAction("locate");
+    setLocationError(null);
+    setCheckoutError(null);
     try {
       const res = await fetch("/api/geocode", {
         method: "POST",
@@ -78,13 +88,13 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
       if (!res.ok) throw new Error("location request failed");
       const data = (await res.json()) as Located;
       setLocated(data);
-      setTribeId(data.tribes.length === 1 ? data.tribes[0].id : null);
+      setTribeId(null);
     } catch {
-      setError(
+      setLocationError(
         "We couldn’t locate that address. Choose a county below and try again.",
       );
     } finally {
-      setBusy(false);
+      setBusyAction(null);
     }
   }
 
@@ -92,17 +102,17 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
     intent: CheckoutIntent,
     resuming = false,
   ) => {
-    setBusy(true);
-    setError(null);
+    setBusyAction("checkout");
+    setCheckoutError(null);
     try {
       await startCheckout(intent, { resuming });
     } catch (caught) {
-      setError(
+      setCheckoutError(
         caught instanceof Error
           ? caught.message
           : "Stripe Checkout didn’t open. Check your connection.",
       );
-      setBusy(false);
+      setBusyAction(null);
     }
   }, []);
 
@@ -153,10 +163,16 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
     streamDurationSeconds,
     streamIntervalSeconds,
   );
-  const state = error ? "error" : busy ? "loading" : "default";
+  const busy = busyAction !== null;
+  const state =
+    locationError || checkoutError
+      ? "error"
+      : busy
+        ? "loading"
+        : "default";
 
   return (
-    <section className="pledge-flow" data-state={state}>
+    <section className="pledge-flow" data-state={state} aria-busy={busy}>
       {demo && (
         <div className="pledge-demo-note">
           <ShieldCheck size={15} aria-hidden="true" />
@@ -166,11 +182,15 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
 
       <div className="pledge-locate-heading">
         <div>
-          <p className="pledge-kicker">Start here</p>
-          <h3>Find the program for your address</h3>
+          <p className="pledge-kicker">Test program finder</p>
+          <h3>See programs listed for your address</h3>
         </div>
         <span>Stripe test mode</span>
       </div>
+      <p id="pledge-location-help" className="pledge-location-note">
+        Tend uses public program information and may show more than one
+        listing.
+      </p>
 
       <form
         onSubmit={(event) => {
@@ -186,24 +206,28 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
             placeholder="Street address in the Bay Area"
             value={address}
             onChange={(event) => setAddress(event.target.value)}
-            aria-invalid={Boolean(error)}
-            aria-describedby={error ? "pledge-error" : undefined}
+            aria-invalid={Boolean(locationError)}
+            aria-describedby={
+              locationError
+                ? "pledge-location-help pledge-location-error"
+                : "pledge-location-help"
+            }
           />
         </label>
         <button
           className="pledge-primary-button"
           disabled={busy || !address.trim()}
           type="submit"
-          data-state={busy && !located ? "loading" : "default"}
+          data-state={busyAction === "locate" ? "loading" : "default"}
         >
-          {busy && !located ? (
+          {busyAction === "locate" ? (
             <>
               <LoaderCircle className="pledge-spinner" size={16} />
               Locating
             </>
           ) : (
             <>
-              Find my program
+              Show programs for this address
               <ArrowRight size={16} aria-hidden="true" />
             </>
           )}
@@ -230,17 +254,27 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
         ))}
       </div>
 
+      {locationError && (
+        <p
+          id="pledge-location-error"
+          className="pledge-error"
+          role="alert"
+        >
+          {locationError}
+        </p>
+      )}
+
       {located && (
         <div className="pledge-programs">
           {located.county && located.tribes.length > 0 && (
-            <div className="pledge-result-heading">
+            <div className="pledge-result-heading" role="status">
               <span>
                 <Check size={14} aria-hidden="true" /> {located.county} County
               </span>
               <p>
                 {located.tribes.length === 1
-                  ? "One matching Indigenous-led program"
-                  : `${located.tribes.length} matching programs. Choose one.`}
+                  ? `One program is listed for ${located.county} County. Select it to continue.`
+                  : `${located.tribes.length} programs are listed for ${located.county} County. Select one to continue.`}
               </p>
             </div>
           )}
@@ -273,19 +307,29 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
         <div className="pledge-amount-stage">
           <div className="pledge-amount-header">
             <div>
-              <p className="pledge-kicker">Choose your contribution</p>
-              <h3>{selectedTribe.taxName}</h3>
+              <p className="pledge-kicker">Tend test checkout</p>
+              <h3>Choose a test amount for {selectedTribe.taxName}</h3>
             </div>
             <div className="pledge-suggestion">
               <span>Test amount</span>
               <strong>${selectedAmount}</strong>
             </div>
           </div>
+          <p className="pledge-location-note">
+            For a real donation, view the{" "}
+            <Link
+              href={`/programs/${selectedTribe.id}`}
+              className="font-semibold underline underline-offset-4"
+            >
+              official donation links for {selectedTribe.name}
+            </Link>
+            . Tend&apos;s checkout below uses test funds.
+          </p>
 
           <div className="pledge-amount-grid">
             <div className="pledge-controls">
               <fieldset className="pledge-control">
-                <legend>Frequency</legend>
+                <legend>Test payment frequency</legend>
                 <div className="pledge-segmented pledge-frequency">
                   {(
                     [
@@ -307,7 +351,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
               </fieldset>
 
               <fieldset className="pledge-control">
-                <legend>Amount</legend>
+                <legend>Test amount</legend>
                 <div className="pledge-amount-row">
                   {AMOUNT_CHIPS.map((chip) => (
                     <button
@@ -332,21 +376,25 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                       onChange={(event) =>
                         setCustom(cleanAmount(event.target.value))
                       }
-                      aria-label="Custom amount in dollars"
+                      aria-label="Custom test amount in dollars"
                       aria-invalid={Boolean(custom) && !amountValid}
+                      aria-describedby="pledge-amount-help"
                     />
                   </label>
                 </div>
+                <p id="pledge-amount-help" className="pledge-location-note">
+                  Enter an amount from $1 to $10,000.
+                </p>
               </fieldset>
 
               <details className="pledge-stream-customizer pledge-stream-customizer-wide">
                 <summary>
                   <span>
                     <SlidersHorizontal size={15} aria-hidden="true" />
-                    Customize stream
+                    Set Tempo testnet transfer timing
                   </span>
                   <small>
-                    {settlementCount} transfers, every{" "}
+                    {settlementCount} testnet transfers, every{" "}
                     {formatStreamTime(streamIntervalSeconds)}
                   </small>
                 </summary>
@@ -375,27 +423,39 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
 
               <div className="pledge-payment-review">
                 <div>
-                  <span>Program reference</span>
+                  <span>Program listing</span>
                   <strong>{selectedTribe?.name ?? "Selected program"}</strong>
                 </div>
                 <div>
-                  <span>Amount</span>
+                  <span>Test amount</span>
                   <strong>
                     ${amountValid ? selectedAmount.toFixed(2) : "0.00"}
                   </strong>
                 </div>
                 <div>
-                  <span>Receipt stream</span>
+                  <span>Frequency</span>
+                  <strong>{INTERVAL_LABELS[interval]}</strong>
+                </div>
+                <div>
+                  <span>Tempo testnet transfers</span>
+                  <strong>{settlementCount}</strong>
+                </div>
+                <div>
+                  <span>Transfer window</span>
+                  <strong>{formatStreamTime(streamDurationSeconds)}</strong>
+                </div>
+                <div>
+                  <span>Transfer interval</span>
                   <strong>
-                    {settlementCount} transfers over{" "}
-                    {formatStreamTime(streamDurationSeconds)}
+                    Every {formatStreamTime(streamIntervalSeconds)}
                   </strong>
                 </div>
               </div>
 
               <p className="pledge-payment-note">
-                Stripe handles a test payment. A verified webhook can start
-                faucet-funded pathUSD transfers on Tempo Moderato.
+                Stripe processes a test payment. This prototype can then
+                create test pathUSD transfers on the Tempo Moderato testnet.
+                No real money reaches {selectedTribe.name}.
               </p>
 
               <button
@@ -405,16 +465,16 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                 className="pledge-checkout-button"
                 data-state={state}
               >
-                {busy ? (
+                {busyAction === "checkout" ? (
                   <>
                     <LoaderCircle className="pledge-spinner" size={17} />
-                    Opening Stripe
+                    Opening Stripe test checkout
                   </>
                 ) : (
                   <>
                     <span>
                       Open ${amountValid ? selectedAmount.toFixed(2) : "0.00"}{" "}
-                      test checkout
+                      test checkout (no real charge)
                     </span>
                     <ArrowRight size={17} aria-hidden="true" />
                   </>
@@ -422,20 +482,24 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
               </button>
               <p className="pledge-wallet-note">
                 <ShieldCheck size={13} aria-hidden="true" />
-                Apple Pay appears in Stripe Checkout on a supported iPhone.
+                Stripe may offer Apple Pay on a supported iPhone.
               </p>
+              {checkoutError && (
+                <p
+                  id="pledge-checkout-error"
+                  className="pledge-error"
+                  role="alert"
+                >
+                  {checkoutError}
+                </p>
+              )}
               <p className="pledge-test-disclosure">
-                Stripe test payment with a pathUSD testnet receipt
+                Stripe test payment with a Tempo Moderato testnet transfer
+                record. No real funds move.
               </p>
             </div>
           </div>
         </div>
-      )}
-
-      {error && (
-        <p id="pledge-error" className="pledge-error" role="alert">
-          {error}
-        </p>
       )}
     </section>
   );

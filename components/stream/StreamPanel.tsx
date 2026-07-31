@@ -114,12 +114,13 @@ export function StreamPanel({
     <section
       className="pledge-payment-panel pledge-payment-panel-primary"
       aria-labelledby="stream-title"
+      aria-busy={busy}
       data-state={error ? "error" : busy ? "loading" : "default"}
     >
       <div className="pledge-payment-heading">
         <div>
           <p className="pledge-kicker">Tend checkout preview</p>
-          <h4 id="stream-title">Test the flow for {tribeName}</h4>
+          <h4 id="stream-title">Preview Tend&apos;s Stripe test checkout</h4>
         </div>
         <span className="pledge-test-badge">
           Test mode
@@ -127,12 +128,12 @@ export function StreamPanel({
       </div>
 
       <p className="pledge-payment-intro">
-        Choose a test amount. Stripe creates a test session, then Tend shows
-        the receipt settle on a public testnet.
+        Choose a sample amount, then open Stripe&apos;s test checkout. No real
+        payment is created, and no money reaches {tribeName}.
       </p>
 
       <fieldset className="pledge-control">
-        <legend>Amount</legend>
+        <legend>Test amount</legend>
         <div className="pledge-amount-row">
           {AMOUNTS.map((value) => (
             <button
@@ -151,25 +152,29 @@ export function StreamPanel({
           <label className="pledge-custom-amount">
             <span>$</span>
             <input
-              aria-label="Custom contribution amount in dollars"
+              aria-label="Custom test amount in dollars"
               aria-invalid={Boolean(custom) && !amountValid}
               inputMode="decimal"
               onChange={(event) => setCustom(cleanAmount(event.target.value))}
               placeholder="Other"
               value={custom}
+              aria-describedby="stream-amount-help"
             />
           </label>
         </div>
+        <p id="stream-amount-help" className="pledge-location-note">
+          Enter an amount from $1 to $10,000.
+        </p>
       </fieldset>
 
       <details className="pledge-stream-customizer">
         <summary>
           <span>
             <SlidersHorizontal size={15} aria-hidden="true" />
-            Customize stream
+            Set Tempo testnet transfer timing
           </span>
           <small>
-            {settlementCount} transfers, every{" "}
+            {settlementCount} testnet transfers, every{" "}
             {formatStreamTime(streamIntervalSeconds)}
           </small>
         </summary>
@@ -192,11 +197,12 @@ export function StreamPanel({
         {busy ? (
           <>
             <LoaderCircle className="pledge-spinner" size={17} />
-            Opening Stripe
+            Opening Stripe test checkout
           </>
         ) : (
           <>
-            Open ${amountValid ? selectedAmount.toFixed(2) : "0.00"} test checkout
+            Open ${amountValid ? selectedAmount.toFixed(2) : "0.00"} test
+            checkout (no real charge)
             <ArrowRight size={17} aria-hidden="true" />
           </>
         )}
@@ -204,7 +210,7 @@ export function StreamPanel({
 
       <p className="pledge-wallet-note">
         <ShieldCheck size={13} aria-hidden="true" />
-        Stripe Checkout presents Apple Pay on a supported iPhone.
+        Stripe may offer Apple Pay on a supported iPhone.
       </p>
 
       {error && (
@@ -214,7 +220,8 @@ export function StreamPanel({
       )}
 
       <p className="pledge-test-disclosure">
-        Stripe test payment with faucet-funded pathUSD on Tempo Moderato
+        Test only. This uses faucet-funded pathUSD on the Tempo Moderato
+        testnet. Use the official donation link above for a real contribution.
       </p>
     </section>
   );

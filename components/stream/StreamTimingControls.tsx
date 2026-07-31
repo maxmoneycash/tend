@@ -34,7 +34,7 @@ export function StreamTimingControls({
   return (
     <div className="pledge-stream-timing">
       <fieldset className="pledge-control">
-        <legend>Stream duration</legend>
+        <legend>Tempo testnet transfer window</legend>
         <div className="pledge-segmented pledge-duration">
           {STREAM_DURATIONS_SECONDS.map((seconds) => (
             <button
@@ -50,15 +50,15 @@ export function StreamTimingControls({
       </fieldset>
 
       <fieldset className="pledge-control pledge-cadence">
-        <legend className="sr-only">Payment frequency</legend>
+        <legend className="sr-only">Tempo testnet transfer interval</legend>
         <div className="pledge-cadence-heading">
-          <span aria-hidden="true">Payment frequency</span>
+          <span aria-hidden="true">Tempo testnet transfer interval</span>
           <output aria-live="polite">
             Every {formatStreamTime(intervalSeconds)}
           </output>
         </div>
         <Slider
-          aria-label="Payment frequency"
+          aria-label="Tempo testnet transfer interval"
           className="pledge-timing-slider"
           min={0}
           max={STREAM_INTERVALS_SECONDS.length - 1}
@@ -79,7 +79,7 @@ export function StreamTimingControls({
 
       <div className="pledge-stream-preview" aria-live="polite">
         <span>
-          <strong>{settlements}</strong> onchain transfers
+          <strong>{settlements}</strong> Tempo testnet transfers
         </span>
         <span>
           <strong>
@@ -89,10 +89,10 @@ export function StreamTimingControls({
               maximumFractionDigits: 6,
             })}
           </strong>{" "}
-          average
+          per testnet transfer
         </span>
         <span>
-          <strong>{formatStreamTime(durationSeconds)}</strong> total
+          <strong>{formatStreamTime(durationSeconds)}</strong> total window
         </span>
       </div>
     </div>
