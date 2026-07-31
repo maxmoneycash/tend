@@ -27,6 +27,13 @@ export function ProgramCard({
   program: Tribe;
 }) {
   const tone = TONE[program.id];
+  const isYunakinKindfulCampaign = program.id === "ramaytush";
+  const donationButtonLabel = isYunakinKindfulCampaign
+    ? "Continue to Yunakin on Kindful"
+    : "Open the Foundation donation form";
+  const donationHandoff = isYunakinKindfulCampaign
+    ? `Opens the ${program.taxName} campaign at ${host(program.officialDonationUrl)} in a new tab.`
+    : `Opens the donation form published by ${program.name} at ${host(program.officialDonationUrl)} in a new tab.`;
 
   return (
     <article className="group relative overflow-hidden rounded-[20px] border border-black/[0.1] bg-white shadow-[0_18px_48px_rgba(28,20,14,0.06)] transition duration-300 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-[0_22px_58px_rgba(28,20,14,0.1)]">
@@ -83,17 +90,17 @@ export function ProgramCard({
         </div>
 
         <p className="mt-4 text-[12px] leading-relaxed text-[#625c56]">
-          Opens {host(program.officialDonationUrl)} for {program.name}.
+          {donationHandoff}
         </p>
 
-        <div className="mt-2 grid gap-2 sm:grid-cols-[1fr_auto]">
+        <div className="mt-2 grid gap-2 lg:grid-cols-[1fr_auto]">
           <a
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[11px] bg-[#171411] px-4 text-center text-[12px] font-semibold text-white transition hover:bg-[#38322d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
             href={program.officialDonationUrl}
             rel="noreferrer"
             target="_blank"
           >
-            Donate on the official site
+            {donationButtonLabel}
             <ExternalLink aria-hidden="true" size={14} />
           </a>
           <Link
