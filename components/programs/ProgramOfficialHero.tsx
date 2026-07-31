@@ -71,18 +71,22 @@ export function ProgramOfficialHero({
           </a>
         </div>
 
-        <div className="mt-3 grid max-w-xl gap-2 text-[10px] leading-relaxed text-[#777069] sm:text-[11px]">
+        <div className="mt-4 grid max-w-xl gap-2 rounded-[var(--radius-sm)] border border-border bg-[var(--background-tertiary)] p-3 text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-muted-foreground">
           <p className="flex items-start gap-2">
             <ShieldCheck
               aria-hidden="true"
               className="mt-0.5 shrink-0"
-              size={13}
+              size={15}
             />
             The donation button opens {host(program.officialDonationUrl)}, the
             official link listed for this program.
           </p>
-          <p className="flex items-center gap-2 font-semibold text-[#8f520d]">
-            <FlaskConical aria-hidden="true" className="shrink-0" size={13} />
+          <p className="flex items-start gap-2 border-t border-border pt-2 font-semibold text-warning">
+            <FlaskConical
+              aria-hidden="true"
+              className="mt-0.5 shrink-0"
+              size={15}
+            />
             Tend checkout below uses test funds only.
           </p>
         </div>
