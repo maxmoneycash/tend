@@ -137,6 +137,7 @@ export const signals: Signal[] = [
     sourceName: "Stanford Report",
     sourceUrl:
       "https://news.stanford.edu/stories/2022/03/genomic-analysis-supports-ancient-muwekma-ohlone-connection",
+    sourceAction: "Read Stanford’s study summary",
   },
 ];
 
