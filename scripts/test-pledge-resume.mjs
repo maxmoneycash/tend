@@ -57,6 +57,15 @@ test("a restored pledge keeps its selection, failure, and retry action", () => {
     }),
     "Try Stripe test checkout again",
   );
+  assert.equal(
+    pledgeCheckoutButtonLabel({
+      amountValid: true,
+      checkoutError: null,
+      demo: false,
+      selectedAmount: restored.amount,
+    }),
+    "Open $73.50 Stripe test checkout (no real charge)",
+  );
   assert.deepEqual(
     buildPledgeCheckoutIntent({
       interval: restored.interval,

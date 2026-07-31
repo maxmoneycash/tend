@@ -112,7 +112,7 @@ export function pledgeCheckoutButtonLabel({
   const amount = amountValid ? selectedAmount.toFixed(2) : "0.00";
   return demo
     ? `Continue to $${amount} demo receipt preview`
-    : `Open $${amount} test checkout (no real charge)`;
+    : `Open $${amount} Stripe test checkout (no real charge)`;
 }
 
 export function buildPledgeCheckoutIntent({

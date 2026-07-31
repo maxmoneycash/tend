@@ -341,10 +341,13 @@ export function PledgeFlow({
               <p className="pledge-kicker">
                 {demo ? "Tend demo preview" : "Tend test checkout"}
               </p>
-              <h3>Choose a test amount for {selectedTribe.taxName}</h3>
+              <h3>
+                Choose a {demo ? "sample" : "Stripe test"} amount for{" "}
+                {selectedTribe.taxName}
+              </h3>
             </div>
             <div className="pledge-suggestion">
-              <span>Test amount</span>
+              <span>{demo ? "Sample amount" : "Stripe test amount"}</span>
               <strong>${selectedAmount}</strong>
             </div>
           </div>
@@ -389,7 +392,9 @@ export function PledgeFlow({
               </fieldset>
 
               <fieldset className="pledge-control">
-                <legend>Test amount</legend>
+                <legend>
+                  {demo ? "Sample amount" : "Stripe test amount"}
+                </legend>
                 <div className="pledge-amount-row">
                   {AMOUNT_CHIPS.map((chip) => (
                     <button
@@ -414,14 +419,19 @@ export function PledgeFlow({
                       onChange={(event) =>
                         setCustom(cleanAmount(event.target.value))
                       }
-                      aria-label="Custom test amount in dollars"
+                      aria-label={
+                        demo
+                          ? "Custom sample amount in dollars"
+                          : "Custom Stripe test amount in dollars"
+                      }
                       aria-invalid={Boolean(custom) && !amountValid}
                       aria-describedby="pledge-amount-help"
                     />
                   </label>
                 </div>
                 <p id="pledge-amount-help" className="pledge-location-note">
-                  Enter an amount from $1 to $10,000.
+                  Enter {demo ? "a sample" : "a Stripe test"} amount from $1
+                  to $10,000. No real funds move.
                 </p>
               </fieldset>
 
@@ -431,11 +441,11 @@ export function PledgeFlow({
                     <SlidersHorizontal size={15} aria-hidden="true" />
                     {demo
                       ? "Set demo receipt timing"
-                      : "Set Tempo testnet transfer timing"}
+                      : "Plan Tempo testnet timing"}
                   </span>
                   <small>
                     {settlementCount}{" "}
-                    {demo ? "preview transfers" : "testnet transfers"}, every{" "}
+                    {demo ? "preview transfers" : "planned test transfers"}, every{" "}
                     {formatStreamTime(streamIntervalSeconds)}
                   </small>
                 </summary>
@@ -471,27 +481,31 @@ export function PledgeFlow({
                   <strong>{selectedTribe?.name ?? "Selected program"}</strong>
                 </div>
                 <div>
-                  <span>Test amount</span>
+                  <span>{demo ? "Sample amount" : "Stripe test amount"}</span>
                   <strong>
                     ${amountValid ? selectedAmount.toFixed(2) : "0.00"}
                   </strong>
                 </div>
                 <div>
-                  <span>Frequency</span>
+                  <span>{demo ? "Preview schedule" : "Stripe test schedule"}</span>
                   <strong>{INTERVAL_LABELS[interval]}</strong>
                 </div>
                 <div>
                   <span>
-                    {demo ? "Preview transfers" : "Tempo testnet transfers"}
+                    {demo ? "Preview transfers" : "Planned testnet transfers"}
                   </span>
                   <strong>{settlementCount}</strong>
                 </div>
                 <div>
-                  <span>Transfer window</span>
+                  <span>
+                    {demo ? "Preview window" : "Planned transfer window"}
+                  </span>
                   <strong>{formatStreamTime(streamDurationSeconds)}</strong>
                 </div>
                 <div>
-                  <span>Transfer interval</span>
+                  <span>
+                    {demo ? "Preview interval" : "Planned transfer interval"}
+                  </span>
                   <strong>
                     Every {formatStreamTime(streamIntervalSeconds)}
                   </strong>
@@ -507,9 +521,11 @@ export function PledgeFlow({
                   </>
                 ) : (
                   <>
-                    Stripe processes a test payment. This prototype can then
-                    create test pathUSD transfers on the Tempo Moderato
-                    testnet. No real money reaches {selectedTribe.name}.
+                    The button asks Stripe to open a test checkout for this
+                    amount and schedule. Tend attempts this Tempo plan once
+                    after Stripe confirms the payment. The receipt lists only
+                    testnet transfers that settle. No real money reaches{" "}
+                    {selectedTribe.name}.
                   </>
                 )}
               </p>
@@ -553,7 +569,7 @@ export function PledgeFlow({
               <p className="pledge-test-disclosure">
                 {demo
                   ? "Demo preview only. Stripe Checkout and Tempo stay idle."
-                  : "Stripe test payment with a Tempo Moderato testnet transfer record. No real funds move."}
+                  : "Test only. Stripe may record a checkout attempt; the receipt shows only confirmed Tempo testnet transfers. No real funds move."}
               </p>
             </div>
           </div>
