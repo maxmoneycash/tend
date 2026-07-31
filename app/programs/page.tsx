@@ -36,8 +36,9 @@ export default function ProgramsPage() {
               Indigenous-led contribution programs
             </h1>
             <p className="text-[13px] sm:text-[14px] font-sans text-[#7d7d7d] max-w-xl text-pretty leading-relaxed tracking-[-0.01em]">
-              Sovereign tenants: their counties, their rates, their Stripe
-              account. No platform fee.
+              Demonstration listings based on public information. These
+              organizations have not onboarded to Tend, and no real
+              contributions are accepted here.
             </p>
           </div>
 
@@ -83,25 +84,15 @@ export default function ProgramsPage() {
                   </div>
                   <div className="mt-4 pt-3 border-t border-black/[0.06] flex items-center justify-between">
                     <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-700">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                      Accepting pledges
+                      Demonstration program
                     </span>
                     <span className="text-[11px] text-[#8a8a8a] font-mono">
-                      monthly · yearly · MPP
+                      Stripe test mode
                     </span>
                   </div>
                 </div>
               </Link>
             ))}
-
-            <div className="border border-dashed border-black/[0.12] rounded-[16px] p-5 flex flex-col items-start justify-center min-h-[180px] md:col-span-2">
-              <p className="text-[14px] font-semibold text-[#3a3a3a]">
-                Your program here
-              </p>
-              <p className="mt-2 text-[12px] leading-relaxed text-[#6b6b6b] max-w-xl">
-                Onboarding is a conversation, on the tribe&apos;s terms.
-              </p>
-            </div>
           </div>
         </main>
       </div>

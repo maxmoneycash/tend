@@ -170,7 +170,7 @@ export function TempoStream({
     <section className="tempo-stream">
       <header className="tempo-stream-hero">
         <div>
-          <p className="pledge-kicker">Live receipt</p>
+          <p className="pledge-kicker">Test receipt</p>
           <h1>
             {status === "complete"
               ? "Every settlement landed."
@@ -192,7 +192,7 @@ export function TempoStream({
           )}
           {status === "connecting" && "Verifying Stripe"}
           {status === "preparing" && "Preparing Tempo"}
-          {status === "streaming" && "Streaming live"}
+          {status === "streaming" && "Streaming test receipt"}
           {status === "complete" && "Complete"}
           {status === "error" && "Connection paused"}
         </div>

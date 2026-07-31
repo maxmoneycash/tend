@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion } from "motion/react";
-// ThemeSwitcher removed from nav — now fixed at bottom of page
-import "@/styles/landing.css";
+import "@/styles/navbar.css";
 
 const NAV_LINKS = [
   { href: "/programs", label: "Programs" },
@@ -16,16 +15,19 @@ const NAV_LINKS = [
 
 const LOGO_LIGHT = "/tend-logo-light.svg";
 const LOGO_DARK = "/tend-logo-dark.svg";
+const subscribeToHydration = () => () => {};
 
 export function Navbar() {
   const pathname = usePathname();
   const navCardRef = useRef<HTMLDivElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    subscribeToHydration,
+    () => true,
+    () => false,
+  );
 
   const isLightPage = true; // original light theme carries the whole app
-
-  useEffect(() => { setMounted(true); }, []);
 
   // Scroll-linked glass effect — initial state handled by CSS via data-theme
   useEffect(() => {
@@ -46,7 +48,7 @@ export function Navbar() {
             const blur = 4 + eased * 8;
             card.style.background = `rgba(255,255,255,${bgOpacity})`;
             card.style.backdropFilter = `blur(${blur}px)`;
-            (card.style as any).webkitBackdropFilter = `blur(${blur}px)`;
+            card.style.setProperty("-webkit-backdrop-filter", `blur(${blur}px)`);
             if (progress > 0.15) {
               card.style.borderColor = "rgb(217, 212, 212)";
               card.style.boxShadow = `0 6px 12px rgba(0,0,0,0.06)`;
@@ -61,7 +63,7 @@ export function Navbar() {
             card.style.background = `rgba(20,20,20,${bgOpacity})`;
             card.style.boxShadow = `0 2px 16px rgba(0,0,0,${0.1 + progress * 0.15})`;
             card.style.backdropFilter = `blur(${blur}px)`;
-            (card.style as any).webkitBackdropFilter = `blur(${blur}px)`;
+            card.style.setProperty("-webkit-backdrop-filter", `blur(${blur}px)`);
             card.style.borderColor = `rgba(255,255,255,${borderOpacity})`;
           }
         }
@@ -105,7 +107,7 @@ export function Navbar() {
     <>
       <nav className="navbar">
         <div className="nav-card" ref={navCardRef} data-theme={isLightPage ? "light" : "dark"}>
-          <Link href="/" className="nav-logo">
+          <Link href="/programs" className="nav-logo">
             <img
               src={isLightPage ? LOGO_DARK : LOGO_LIGHT}
               alt="Tend"
@@ -129,7 +131,7 @@ export function Navbar() {
             )}
           </div>
           <Link href="/programs" className="btn-nav-cta">
-            Start a pledge <span className="arrow">→</span>
+            Explore programs <span className="arrow">→</span>
           </Link>
           <button
             className="nav-hamburger"
@@ -203,7 +205,7 @@ export function Navbar() {
                 padding: "calc(24px + env(safe-area-inset-top, 0px)) 20px 0",
               }}
             >
-              <Link href="/" className="nav-logo" onClick={() => setMobileOpen(false)}>
+              <Link href="/programs" className="nav-logo" onClick={() => setMobileOpen(false)}>
                 <img
                   src={isLightPage ? LOGO_DARK : LOGO_LIGHT}
                   alt="Tend"
@@ -340,7 +342,7 @@ export function Navbar() {
                     textDecoration: "none",
                   }}
                 >
-                  Start a pledge
+                  Explore programs
                 </Link>
               </motion.div>
 

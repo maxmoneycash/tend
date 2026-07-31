@@ -102,7 +102,7 @@ export default function ExplorerPage() {
           {/* Part 2 — the campaign signals */}
           <PartHeader
             n={2}
-            title="The recognition fight, live"
+            title="The recognition fight, documented"
             sub="Petition #111 was denied in 2002 even as the government conceded the tribe's descent from the never-terminated Verona Band. These are the current signals."
           />
           <div className="grid gap-3 sm:grid-cols-3">

@@ -5,7 +5,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 export const metadata: Metadata = {
   title: "Tend — a land tax for the land you live on",
   description:
-    "Find Indigenous-led contribution programs connected to where you live. Humans can contribute by card; machines can pay over Stripe MPP.",
+    "Explore demonstration listings for Indigenous-led contribution programs and preview the test-mode donation flow.",
 };
 
 export default function RootLayout({

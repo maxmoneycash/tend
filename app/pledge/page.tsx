@@ -57,18 +57,16 @@ export default async function Home() {
       <section className="relative mx-auto max-w-6xl px-5 pt-20 pb-14">
         <div className="max-w-2xl">
           <span className="animate-enter inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-700">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
-            </span>
-            Live on Ohlone land · Auth0 × Stripe hackathon
+            Prototype · Stripe test mode
           </span>
           <h1 className="animate-enter animate-enter-delay-1 display-1 mt-5">
             You live on someone&apos;s ancestral land.{" "}
             <span className="text-gradient-whop">Tend it.</span>
           </h1>
           <p className="animate-enter animate-enter-delay-2 mt-5 max-w-xl text-[15px] leading-relaxed text-[#555555]">
-            A small recurring contribution to the tribes whose land you live on. Sign in, type your address, and begin — <strong className="text-[#2a2a2a]">no platform fee.</strong>
+            Try the contribution flow with demonstration programs based on
+            public information. <strong className="text-[#2a2a2a]">No real
+            contribution reaches an organization in this prototype.</strong>
           </p>
           <div className="animate-enter animate-enter-delay-3 mt-7 flex flex-wrap gap-3">
             <a href="#pledge" className="btn tnd-btn-primary">
@@ -83,8 +81,8 @@ export default async function Home() {
         {/* stats row */}
         <div className="animate-enter animate-enter-delay-3 mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: "PROGRAMS LIVE", value: "2" },
-            { label: "PLATFORM FEE", value: "0%" },
+            { label: "DEMO PROGRAMS", value: "2" },
+            { label: "REAL FUNDS SENT", value: "$0" },
             { label: "COUNTIES COVERED", value: "5" },
             { label: "MACHINE PAYERS", value: "MPP PREVIEW" },
           ].map((s) => (
@@ -178,11 +176,11 @@ export default async function Home() {
           {[
             {
               title: "A proven practice",
-              body: "Shuumi built one of the strongest Indigenous land trusts in the country — the model works. Yunakin runs today; Tend gives programs like it shared rails.",
+              body: "Yunakin and Shuumi are real programs run by their respective organizations. Their presence here does not mean those organizations use or endorse Tend.",
             },
             {
-              title: "No Tend platform fee",
-              body: "Pledges live on the tribe's own Stripe account. If Tend vanished tomorrow, every pledge would keep flowing.",
+              title: "Test mode only",
+              body: "No real funds move in this prototype. Beneficiary-managed Stripe accounts require each organization to onboard and approve the arrangement.",
             },
             {
               title: "Sovereignty as architecture",

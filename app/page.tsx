@@ -1,5 +1,5 @@
-import { LandingClient } from "@/components/landing/LandingClient";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return <LandingClient />;
+  redirect("/programs");
 }

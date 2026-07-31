@@ -4,7 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { AmbientBlobs } from "@/components/layout/AmbientBlobs";
 import { auth0 } from "@/lib/auth0";
 import { canAccessTribe } from "@/lib/access";
-import { demoMachinePayments, demoMode, demoPledges } from "@/lib/demo";
+import { demoMode } from "@/lib/demo";
 import { getStripe } from "@/lib/stripe";
 import { getTribe, getTribeAccount, type TribeId } from "@/lib/tribes";
 
@@ -79,10 +79,7 @@ export default async function TribeDashboard({
   let machine: MachineRow[] = [];
   let stripeNote: string | null = null;
 
-  if (demo) {
-    pledges = demoPledges();
-    machine = demoMachinePayments();
-  } else {
+  if (!demo) {
     try {
       const stripe = getStripe();
       const res = await stripe.subscriptions.list(
@@ -122,12 +119,6 @@ export default async function TribeDashboard({
     }
   }
 
-  const sampled = !demo && pledges.length === 0 && machine.length === 0;
-  if (sampled) {
-    pledges = demoPledges();
-    machine = demoMachinePayments();
-  }
-
   const mrr = pledges.reduce((sum, p) => sum + monthly(p), 0);
   const machineTotal = machine
     .filter((m) => m.status === "succeeded")
@@ -150,23 +141,22 @@ export default async function TribeDashboard({
             </h1>
             <p className="text-[13px] sm:text-[14px] text-[#7d7d7d] max-w-xl text-pretty leading-relaxed">
               {demo
-                ? "The fundraising program in a box."
+                ? "Demonstration dashboard. No sample activity is fabricated."
                 : account
-                  ? `Payments land directly on this tribe's own Stripe account (${account.slice(0, 12)}…).`
-                  : "Platform mode — pledges are tagged to this program until the tribe connects its own account."}
+                  ? `Test payments are created on the configured connected test account (${account.slice(0, 12)}…).`
+                  : "No beneficiary account is connected; test events remain on the platform test account."}
             </p>
           </div>
 
-          {(demo || authBypass || sampled) && (
+          {(demo || authBypass) && (
             <div className="animate-enter mb-4 surface-1 rounded-[12px] px-4 py-3 flex items-center gap-2.5">
               <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 uppercase tracking-wider shrink-0">
                 {demo ? "Demo" : "Test mode"}
               </span>
               <p className="text-[12px] text-[#555555] leading-relaxed">
                 {demo
-                  ? "Sample data, sign-in bypassed."
+                  ? "Empty demonstration state, sign-in bypassed."
                   : "Real test transactions, sign-in bypassed for recording."}{" "}
-                {sampled && "Sample data shown until the first pledges arrive. "}
                 Production access is isolated with Auth0 Organizations.
               </p>
             </div>
@@ -179,14 +169,14 @@ export default async function TribeDashboard({
               <p className="font-mono text-[26px] font-bold text-[#111111] tracking-tight">
                 {pledges.length}
               </p>
-              <p className="text-[10px] text-[#8a8a8a] mt-0.5">active recurring pledges</p>
+              <p className="text-[10px] text-[#8a8a8a] mt-0.5">active test subscriptions</p>
             </div>
             <div className="surface-1 rounded-[16px] p-4">
-              <p className="text-[9px] text-[#6b6b6b] uppercase tracking-wider">Recurring</p>
+              <p className="text-[9px] text-[#6b6b6b] uppercase tracking-wider">Monthly equivalent</p>
               <p className="font-mono text-[26px] font-bold text-[#111111] tracking-tight">
                 {usd(mrr)}
               </p>
-              <p className="text-[10px] text-[#8a8a8a] mt-0.5">per month · no Tend platform fee</p>
+              <p className="text-[10px] text-[#8a8a8a] mt-0.5">Stripe test mode</p>
             </div>
             <div className="surface-1 rounded-[16px] p-4">
               <p className="text-[9px] text-[#6b6b6b] uppercase tracking-wider">Machine payments</p>

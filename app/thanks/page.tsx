@@ -64,13 +64,13 @@ export default async function Thanks({
       </h1>
       <p className="mt-6 text-lg text-faded leading-relaxed">
         {tribe
-          ? `Your ${tribe.taxName} is ready for the ${tribe.name}.`
-          : "Your contribution is ready for the organization."}{" "}
+          ? `This test receipt references ${tribe.taxName} and ${tribe.name}.`
+          : "This test receipt references the selected demonstration program."}{" "}
         {demo === "1"
-          ? "In a configured deployment, Stripe Checkout creates the subscription and sends the receipt."
-          : "A receipt is on its way from Stripe."}
+          ? "A configured test environment opens Stripe Checkout; this preview does not represent beneficiary onboarding or a real transfer."
+          : "Stripe created a test-mode receipt; no real funds were sent to the organization."}
       </p>
-      <Link href="/" className="btn tnd-btn-primary mt-10">
+      <Link href="/programs" className="btn tnd-btn-primary mt-10">
         Back to Tend
       </Link>
     </div>

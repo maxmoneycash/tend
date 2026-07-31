@@ -204,7 +204,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
           <p className="pledge-kicker">Start here</p>
           <h3>Find the program for your address</h3>
         </div>
-        <span>No account needed</span>
+        <span>Stripe test mode</span>
       </div>
 
       <form

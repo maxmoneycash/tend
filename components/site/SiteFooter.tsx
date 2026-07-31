@@ -1,13 +1,4 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-
-/** The original landing carries its own footer; this one serves the app
- * surfaces and stays off "/" so the landing renders exactly as built. */
 export function SiteFooter() {
-  const pathname = usePathname();
-  if (pathname === "/") return null;
-
   return (
     <footer className="mt-24 border-t border-black/[0.08] bg-[#efefef]">
       <div className="mx-auto max-w-6xl px-5 py-12">
@@ -24,13 +15,13 @@ export function SiteFooter() {
           <p>
             Where territorial definitions differ, Tend shows every tribe whose
             published definition includes your county and lets you choose — it
-            never arbitrates boundaries. Tend takes no platform fee; payment
-            processing fees may apply.
+            never arbitrates boundaries. No real payments are accepted by this
+            prototype.
           </p>
         </div>
         <div className="mt-8 pt-5 border-t border-black/[0.06] flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-[#8a8a8a] uppercase tracking-wider">
           <span>Ramaytush &amp; Muwekma Ohlone land · San Francisco Bay</span>
-          <span>humans pay by card · MPP prototype for machines</span>
+          <span>Stripe test mode · MPP prototype for machines</span>
         </div>
       </div>
     </footer>

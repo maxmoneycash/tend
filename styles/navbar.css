@@ -1,0 +1,135 @@
+:root {
+  --navbar-ink: #0a0a0a;
+  --navbar-paper: #ffffff;
+}
+
+.navbar {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
+  padding: 16px 40px 0;
+}
+
+.nav-card {
+  --nav-scale: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(20, 20, 20, 0.39);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  box-shadow: none;
+  transition:
+    background 0.15s ease,
+    backdrop-filter 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.logo-img {
+  width: auto;
+  height: calc(36px * var(--nav-scale, 1));
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+}
+
+.nav-link {
+  color: var(--navbar-paper);
+  font-size: 15px;
+  font-weight: 500;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.nav-link:hover,
+.nav-link--active {
+  opacity: 1;
+}
+
+.nav-link--active {
+  font-weight: 600;
+}
+
+.btn-nav-cta {
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--navbar-ink);
+  font-size: 15px;
+  font-weight: 600;
+  background: linear-gradient(359deg, #ffffff 0%, #f5f5f5 100%);
+  border: 1px solid rgba(28, 28, 28, 0.15);
+  border-radius: 16px;
+  transition: opacity 0.2s;
+}
+
+.btn-nav-cta:hover {
+  opacity: 0.85;
+}
+
+.btn-nav-cta .arrow {
+  font-size: 18px;
+}
+
+.nav-hamburger {
+  padding: 8px;
+  display: none;
+  align-items: center;
+  color: var(--navbar-paper);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.nav-hamburger svg {
+  width: calc(24px * var(--nav-scale));
+  height: calc(24px * var(--nav-scale));
+}
+
+.nav-card[data-theme="light"] {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: transparent;
+}
+
+.nav-card[data-theme="light"] .nav-link {
+  color: var(--navbar-ink);
+}
+
+.nav-card[data-theme="light"] .btn-nav-cta {
+  color: var(--navbar-paper);
+  background: var(--navbar-ink);
+  border-color: transparent;
+}
+
+.nav-card[data-theme="light"] .nav-hamburger {
+  color: var(--navbar-ink);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 10px 0;
+  }
+
+  .nav-card {
+    --nav-scale: 1.15;
+    padding: 14px 24px 14px 16px;
+  }
+
+  .nav-links,
+  .btn-nav-cta {
+    display: none;
+  }
+
+  .nav-hamburger {
+    display: flex;
+  }
+}

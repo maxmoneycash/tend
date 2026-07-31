@@ -60,7 +60,7 @@ export default async function ProgramDetail({
                 {tribe.region}
               </span>
               <span className="absolute bottom-3 right-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-medium bg-white/90 text-[#3a3a3a]">
-                Hackathon prototype
+                Demonstration listing
               </span>
             </div>
 
@@ -109,12 +109,12 @@ export default async function ProgramDetail({
 
               <div className="mt-5 pt-4 border-t border-black/[0.06] grid grid-cols-3 gap-3">
                 <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Tend fee</p>
-                  <p className="text-[15px] font-bold text-[#111111] font-display">0%</p>
+                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Funds sent</p>
+                  <p className="text-[15px] font-bold text-[#111111] font-display">$0</p>
                 </div>
                 <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Cadence</p>
-                  <p className="text-[15px] font-bold text-[#111111] font-display">mo · yr</p>
+                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Checkout</p>
+                  <p className="text-[15px] font-bold text-[#111111] font-display">test only</p>
                 </div>
                 <div className="surface-2 rounded-[10px] p-2.5 text-center">
                   <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Machines</p>
@@ -129,9 +129,9 @@ export default async function ProgramDetail({
                 tribeName={tribe.name}
               />
               <p className="text-[11px] text-[#8a8a8a] text-center">
-                Want address matching or a recurring contribution?{" "}
+                Want to try address matching?{" "}
                 <Link href="/pledge" className="underline underline-offset-4 text-[#555555] hover:text-[#111111]">
-                  Open the full pledge flow
+                  Open the test flow
                 </Link>
               </p>
 
@@ -145,7 +145,7 @@ export default async function ProgramDetail({
 → 402 · pay $25.00 · receipt`}
                 </pre>
                 <p className="mt-2 text-[10px] font-mono text-[#8a8a8a]">
-                  pathUSD · Tempo Moderato testnet
+                  Demonstration only · pathUSD · Tempo Moderato testnet
                 </p>
               </div>
             </div>
