@@ -66,10 +66,10 @@ export function ProgramOfficialHero({
           />
           <span>
             <span className="font-semibold text-[#3f3934]">
-              Run by {program.name}.
+              Official source from {program.name}.
             </span>{" "}
-            Tend uses the organization’s {program.taxName} page at{" "}
-            {host(program.officialProgramUrl)} as the source for this listing.
+            Tend uses the {program.taxName} page at{" "}
+            {host(program.officialProgramUrl)} for this listing.
           </span>
         </p>
 
