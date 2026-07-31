@@ -1,18 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FlaskConical, Info } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { AmbientBlobs } from "@/components/layout/AmbientBlobs";
-import { countyNotes, countyTribes, getTribe, type TribeId } from "@/lib/tribes";
+import { countyNotes, countyTribes, getTribe } from "@/lib/tribes";
 import { StreamPanel } from "@/components/stream/StreamPanel";
-
-const COVER: Record<TribeId, string> = {
-  ramaytush: "cover-orange",
-  muwekma: "cover-purple",
-};
-const BADGE: Record<TribeId, string> = {
-  ramaytush: "text-[#FA4616] bg-[#FA4616]/10",
-  muwekma: "text-[#8B5CF6] bg-[#8B5CF6]/10",
-};
+import { ProgramOfficialHero } from "@/components/programs/ProgramOfficialHero";
 
 export default async function ProgramDetail({
   params,
@@ -36,67 +29,57 @@ export default async function ProgramDetail({
       <div style={{ paddingTop: "108px" }} />
       <div className="relative" style={{ overflow: "clip" }}>
         <AmbientBlobs variant="earn" />
-        <main className="relative z-10 max-w-6xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
+        <main className="relative z-10 mx-auto max-w-6xl px-5 py-7 sm:px-10 sm:py-10">
           <div className="animate-enter">
             <Link
               href="/programs"
-              className="text-[11px] font-medium text-[#6b6b6b] hover:text-[#3a3a3a]"
+              className="inline-flex min-h-11 items-center text-[11px] font-semibold text-[#6b6b6b] hover:text-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
             >
               ← All programs
             </Link>
-
-            <div className={`mt-4 h-44 ${COVER[tribe.id]} rounded-[16px] relative overflow-hidden border border-black/[0.08]`}>
-              <video
-                src={`/videos/${tribe.id}.mp4`}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <span
-                className={`absolute bottom-3 left-3 z-10 text-[10px] font-semibold px-2 py-0.5 rounded backdrop-blur ${BADGE[tribe.id]}`}
-              >
-                {tribe.region}
-              </span>
-              <span className="absolute bottom-3 right-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-medium bg-white/90 text-[#3a3a3a]">
-                Demonstration listing
-              </span>
-            </div>
-
-            <div className="mt-5 mb-6">
-              <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111111] mb-1 tracking-[-0.02em]">
-                {tribe.taxName}
-              </h1>
-              <p className="text-[13px] text-[#6b6b6b]">
-                {tribe.name}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <a
-                  href={tribe.officialDonationUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex min-h-11 items-center justify-center rounded-[10px] bg-[#111111] px-4 text-[12px] font-semibold text-white hover:bg-[#333333] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                >
-                  Donate on the official site
-                </a>
-                <a
-                  href={tribe.officialProgramUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex min-h-11 items-center justify-center rounded-[10px] border border-black/[0.12] bg-white px-4 text-[12px] font-semibold text-[#333333] hover:border-black/[0.25] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                >
-                  Read the official program page
-                </a>
-              </div>
-            </div>
+            <ProgramOfficialHero counties={tribeCounties} program={tribe} />
           </div>
 
-          <div className="animate-enter animate-enter-delay-1 grid gap-4 lg:grid-cols-[1.5fr_1fr]">
-            <div className="order-2 lg:order-1 surface-1 rounded-[16px] p-5">
-              <p className="text-[11px] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
-                About
+          <section
+            className="animate-enter animate-enter-delay-1 mt-5 grid scroll-mt-28 gap-4 lg:grid-cols-[minmax(260px,0.68fr)_minmax(0,1.32fr)]"
+            id="tend-test-checkout"
+          >
+            <aside className="h-fit rounded-[20px] border-2 border-[#d99445]/35 bg-[#fff8ed] p-5 sm:p-6">
+              <div className="flex items-center gap-2 text-[#9b5a0a]">
+                <FlaskConical aria-hidden="true" size={17} />
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em]">
+                  Tend preview
+                </p>
+              </div>
+              <h2 className="mt-3 text-balance text-[22px] font-bold leading-tight tracking-[-0.025em] text-[#30271f]">
+                This checkout is a test.
+              </h2>
+              <p className="mt-3 text-[12px] leading-relaxed text-[#6f5a43]">
+                This checkout moves test funds only. Stripe stays in test mode,
+                and the receipt settles with faucet-funded pathUSD on Tempo
+                Moderato testnet.
               </p>
+              <p className="mt-4 border-t border-[#d99445]/25 pt-4 text-[11px] font-semibold leading-relaxed text-[#4c3d2d]">
+                Use the official donation button above for real giving. Use
+                this panel only to preview the flow.
+              </p>
+            </aside>
+
+            <StreamPanel tribeId={tribe.id} tribeName={tribe.name} />
+          </section>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-[1.5fr_1fr]">
+            <section
+              aria-labelledby="about-program"
+              className="surface-1 rounded-[16px] p-5 sm:p-6"
+            >
+              <p className="flex items-center gap-2 text-[11px] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
+                <Info aria-hidden="true" size={14} />
+                About this program
+              </p>
+              <h2 className="sr-only" id="about-program">
+                About {tribe.taxName}
+              </h2>
               <p className="mt-2.5 text-[13px] leading-relaxed text-[#3a3a3a]">
                 {tribe.blurb}
               </p>
@@ -111,35 +94,49 @@ export default async function ProgramDetail({
                 ))}
               </div>
               {notes.map((n) => (
-                <p key={n} className="mt-4 text-[11px] leading-relaxed text-[#8a8a8a]">
+                <p
+                  className="mt-4 text-[11px] leading-relaxed text-[#8a8a8a]"
+                  key={n}
+                >
                   {n}
                 </p>
               ))}
 
               <div className="mt-5 pt-4 border-t border-black/[0.06] grid grid-cols-3 gap-3">
                 <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Funds sent</p>
-                  <p className="text-[15px] font-bold text-[#111111] font-display">$0</p>
+                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">
+                    Real funds sent
+                  </p>
+                  <p className="text-[15px] font-bold text-[#111111] font-display">
+                    $0
+                  </p>
                 </div>
                 <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Checkout</p>
-                  <p className="text-[15px] font-bold text-[#111111] font-display">test only</p>
+                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">
+                    Checkout
+                  </p>
+                  <p className="text-[15px] font-bold text-[#111111] font-display">
+                    test only
+                  </p>
                 </div>
                 <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">Machines</p>
-                  <p className="text-[15px] font-bold text-[#111111] font-display">MPP</p>
+                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">
+                    Machine path
+                  </p>
+                  <p className="text-[15px] font-bold text-[#111111] font-display">
+                    MPP
+                  </p>
                 </div>
               </div>
-            </div>
+            </section>
 
-            <div className="order-1 lg:order-2 space-y-4">
-              <StreamPanel
-                tribeId={tribe.id}
-                tribeName={tribe.name}
-              />
+            <div className="space-y-4">
               <p className="text-[11px] text-[#8a8a8a] text-center">
                 Want to try address matching?{" "}
-                <Link href="/pledge" className="underline underline-offset-4 text-[#555555] hover:text-[#111111]">
+                <Link
+                  className="underline underline-offset-4 text-[#555555] hover:text-[#111111]"
+                  href="/pledge"
+                >
                   Open the test flow
                 </Link>
               </p>
