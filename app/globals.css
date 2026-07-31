@@ -2350,7 +2350,7 @@ body {
   border-block: 1px solid var(--pledge-rule);
 }
 
-.pledge-payment-review > div {
+.pledge-payment-review-primary > div {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -2359,8 +2359,25 @@ body {
   padding-block: 0.65rem;
 }
 
-.pledge-payment-review > div + div {
+.pledge-payment-review-primary > div + div {
   border-top: 1px solid var(--pledge-rule);
+}
+
+.pledge-payment-review-timing {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  border-top: 1px solid var(--pledge-rule);
+  background: var(--pledge-rule);
+}
+
+.pledge-payment-review-timing > div {
+  display: grid;
+  align-content: start;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.65rem 0.5rem;
+  background: var(--pledge-paper-soft);
 }
 
 .pledge-payment-review span {
@@ -2377,6 +2394,13 @@ body {
   text-align: end;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.pledge-payment-review-timing strong {
+  overflow: visible;
+  text-align: start;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .pledge-test-disclosure {

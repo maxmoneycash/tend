@@ -481,35 +481,39 @@ export function PledgeFlow({
               </div>
 
               <div className="pledge-payment-review">
-                <div>
-                  <span>Program listing</span>
-                  <strong>{selectedTribe?.name ?? "Selected program"}</strong>
+                <div className="pledge-payment-review-primary">
+                  <div>
+                    <span>Program listing</span>
+                    <strong>{selectedTribe?.name ?? "Selected program"}</strong>
+                  </div>
+                  <div>
+                    <span>Test amount</span>
+                    <strong>
+                      ${amountValid ? selectedAmount.toFixed(2) : "0.00"}
+                    </strong>
+                  </div>
+                  <div>
+                    <span>Frequency</span>
+                    <strong>{INTERVAL_LABELS[interval]}</strong>
+                  </div>
                 </div>
-                <div>
-                  <span>Test amount</span>
-                  <strong>
-                    ${amountValid ? selectedAmount.toFixed(2) : "0.00"}
-                  </strong>
-                </div>
-                <div>
-                  <span>Frequency</span>
-                  <strong>{INTERVAL_LABELS[interval]}</strong>
-                </div>
-                <div>
-                  <span>
-                    {demo ? "Preview transfers" : "Tempo testnet transfers"}
-                  </span>
-                  <strong>{settlementCount}</strong>
-                </div>
-                <div>
-                  <span>Transfer window</span>
-                  <strong>{formatStreamTime(streamDurationSeconds)}</strong>
-                </div>
-                <div>
-                  <span>Transfer interval</span>
-                  <strong>
-                    Every {formatStreamTime(streamIntervalSeconds)}
-                  </strong>
+                <div className="pledge-payment-review-timing">
+                  <div>
+                    <span>
+                      {demo ? "Preview transfers" : "Tempo testnet transfers"}
+                    </span>
+                    <strong>{settlementCount}</strong>
+                  </div>
+                  <div>
+                    <span>Transfer window</span>
+                    <strong>{formatStreamTime(streamDurationSeconds)}</strong>
+                  </div>
+                  <div>
+                    <span>Transfer interval</span>
+                    <strong>
+                      Every {formatStreamTime(streamIntervalSeconds)}
+                    </strong>
+                  </div>
                 </div>
               </div>
 
