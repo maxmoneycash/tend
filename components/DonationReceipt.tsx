@@ -2,7 +2,10 @@
 
 import { Check, Copy, ExternalLink, Radio } from "lucide-react";
 import { useState } from "react";
-import { tempoTestnetTransactionUrl } from "@/lib/receipt-proof";
+import {
+  stripeHostedReceiptUrl,
+  tempoTestnetTransactionUrl,
+} from "@/lib/receipt-proof";
 
 type ReceiptStatus =
   | "unverified"
@@ -99,6 +102,7 @@ export function DonationReceipt({
   const copyButtonLabel = reference
     ? "Copy session ID"
     : "Copy transaction ID";
+  const stripeReceiptUrl = stripeHostedReceiptUrl(receiptUrl);
   const lastTransactionUrl = tempoTestnetTransactionUrl(lastHash);
   const statusLabel = {
     unverified: unverifiedStatusLabel,
@@ -303,17 +307,18 @@ export function DonationReceipt({
         <ReceiptEdge bottom />
       </div>
 
-      {(lastTransactionUrl || receiptUrl) && (
+      {(lastTransactionUrl || stripeReceiptUrl) && (
         <div className="tend-receipt-links">
-          {receiptUrl && (
+          {stripeReceiptUrl && (
             <a
               className="tend-receipt-explorer"
-              href={receiptUrl}
+              href={stripeReceiptUrl}
               target="_blank"
-              rel="noreferrer"
-              aria-label="Open Stripe test receipt in a new tab"
+              rel="noopener noreferrer"
+              aria-label="View the Stripe test receipt in a new tab"
             >
-              Stripe test receipt <ExternalLink size={13} aria-hidden="true" />
+              View Stripe test receipt{" "}
+              <ExternalLink size={13} aria-hidden="true" />
             </a>
           )}
           {lastTransactionUrl && (

@@ -7,7 +7,10 @@ import {
   terminalPaymentFailureRecoveryCopy,
   terminalSettlementErrorCopy,
 } from "../lib/receipt-copy.ts";
-import { tempoTestnetTransactionUrl } from "../lib/receipt-proof.ts";
+import {
+  stripeHostedReceiptUrl,
+  tempoTestnetTransactionUrl,
+} from "../lib/receipt-proof.ts";
 
 const [receipt, stream, route] = await Promise.all([
   readFile(new URL("../components/DonationReceipt.tsx", import.meta.url), "utf8"),
@@ -26,6 +29,30 @@ assert.equal(
   tempoTestnetTransactionUrl("https://example.com/not-a-tempo-transaction"),
   null,
   "An unexpected transaction value must not become an external receipt link.",
+);
+assert.equal(
+  stripeHostedReceiptUrl(
+    "https://pay.stripe.com/receipts/payment/test_receipt_token",
+  ),
+  "https://pay.stripe.com/receipts/payment/test_receipt_token",
+  "A Stripe-hosted receipt must keep its HTTPS receipt URL.",
+);
+assert.equal(
+  stripeHostedReceiptUrl(
+    "https://pay.stripe.com.example/receipts/payment/test_receipt_token",
+  ),
+  null,
+  "A deceptive Stripe hostname must not become a receipt link.",
+);
+assert.equal(
+  stripeHostedReceiptUrl("http://pay.stripe.com/receipts/payment/test"),
+  null,
+  "A hosted receipt must use HTTPS.",
+);
+assert.equal(
+  stripeHostedReceiptUrl("https://pay.stripe.com/account"),
+  null,
+  "A Stripe URL outside the hosted receipt path must not become a receipt link.",
 );
 
 assert.equal(
@@ -181,6 +208,16 @@ assert.match(
   receipt,
   /href=\{lastTransactionUrl\}[\s\S]*?rel="noopener noreferrer"[\s\S]*?aria-label="View the last Tempo testnet transaction in a new tab"[\s\S]*?View Tempo transaction on testnet/,
   "The receipt proof link must name its destination and use the validated testnet URL.",
+);
+assert.match(
+  receipt,
+  /const stripeReceiptUrl = stripeHostedReceiptUrl\(receiptUrl\);/,
+  "The receipt component must validate the stored Stripe URL before rendering it.",
+);
+assert.match(
+  receipt,
+  /href=\{stripeReceiptUrl\}[\s\S]*?rel="noopener noreferrer"[\s\S]*?aria-label="View the Stripe test receipt in a new tab"[\s\S]*?View Stripe test receipt/,
+  "The Stripe receipt link must name its action and use the validated hosted URL.",
 );
 assert.match(
   receipt,
