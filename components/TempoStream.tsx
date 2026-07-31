@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DonationReceipt } from "@/components/DonationReceipt";
+import { terminalSettlementErrorCopy } from "@/lib/receipt-copy";
 
 type PreparingEvent = {
   type: "preparing";
@@ -175,17 +176,16 @@ function getViewCopy(
       };
     case "error":
       return {
-        announcement:
-          "The Tempo testnet transfers stopped. A Tend operator must review the receipt before any retry.",
+        announcement: terminalSettlementErrorCopy(settled, total),
         heading: "The testnet transfers stopped.",
         intro:
           settled > 0 && total > 0
-            ? `Stripe verified the test payment. ${settled} of ${total} pathUSD test transfers settled before the stream stopped. A Tend operator must review the receipt before any retry to prevent a duplicate test transfer.`
-            : "Stripe verified the test payment. The Tempo testnet stream stopped before a transfer settled. A Tend operator must review the receipt before any retry to prevent a duplicate test transfer.",
+            ? `Stripe verified the test payment. ${settled} of ${total} pathUSD test transfers settled before the stream stopped.`
+            : "Stripe verified the test payment. The Tempo testnet stream stopped before a transfer settled.",
         panel:
           settled > 0
-            ? "Confirmed test transfers remain below. A Tend operator must review the receipt before any retry."
-            : "A Tend operator must review the receipt before any test transfer can be retried.",
+            ? "Confirmed test transfers remain on this receipt."
+            : "No test transfers are confirmed on this receipt.",
         stateLabel: "Test transfers stopped",
       };
     case "payment-failed":
@@ -336,10 +336,18 @@ export function TempoStream({
     status === "error" ||
     Boolean(ready || complete || eventError);
   const paymentFailed = status === "payment-failed";
+  const terminalSettlementError =
+    status === "error"
+      ? terminalSettlementErrorCopy(
+          settlements.length,
+          totalSettlements,
+        )
+      : null;
   const error =
     (requestError
       ? `Tend could not refresh this test receipt. ${requestError}`
       : null) ??
+    terminalSettlementError ??
     eventError?.message ??
     (paymentFailed
       ? "Stripe marked this test payment as failed. No Tempo testnet transfers started."

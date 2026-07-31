@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test:media-budget": "node scripts/test-media-budget.mjs",
     "test:payments": "node scripts/test-payment-routes.mjs",
+    "test:receipt-recovery": "node --experimental-strip-types scripts/test-receipt-recovery.mjs",
     "test:e2e": "node scripts/test-donation-journey.mjs"
   },
   "dependencies": {
