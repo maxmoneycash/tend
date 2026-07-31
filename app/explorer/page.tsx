@@ -24,7 +24,15 @@ function EvidenceBadge({ tier }: { tier: Evidence }) {
   );
 }
 
-function SourceLink({ name, url }: { name: string; url: string }) {
+function SourceLink({
+  name,
+  url,
+  action,
+}: {
+  name: string;
+  url: string;
+  action?: string;
+}) {
   const host = new URL(url).host.replace(/^www\./, "");
   return (
     <a
@@ -35,6 +43,7 @@ function SourceLink({ name, url }: { name: string; url: string }) {
     >
       <span>Source: {name}</span>
       <span className="font-mono text-[12px] text-[#666666]">
+        {action && <span className="font-sans">{action} · </span>}
         {host} <span aria-hidden="true">↗</span>
       </span>
       <span className="sr-only">(opens in a new tab)</span>
@@ -87,7 +96,11 @@ export default function ExplorerPage() {
                 <p className="text-[11px] text-[#6b6b6b] uppercase tracking-wider">{f.label}</p>
                 <p className="font-mono text-[26px] font-bold text-[#111111] tracking-tight">{f.value}</p>
                 <p className="text-[12px] text-[#8a8a8a] mt-0.5">{f.note}</p>
-                <SourceLink name={f.sourceName} url={f.sourceUrl} />
+                <SourceLink
+                  action={f.sourceAction}
+                  name={f.sourceName}
+                  url={f.sourceUrl}
+                />
               </div>
             ))}
           </div>
