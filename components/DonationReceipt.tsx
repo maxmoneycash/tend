@@ -105,7 +105,7 @@ export function DonationReceipt({
 
           <dl className="tend-receipt-lines">
             <div>
-              <dt>To</dt>
+              <dt>{isStream ? "For" : "To"}</dt>
               <dd>{organization}</dd>
             </div>
             {isStream ? (
@@ -117,7 +117,7 @@ export function DonationReceipt({
                   </dd>
                 </div>
                 <div>
-                  <dt>Recipient</dt>
+                  <dt>Testnet recipient</dt>
                   <dd>{short(recipient)}</dd>
                 </div>
                 <div>

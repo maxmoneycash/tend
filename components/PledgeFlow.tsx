@@ -415,8 +415,8 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                   <span>
                     <Building2 size={17} aria-hidden="true" />
                   </span>
-                  <strong>Program</strong>
-                  <small>Tempo</small>
+                  <strong>Tempo</strong>
+                  <small>Testnet</small>
                 </div>
               </div>
 

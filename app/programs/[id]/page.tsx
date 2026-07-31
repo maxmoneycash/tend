@@ -45,13 +45,21 @@ export default async function ProgramDetail({
               ← All programs
             </Link>
 
-            <div className={`mt-4 h-28 ${COVER[tribe.id]} rounded-[16px] relative border border-black/[0.08]`}>
+            <div className={`mt-4 h-44 ${COVER[tribe.id]} rounded-[16px] relative overflow-hidden border border-black/[0.08]`}>
+              <video
+                src={`/videos/${tribe.id}.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 h-full w-full object-cover"
+              />
               <span
-                className={`absolute top-3 left-3 text-[10px] font-semibold px-2 py-0.5 rounded ${BADGE[tribe.id]}`}
+                className={`absolute top-3 left-3 z-10 text-[10px] font-semibold px-2 py-0.5 rounded backdrop-blur ${BADGE[tribe.id]}`}
               >
                 {tribe.region}
               </span>
-              <span className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-700">
+              <span className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-green-500/10 text-green-700">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
                 Accepting pledges
               </span>

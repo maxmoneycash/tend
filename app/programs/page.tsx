@@ -48,9 +48,17 @@ export default function ProgramsPage() {
                 href={`/programs/${t.id}`}
                 className="group block bg-white border border-black/[0.08] rounded-[16px] overflow-hidden transition-all duration-300 ease-out hover:scale-[1.01] hover:border-black/[0.14] active:scale-[0.99]"
               >
-                <div className={`h-20 ${COVER[t.id]} relative`}>
+                <div className={`h-36 ${COVER[t.id]} relative overflow-hidden`}>
+                  <video
+                    src={`/videos/${t.id}.mp4`}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
                   <span
-                    className={`absolute top-3 left-3 text-[10px] font-semibold px-2 py-0.5 rounded ${BADGE[t.id]}`}
+                    className={`absolute top-3 left-3 z-10 text-[10px] font-semibold px-2 py-0.5 rounded backdrop-blur ${BADGE[t.id]}`}
                   >
                     {t.region}
                   </span>

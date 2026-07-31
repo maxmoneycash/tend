@@ -192,7 +192,7 @@ export function TempoStream({
         {[
           ["Stripe", "Payment verified", true],
           ["Tempo", `${settlements.length}/${totalSettlements} settled`, settlements.length > 0],
-          ["Program", status === "complete" ? "Received" : "Receiving", status === "complete"],
+          ["Receipt", status === "complete" ? "Auditable" : "Building", status === "complete"],
         ].map(([label, detail, active], index) => (
           <div key={String(label)} className="tempo-route-step" data-active={active}>
             <span>{active ? <Check size={13} /> : index + 1}</span>
