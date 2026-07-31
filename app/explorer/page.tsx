@@ -148,7 +148,11 @@ export default function ExplorerPage() {
                 </div>
                 <p className="text-[13px] font-semibold text-[#111111]">{s.title}</p>
                 <p className="text-[12px] text-[#555555] leading-relaxed mt-1.5">{s.detail}</p>
-                <SourceLink name={s.sourceName} url={s.sourceUrl} />
+                <SourceLink
+                  action={s.sourceAction}
+                  name={s.sourceName}
+                  url={s.sourceUrl}
+                />
               </div>
             ))}
           </div>

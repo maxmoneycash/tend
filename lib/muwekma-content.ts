@@ -3,6 +3,7 @@ export type Evidence = "documented" | "reported" | "oral-history" | "analysis";
 type SourcedEntry = {
   sourceName: string;
   sourceUrl: string;
+  sourceAction?: string;
 };
 
 export interface TimelineEntry extends SourcedEntry {
@@ -118,6 +119,7 @@ export const signals: Signal[] = [
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",
+    sourceAction: "Read the Tribe’s federal recognition page",
   },
   {
     date: "Research",
@@ -134,7 +136,6 @@ interface TribeFact extends SourcedEntry {
   label: string;
   value: string;
   note: string;
-  sourceAction?: string;
 }
 
 export const tribeFacts: TribeFact[] = [
