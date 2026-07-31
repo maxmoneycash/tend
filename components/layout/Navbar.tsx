@@ -172,12 +172,6 @@ export function Navbar() {
         </div>
       </nav>
 
-      <span
-        id="main-content"
-        className="main-content-anchor"
-        tabIndex={-1}
-      />
-
       {mounted &&
         mobileOpen &&
         createPortal(

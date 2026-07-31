@@ -28,12 +28,7 @@
   transform: translateY(0);
 }
 
-.main-content-anchor {
-  display: block;
-  width: 1px;
-  height: 1px;
-  margin-bottom: -1px;
-  overflow: hidden;
+#main-content {
   scroll-margin-top: calc(100px + env(safe-area-inset-top, 0px));
 }
 

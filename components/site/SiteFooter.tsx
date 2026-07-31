@@ -8,9 +8,8 @@ export function SiteFooter() {
         <div className="mt-5 grid gap-4 text-[14px] leading-6 text-[#555555] sm:mt-6 sm:grid-cols-2 sm:gap-8">
           <p>
             Tend is a test-only hackathon prototype from July 2026. The
-            Association of Ramaytush Ohlone, Muwekma Ohlone Preservation
-            Foundation, and Sogorea Te&apos; Land Trust have not approved,
-            endorsed, or joined it.
+            organizations listed here did not take part in this July 2026
+            hackathon prototype.
           </p>
           <p>
             County matches are informational. Real donations belong on the

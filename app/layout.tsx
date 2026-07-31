@@ -39,7 +39,9 @@ export default function RootLayout({
       lang="en"
     >
       <body className="flex min-h-svh min-w-0 flex-col antialiased">
-        <div className="min-w-0 flex-1">{children}</div>
+        <main id="main-content" className="min-w-0 flex-1" tabIndex={-1}>
+          {children}
+        </main>
         <SiteFooter />
       </body>
     </html>
