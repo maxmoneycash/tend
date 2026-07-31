@@ -1,5 +1,16 @@
 "use client";
 
+import {
+  ArrowRight,
+  Bot,
+  Building2,
+  Check,
+  CreditCard,
+  LoaderCircle,
+  MapPin,
+  ShieldCheck,
+  WalletCards,
+} from "lucide-react";
 import { useState } from "react";
 
 type TribeCard = {
@@ -19,8 +30,10 @@ type Located = {
   coveredCounties: string[];
 };
 
-const MONTHLY_CHIPS = [10, 25, 50, 100];
-const YEARLY_CHIPS = [100, 250, 500, 1000];
+type Interval = "once" | "month" | "year";
+
+const AMOUNT_CHIPS = [10, 20, 25, 50, 100];
+const YEARLY_CHIPS = [100, 200, 250, 500, 1000];
 
 function suggest(housing: string, bracket: string): number {
   if (housing === "rent") {
@@ -29,11 +42,26 @@ function suggest(housing: string, bracket: string): number {
   return bracket === "low" ? 30 : bracket === "mid" ? 50 : 75;
 }
 
+function suggestedAmount(
+  housing: string,
+  bracket: string,
+  interval: Interval,
+) {
+  const monthly = suggest(housing, bracket);
+  return interval === "year" ? monthly * 10 : monthly;
+}
+
+function cleanAmount(value: string) {
+  const clean = value.replace(/[^0-9.]/g, "");
+  const [whole, ...decimals] = clean.split(".");
+  return decimals.length ? `${whole}.${decimals.join("").slice(0, 2)}` : whole;
+}
+
 export function PledgeFlow({ demo = false }: { demo?: boolean }) {
   const [address, setAddress] = useState("");
   const [located, setLocated] = useState<Located | null>(null);
   const [tribeId, setTribeId] = useState<string | null>(null);
-  const [interval, setInterval] = useState<"month" | "year">("month");
+  const [interval, setInterval] = useState<Interval>("once");
   const [amount, setAmount] = useState<number>(25);
   const [custom, setCustom] = useState("");
   const [housing, setHousing] = useState("rent");
@@ -50,236 +78,406 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      if (!res.ok) throw new Error("location request failed");
       const data = (await res.json()) as Located;
       setLocated(data);
       setTribeId(data.tribes.length === 1 ? data.tribes[0].id : null);
     } catch {
-      setError("Something went sideways — try the county picker.");
+      setError(
+        "We couldn’t locate that address. Choose a county below and try again.",
+      );
     } finally {
       setBusy(false);
     }
   }
 
   async function checkout() {
-    if (!tribeId) return;
+    if (!tribeId || !amountValid) return;
     setBusy(true);
     setError(null);
     try {
-      const cents = Math.round(
-        (custom ? Number(custom) : amount) * 100,
-      );
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tribeId, amountCents: cents, interval }),
+        body: JSON.stringify({
+          tribeId,
+          amountCents: Math.round(selectedAmount * 100),
+          interval,
+        }),
       });
       const data = (await res.json()) as { url?: string; error?: string };
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        setError(data.error ?? "Checkout could not start.");
+      if (!res.ok || !data.url) {
+        setError(
+          data.error ??
+            "Stripe Checkout didn’t open. Check the amount and try again.",
+        );
         setBusy(false);
+        return;
       }
+      window.location.href = data.url;
     } catch {
-      setError("Checkout could not start.");
+      setError(
+        "Stripe Checkout didn’t open. Check your connection and try again.",
+      );
       setBusy(false);
     }
   }
 
-  const chips = interval === "month" ? MONTHLY_CHIPS : YEARLY_CHIPS;
-  const suggested =
-    interval === "month"
-      ? suggest(housing, bracket)
-      : suggest(housing, bracket) * 10;
-  const selectedTribe = located?.tribes.find((t) => t.id === tribeId);
+  function chooseInterval(next: Interval) {
+    setInterval(next);
+    setAmount(suggestedAmount(housing, bracket, next));
+    setCustom("");
+  }
+
+  function chooseHousing(next: string) {
+    setHousing(next);
+    setAmount(suggestedAmount(next, bracket, interval));
+    setCustom("");
+  }
+
+  function chooseBracket(next: string) {
+    setBracket(next);
+    setAmount(suggestedAmount(housing, next, interval));
+    setCustom("");
+  }
+
+  const chips = interval === "year" ? YEARLY_CHIPS : AMOUNT_CHIPS;
+  const suggested = suggestedAmount(housing, bracket, interval);
+  const selectedTribe = located?.tribes.find((tribe) => tribe.id === tribeId);
+  const selectedAmount = custom ? Number(custom) : amount;
+  const amountValid =
+    Number.isFinite(selectedAmount) && selectedAmount >= 1 && selectedAmount <= 10000;
+  const microAmount = amountValid ? selectedAmount / 20 : 0;
+  const state = error ? "error" : busy ? "loading" : "default";
 
   return (
-    <section className="card p-6 sm:p-8">
+    <section className="pledge-flow" data-state={state}>
       {demo && (
-        <p className="mb-4 font-display text-sm font-semibold text-sun-deep">
-          Hackathon demo — no real charge will be created
-        </p>
+        <div className="pledge-demo-note">
+          <ShieldCheck size={15} aria-hidden="true" />
+          Demo preview — no card charge will be created
+        </div>
       )}
-      {/* Step 1 — locate */}
+
+      <div className="pledge-locate-heading">
+        <div>
+          <p className="pledge-kicker">Start here</p>
+          <h3>Find the program for your address</h3>
+        </div>
+        <span>No account needed</span>
+      </div>
+
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
+        onSubmit={(event) => {
+          event.preventDefault();
           if (address.trim()) locate({ address: address.trim() });
         }}
-        className="flex flex-col sm:flex-row gap-3"
+        className="pledge-address-form"
       >
-        <input
-          className="field flex-1"
-          placeholder="Your street address — e.g. 1 Dr Carlton B Goodlett Pl, San Francisco"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          aria-label="Street address"
-        />
-        <button className="btn tnd-btn-primary" disabled={busy} type="submit">
-          {busy && !located ? "Locating…" : "Whose land am I on?"}
+        <label className="pledge-address-field">
+          <span className="sr-only">Street address</span>
+          <MapPin size={17} aria-hidden="true" />
+          <input
+            placeholder="Street address in the Bay Area"
+            value={address}
+            onChange={(event) => setAddress(event.target.value)}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? "pledge-error" : undefined}
+          />
+        </label>
+        <button
+          className="pledge-primary-button"
+          disabled={busy || !address.trim()}
+          type="submit"
+          data-state={busy && !located ? "loading" : "default"}
+        >
+          {busy && !located ? (
+            <>
+              <LoaderCircle className="pledge-spinner" size={16} />
+              Locating
+            </>
+          ) : (
+            <>
+              Find my program
+              <ArrowRight size={16} aria-hidden="true" />
+            </>
+          )}
         </button>
       </form>
 
-      <div className="mt-3 text-sm text-faded">
-        or choose your county:{" "}
+      <div className="pledge-counties" aria-label="Choose a county instead">
+        <span>Or choose a county</span>
         {(located?.coveredCounties ?? [
           "San Francisco",
           "San Mateo",
           "Santa Clara",
           "Alameda",
           "Contra Costa",
-        ]).map((c) => (
+        ]).map((county) => (
           <button
-            key={c}
+            key={county}
             type="button"
-            onClick={() => locate({ county: c })}
-            className="underline decoration-sand underline-offset-4 hover:text-ink mr-3"
+            onClick={() => locate({ county })}
+            disabled={busy}
           >
-            {c}
+            {county}
           </button>
         ))}
       </div>
 
-      {/* Step 2 — the answer */}
       {located && (
-        <div className="mt-8">
+        <div className="pledge-programs">
           {located.county && located.tribes.length > 0 && (
-            <h2 className="font-display text-3xl font-semibold">
-              {located.county} County —{" "}
-              {located.tribes.length === 1
-                ? `${located.tribes[0].name.replace("Association of ", "")} land`
-                : "two tribes call this home"}
-            </h2>
-          )}
-          {located.note && (
-            <p className="mt-3 max-w-2xl text-sm text-faded leading-relaxed">
-              {located.note}
-            </p>
-          )}
-
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {located.tribes.map((t) => (
-              <button
-                type="button"
-                key={t.id}
-                onClick={() => setTribeId(t.id)}
-                className={`card p-5 text-left transition ${
-                  tribeId === t.id ? "card-selected" : "hover:border-moss"
-                }`}
-              >
-                <div className="font-display text-sm font-semibold text-tide">
-                  {t.region}
-                </div>
-                <div className="font-display text-xl font-semibold mt-1">
-                  {t.name}
-                </div>
-                <p className="mt-2 text-sm text-faded leading-relaxed">
-                  {t.blurb}
-                </p>
-                <div className="mt-3 text-sm font-medium text-moss">
-                  {t.taxName} →
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Step 3 — amount */}
-      {selectedTribe && (
-        <div className="mt-8 rule pt-8">
-          <h3 className="font-display text-2xl font-semibold">
-            Your {selectedTribe.taxName}
-          </h3>
-
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
-            <select
-              className="field w-auto"
-              value={housing}
-              onChange={(e) => setHousing(e.target.value)}
-              aria-label="Housing situation"
-            >
-              <option value="rent">I rent</option>
-              <option value="own">I own</option>
-            </select>
-            <select
-              className="field w-auto"
-              value={bracket}
-              onChange={(e) => setBracket(e.target.value)}
-              aria-label="Housing cost bracket"
-            >
-              {housing === "rent" ? (
-                <>
-                  <option value="low">under $2k/mo</option>
-                  <option value="mid">$2k–4k/mo</option>
-                  <option value="high">over $4k/mo</option>
-                </>
-              ) : (
-                <>
-                  <option value="low">under $1M home</option>
-                  <option value="mid">$1–2M home</option>
-                  <option value="high">over $2M home</option>
-                </>
-              )}
-            </select>
-            <span className="text-faded">
-              sliding-scale suggestion: <strong>${suggested}</strong>/
-              {interval}
-            </span>
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <div className="flex rounded-full border border-sand overflow-hidden mr-2">
-              {(["month", "year"] as const).map((i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setInterval(i)}
-                  className={`px-4 py-2 text-sm font-semibold ${
-                    interval === i ? "bg-moss text-cream" : "bg-cream"
-                  }`}
-                >
-                  {i === "month" ? "Monthly" : "Yearly"}
-                </button>
-              ))}
+            <div className="pledge-result-heading">
+              <span>
+                <Check size={14} aria-hidden="true" /> {located.county} County
+              </span>
+              <p>
+                {located.tribes.length === 1
+                  ? "One matching Indigenous-led program"
+                  : `${located.tribes.length} matching programs — you choose`}
+              </p>
             </div>
-            {chips.map((c) => (
+          )}
+          {located.note && <p className="pledge-location-note">{located.note}</p>}
+
+          <div className="pledge-program-grid">
+            {located.tribes.map((tribe) => (
               <button
-                key={c}
                 type="button"
-                onClick={() => {
-                  setAmount(c);
-                  setCustom("");
-                }}
-                className={`tnd-chip ${amount === c && !custom ? "tnd-chip-active" : ""}`}
+                key={tribe.id}
+                onClick={() => setTribeId(tribe.id)}
+                className="pledge-program"
+                aria-pressed={tribeId === tribe.id}
               >
-                ${c}
+                <span className="pledge-program-check">
+                  {tribeId === tribe.id && <Check size={13} aria-hidden="true" />}
+                </span>
+                <span>
+                  <small>{tribe.region}</small>
+                  <strong>{tribe.taxName}</strong>
+                  <em>{tribe.name}</em>
+                </span>
               </button>
             ))}
-            <input
-              className="field w-28"
-              placeholder="custom $"
-              inputMode="decimal"
-              value={custom}
-              onChange={(e) => setCustom(e.target.value.replace(/[^0-9.]/g, ""))}
-              aria-label="Custom amount in dollars"
-            />
           </div>
-
-          <button
-            type="button"
-            onClick={checkout}
-            disabled={busy || (!custom && !amount)}
-            className="btn tnd-btn-primary mt-6"
-          >
-            {busy
-              ? "Opening checkout…"
-              : `${demo ? "Preview" : "Begin"} — $${custom || amount}/${interval}, no Tend fee`}
-          </button>
         </div>
       )}
 
-      {error && <p className="mt-4 text-sm text-clay">{error}</p>}
+      {selectedTribe && (
+        <div className="pledge-amount-stage">
+          <div className="pledge-amount-header">
+            <div>
+              <p className="pledge-kicker">Choose your contribution</p>
+              <h3>{selectedTribe.taxName}</h3>
+            </div>
+            <div className="pledge-suggestion">
+              <span>Suggested</span>
+              <strong>${suggested}</strong>
+            </div>
+          </div>
+
+          <div className="pledge-amount-grid">
+            <div className="pledge-controls">
+              <fieldset className="pledge-control">
+                <legend>Housing</legend>
+                <div className="pledge-segmented">
+                  {[
+                    ["rent", "I rent"],
+                    ["own", "I own"],
+                  ].map(([value, label]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => chooseHousing(value)}
+                      aria-pressed={housing === value}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+
+              <label className="pledge-control">
+                <span>Housing cost</span>
+                <select
+                  value={bracket}
+                  onChange={(event) => chooseBracket(event.target.value)}
+                >
+                  {housing === "rent" ? (
+                    <>
+                      <option value="low">Under $2k / month</option>
+                      <option value="mid">$2k–4k / month</option>
+                      <option value="high">Over $4k / month</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="low">Under $1M home</option>
+                      <option value="mid">$1–2M home</option>
+                      <option value="high">Over $2M home</option>
+                    </>
+                  )}
+                </select>
+              </label>
+
+              <fieldset className="pledge-control">
+                <legend>Frequency</legend>
+                <div className="pledge-segmented pledge-frequency">
+                  {(
+                    [
+                      ["once", "One time"],
+                      ["month", "Monthly"],
+                      ["year", "Yearly"],
+                    ] as const
+                  ).map(([value, label]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => chooseInterval(value)}
+                      aria-pressed={interval === value}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+
+              <fieldset className="pledge-control">
+                <legend>Amount</legend>
+                <div className="pledge-amount-row">
+                  {chips.map((chip) => (
+                    <button
+                      key={chip}
+                      type="button"
+                      onClick={() => {
+                        setAmount(chip);
+                        setCustom("");
+                      }}
+                      className="pledge-amount-chip"
+                      aria-pressed={amount === chip && !custom}
+                    >
+                      ${chip}
+                    </button>
+                  ))}
+                  <label className="pledge-custom-amount">
+                    <span>$</span>
+                    <input
+                      placeholder="Other"
+                      inputMode="decimal"
+                      value={custom}
+                      onChange={(event) =>
+                        setCustom(cleanAmount(event.target.value))
+                      }
+                      aria-label="Custom amount in dollars"
+                      aria-invalid={Boolean(custom) && !amountValid}
+                    />
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+            <div className="pledge-payment-panel">
+              <div className="pledge-payment-heading">
+                <div>
+                  <p className="pledge-kicker">Payment stream</p>
+                  <h4>Watch every dollar move</h4>
+                </div>
+                <span className="pledge-live-state">
+                  <i aria-hidden="true" />
+                  {busy ? "Connecting" : "Ready"}
+                </span>
+              </div>
+
+              <div
+                className="pledge-route"
+                aria-label="Apple Pay or card to Stripe, then a Tempo testnet settlement stream to the organization"
+              >
+                <div className="pledge-route-node">
+                  <span>
+                    <WalletCards size={17} aria-hidden="true" />
+                  </span>
+                  <strong>You</strong>
+                  <small>Apple Pay</small>
+                </div>
+                <div className="pledge-route-line" aria-hidden="true" />
+                <div className="pledge-route-node">
+                  <span>
+                    <CreditCard size={17} aria-hidden="true" />
+                  </span>
+                  <strong>Stripe</strong>
+                  <small>Verified</small>
+                </div>
+                <div
+                  className="pledge-route-line pledge-route-line-delay"
+                  aria-hidden="true"
+                />
+                <div className="pledge-route-node">
+                  <span>
+                    <Building2 size={17} aria-hidden="true" />
+                  </span>
+                  <strong>Program</strong>
+                  <small>Tempo</small>
+                </div>
+              </div>
+
+              <div className="pledge-micro-summary">
+                <span>
+                  <strong>20</strong> settlements
+                </span>
+                <span>
+                  <strong>${microAmount.toFixed(2)}</strong> each
+                </span>
+                <span>
+                  <strong>~1s</strong> finality
+                </span>
+              </div>
+
+              <p className="pledge-payment-note">
+                Stripe verifies the card payment, then Tend mirrors it as
+                AlphaUSD micropayments on Tempo testnet.
+              </p>
+
+              <button
+                type="button"
+                onClick={checkout}
+                disabled={busy || !amountValid}
+                className="pledge-checkout-button"
+                data-state={state}
+              >
+                {busy ? (
+                  <>
+                    <LoaderCircle className="pledge-spinner" size={17} />
+                    Opening Stripe
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      {demo ? "Preview" : "Pay"} ${amountValid ? selectedAmount : 0}
+                    </span>
+                    <ArrowRight size={17} aria-hidden="true" />
+                  </>
+                )}
+              </button>
+              <p className="pledge-wallet-note">
+                <ShieldCheck size={13} aria-hidden="true" />
+                Apple Pay appears in Stripe Checkout on a supported iPhone.
+              </p>
+
+              <div className="pledge-machine-preview">
+                <Bot size={14} aria-hidden="true" />
+                Agents can use the same route through Stripe MPP
+                <span>Preview</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <p id="pledge-error" className="pledge-error" role="alert">
+          {error}
+        </p>
+      )}
     </section>
   );
 }

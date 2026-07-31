@@ -97,6 +97,29 @@
   --light-border-strong: rgba(0, 0, 0, 0.12);
   --light-chip-bg: #f0f0f0;
   --light-chip-hover: #e5e5e5;
+
+  /* ── Tend contribution + receipt system ─────────── */
+  --pledge-paper: var(--card);
+  --pledge-paper-soft: var(--background-tertiary);
+  --pledge-ink: var(--foreground);
+  --pledge-muted: var(--muted-foreground);
+  --pledge-rule: var(--border);
+  --pledge-rule-strong: var(--border-strong);
+  --pledge-accent: var(--accent);
+  --pledge-accent-ink: oklch(17% 0.012 48);
+  --pledge-success: var(--success);
+  --pledge-error-color: var(--danger);
+  --pledge-focus: oklch(58% 0.2 36);
+  --pledge-receipt-paper: oklch(95% 0.014 82);
+  --pledge-receipt-ink: oklch(20% 0.012 56);
+  --pledge-receipt-muted: oklch(52% 0.012 60);
+  --pledge-receipt-rule: oklch(78% 0.016 72);
+  --pledge-shadow: oklch(20% 0.01 55 / 0.08);
+  --pledge-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --pledge-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --pledge-dur-micro: 120ms;
+  --pledge-dur-short: 220ms;
+  --pledge-dur-long: 420ms;
 }
 
 @theme inline {

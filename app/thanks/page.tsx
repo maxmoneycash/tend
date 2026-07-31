@@ -1,14 +1,49 @@
 import { Navbar } from "@/components/layout/Navbar";
+import { TempoStream } from "@/components/TempoStream";
 import Link from "next/link";
 import { getTribe } from "@/lib/tribes";
 
 export default async function Thanks({
   searchParams,
 }: {
-  searchParams: Promise<{ tribe?: string; demo?: string }>;
+  searchParams: Promise<{
+    amount?: string;
+    demo?: string;
+    session_id?: string;
+    tribe?: string;
+  }>;
 }) {
-  const { tribe: tribeParam, demo } = await searchParams;
+  const {
+    tribe: tribeParam,
+    demo,
+    session_id: sessionId,
+  } = await searchParams;
   const tribe = getTribe(tribeParam ?? "");
+
+  if (sessionId && demo !== "1") {
+    return (
+      <>
+        <Navbar />
+        <div style={{ paddingTop: "108px" }} />
+        <main className="tempo-thanks-shell">
+          <TempoStream
+            sessionId={sessionId}
+            fallbackOrganization={
+              tribe?.name ?? "Indigenous-led organization"
+            }
+          />
+          <div className="tempo-thanks-actions">
+            <Link href="/pledge" className="btn btn-ghost">
+              Make another contribution
+            </Link>
+            <Link href="/dashboard" className="btn tnd-btn-primary">
+              Open dashboard
+            </Link>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
@@ -24,14 +59,16 @@ export default async function Thanks({
       <p className="font-display text-sm font-semibold text-tide">
         {demo === "1" ? "Pledge preview" : "Pledge begun"}
       </p>
-      <h1 className="display-1 mt-4">Contribution preview complete.</h1>
+      <h1 className="display-1 mt-4">
+        {demo === "1" ? "Contribution preview complete." : "Contribution begun."}
+      </h1>
       <p className="mt-6 text-lg text-faded leading-relaxed">
         {tribe
-          ? `Your ${tribe.taxName} now recurs to the ${tribe.name} through their connected account.`
-          : "Your contribution is now recurring through the organization's connected account."}{" "}
+          ? `Your ${tribe.taxName} is ready for the ${tribe.name}.`
+          : "Your contribution is ready for the organization."}{" "}
         {demo === "1"
           ? "In a configured deployment, Stripe Checkout creates the subscription and sends the receipt."
-          : "A receipt is on its way from Stripe, and every renewal happens without you lifting a finger."}
+          : "A receipt is on its way from Stripe."}
       </p>
       <Link href="/" className="btn tnd-btn-primary mt-10">
         Back to Tend

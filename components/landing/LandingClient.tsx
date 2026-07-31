@@ -1492,6 +1492,8 @@ export function LandingClient() {
               <div class="phone-notif-app">
                 <div class="phone-notif-icon">
                   <div style="width:100%;height:100%;border-radius:6px;background:#FA4616;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">T</div>
+                <div className="pill-badge" style={{ marginTop: "26px" }}>Real-Time Payments</div>
+                <p className="hero-sub" style={{ marginTop: "10px" }}>Every donation streams on Tempo and offramps to the tribe through Stripe.</p>
                 </div>
                 <span class="phone-notif-title">Tend</span>
               </div>
@@ -1631,19 +1633,8 @@ export function LandingClient() {
                   <a href="#" className="btn-white">Explore programs</a>
                 </div>
               </div>
-            </div>
-          </section>
-
-          {/* ═══════ PHONE NOTIFICATIONS + DASHBOARD ═══════ */}
-          <section className="section section--dark-phone" id="phone-notifs" data-view="creator">
-            <div className="section-inner">
-              <div className="phone-notifs-text">
-                <div className="pill-badge">Real-Time Payments</div>
-                <h2 className="section-h2">Watch Donations Stream In</h2>
-                <p className="section-p">Every donation streams on Tempo and offramps to the tribe through Stripe — live, transparent, continuous.</p>
-              </div>
-              <div className="phone-dash-row">
-                {/* Phone */}
+              <div className="hero-visual" style={{ display: "flex", justifyContent: "center", alignItems: "flex-start" }}>
+                <div style={{ transform: "scale(0.78)", transformOrigin: "top center" }}>
                 <div className="phone-frame" id="phoneFrame">
                   <div className="phone-screen">
                     <div className="phone-island"><div className="phone-island-cam"></div></div>
@@ -1663,203 +1654,12 @@ export function LandingClient() {
                     <div className="phone-home-indicator"></div>
                   </div>
                 </div>
-
-                {/* Dashboard Mockup */}
-                <div className="dash-browser" id="dashBrowser">
-                  <div className="dash-browser-bar">
-                    <div className="dash-browser-dots">
-                      <span className="dash-dot dash-dot--red"></span>
-                      <span className="dash-dot dash-dot--yellow"></span>
-                      <span className="dash-dot dash-dot--green"></span>
-                    </div>
-                    <div className="dash-browser-url">
-                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12"/><path d="M8 2a10 10 0 0 1 0 12M8 2a10 10 0 0 0 0 12"/></svg>
-                      <span>tend.example</span>
-                    </div>
-                  </div>
-                  <div className="dash-content">
-                    {/* Dashboard Nav */}
-                    <div className="dash-nav">
-                      <div className="dash-nav-logo">
-                        <img src="https://framerusercontent.com/images/XXhHjUvBpWZhAQ0cxQMYloDvnlI.png?width=1024&height=1024" alt="" className="dash-nav-logo-img" />
-                      </div>
-                      <div className="dash-nav-tabs">
-                        <span className="dash-tab dash-tab--active" data-dash-tab="payouts">Donations</span>
-                        <span className="dash-tab" data-dash-tab="earn">Streams</span>
-                      </div>
-                    </div>
-
-                    {/* ── PAYOUTS TAB ── */}
-                    <div className="dash-tab-panel" id="dashPanelPayouts">
-                      {/* Top cards row */}
-                      <div className="dash-top-row">
-                        <div className="dash-earnings-card" id="dashEarningsCard">
-                          <div className="dash-earnings-header">
-                            <div className="dash-earnings-label">Total Streamed</div>
-                            <span className="dash-earnings-rate">$1.00/min</span>
-                          </div>
-                          <div className="dash-earnings-row">
-                            <span className="dash-earnings-big" id="dashEarningsNum">$620</span>
-                          </div>
-                          <div className="dash-earnings-sub">USDC on Tempo · offramped with Stripe</div>
-                        </div>
-                        <div className="dash-campaigns-count">
-                          <div className="dash-count-num">2</div>
-                          <div className="dash-count-sub">Active programs</div>
-                          <div className="dash-count-sub">214 supporters</div>
-                        </div>
-                      </div>
-                      {/* Active Campaign Card */}
-                      <div className="dash-campaign-active">
-                        <div className="dash-active-header">
-                          <span className="dash-active-name">Yunakin Land Tax</span>
-                          <span className="dash-active-badge">Active</span>
-                        </div>
-                        <div className="dash-active-meta">Streaming · Tempo → Stripe offramp</div>
-                        <div className="dash-active-bar">
-                          <div className="dash-active-bar-fill" id="dashBarFill" style={{ width: '32.7%' }}></div>
-                        </div>
-                        <div className="dash-active-bar-label"><span id="dashBarPct">32.7</span>% used</div>
-                      </div>
-                      {/* Live Earnings Table */}
-                      <div className="dash-table">
-                        <div className="dash-table-header">
-                          <span className="dash-th dash-th--campaign">SUPPORTER</span>
-                          <span className="dash-th dash-th--sponsor">BATCHES</span>
-                          <span className="dash-th dash-th--balance">STREAMED</span>
-                        </div>
-                        <div className="dash-table-body" id="dashTableBody">
-                          <div className="dash-table-row">
-                            <div className="dash-td-campaign">
-                              <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>N</div>
-                              <div className="dash-camp-info">
-                                <span className="dash-camp-name">natasha_r</span>
-                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
-                              </div>
-                            </div>
-                            <span className="dash-td-sponsor" data-base-views="1485618">1,485,618</span>
-                            <span className="dash-td-balance dash-td-earned" data-base="332.50">+$332.50</span>
-                          </div>
-                          <div className="dash-table-row">
-                            <div className="dash-td-campaign">
-                              <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>C</div>
-                              <div className="dash-camp-info">
-                                <span className="dash-camp-name">ci-runner @ acme</span>
-                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
-                              </div>
-                            </div>
-                            <span className="dash-td-sponsor" data-base-views="3962">3,962</span>
-                            <span className="dash-td-balance dash-td-earned" data-base="2.82">+$2.82</span>
-                          </div>
-                          <div className="dash-table-row">
-                            <div className="dash-td-campaign">
-                              <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>J</div>
-                              <div className="dash-camp-info">
-                                <span className="dash-camp-name">j.wong</span>
-                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
-                              </div>
-                            </div>
-                            <span className="dash-td-sponsor" data-base-views="388078">388,078</span>
-                            <span className="dash-td-balance dash-td-earned" data-base="276.48">+$276.48</span>
-                          </div>
-                          <div className="dash-table-row">
-                            <div className="dash-td-campaign">
-                              <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>F</div>
-                              <div className="dash-camp-info">
-                                <span className="dash-camp-name">fleet-7 @ mission-labs</span>
-                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
-                              </div>
-                            </div>
-                            <span className="dash-td-sponsor" data-base-views="12173">12,173</span>
-                            <span className="dash-td-balance dash-td-earned" data-base="8.67">+$8.67</span>
-                          </div>
-                        </div>
-                        <div className="dash-table-footer">Auto-refreshing · donations stream in real time</div>
-                      </div>
-                    </div>
-
-                    {/* ── EARN TAB ── */}
-                    <div className="dash-tab-panel dash-tab-panel--hidden" id="dashPanelEarn">
-                      {/* Submit clip — full width */}
-                      <div className="dash-campaign-active">
-                        <div className="dash-active-header">
-                          <span className="dash-active-name">Start a stream</span>
-                          <span className="dash-earnings-sub">Deposit once · streams in 250ms batches</span>
-                        </div>
-                        <div className="dash-earn-input-row">
-                          <input type="text" className="dash-earn-input" placeholder="Deposit amount..." readOnly value="zone://tend/yunakin-donations · $50" />
-                          <button className="dash-earn-btn">Open stream</button>
-                        </div>
-                      </div>
-                      {/* Verification — same style as campaign-active card */}
-                      <div className="dash-campaign-active">
-                        <div className="dash-active-header">
-                          <span className="dash-active-name">Clip Verification</span>
-                          <span className="dash-active-badge" style={{ background: 'rgba(22,163,74,0.1)', color: '#16a34a' }}>Passed</span>
-                        </div>
-                        <div className="dash-active-meta">zx8RsYjf_kY · Yunakin Land Tax</div>
-                        <div className="dash-earn-checks-inner">
-                          <div className="dash-earn-check">
-                            <span className="dash-check-icon dash-check--pass">✓</span>
-                            <span className="dash-check-label">Video Is Public</span>
-                            <span className="dash-check-value dash-check--pass">Yes</span>
-                          </div>
-                          <div className="dash-earn-check">
-                            <span className="dash-check-icon dash-check--pass">✓</span>
-                            <span className="dash-check-label">Duration Valid</span>
-                            <span className="dash-check-value dash-check--pass">0:58</span>
-                          </div>
-                          <div className="dash-earn-check">
-                            <span className="dash-check-icon dash-check--pass">✓</span>
-                            <span className="dash-check-label">Bot Risk</span>
-                            <span className="dash-check-value dash-check--pass">Low</span>
-                          </div>
-                          <div className="dash-earn-check">
-                            <span className="dash-check-icon dash-check--pass">✓</span>
-                            <span className="dash-check-label">Content Match</span>
-                            <span className="dash-check-value dash-check--pass">98%</span>
-                          </div>
-                        </div>
-                      </div>
-                      {/* Payout — same style as the table */}
-                      <div className="dash-table">
-                        <div className="dash-table-header">
-                          <span className="dash-th dash-th--campaign">PAYOUT</span>
-                          <span className="dash-th dash-th--sponsor">DETAILS</span>
-                          <span className="dash-th dash-th--balance">AMOUNT</span>
-                        </div>
-                        <div className="dash-table-body">
-                          <div className="dash-table-row">
-                            <div className="dash-td-campaign">
-                              <div className="dash-clip-icon" style={{ background: 'rgba(22,163,74,0.1)', color: '#16a34a' }}>✓</div>
-                              <div className="dash-camp-info">
-                                <span className="dash-camp-name">USDT Sent</span>
-                                <span className="dash-camp-cat">1,485,618 views × $0.75/1K</span>
-                              </div>
-                            </div>
-                            <span className="dash-td-sponsor">5% fee · $17.50</span>
-                            <span className="dash-td-balance" style={{ color: '#16a34a' }}>+$332.50</span>
-                          </div>
-                          <div className="dash-table-row">
-                            <div className="dash-td-campaign">
-                              <div className="dash-clip-icon" style={{ background: 'rgba(249,115,22,0.1)', color: '#f97316' }}>↗</div>
-                              <div className="dash-camp-info">
-                                <span className="dash-camp-name">On-Chain Tx</span>
-                                <span className="dash-camp-cat">0x7a3f...c912 · Aptos</span>
-                              </div>
-                            </div>
-                            <span className="dash-td-sponsor">Confirmed</span>
-                            <span className="dash-td-balance" style={{ color: '#f97316', cursor: 'pointer' }}>View ↗</span>
-                          </div>
-                        </div>
-                        <div className="dash-table-footer">Offramp complete · Stripe → the tribe’s account</div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
           </section>
+
+
 
           {/* ═══════ HOW IT WORKS ═══════ */}
           <section className="section section--white section--rounded-top" id="how-it-works" data-view="creator">
