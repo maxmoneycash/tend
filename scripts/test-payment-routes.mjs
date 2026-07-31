@@ -3,12 +3,34 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import { createServer } from "node:net";
+import { DatabaseSync } from "node:sqlite";
 import Stripe from "stripe";
 
-const port = 3102;
+async function availablePort() {
+  const probe = createServer();
+  const port = await new Promise((resolve, reject) => {
+    probe.once("error", reject);
+    probe.listen(0, "127.0.0.1", () => {
+      const address = probe.address();
+      if (!address || typeof address === "string") {
+        reject(new Error("Could not reserve a payment test port."));
+        return;
+      }
+      resolve(address.port);
+    });
+  });
+  await new Promise((resolve, reject) => {
+    probe.close((error) => (error ? reject(error) : resolve()));
+  });
+  return port;
+}
+
+const port = await availablePort();
 const baseUrl = `http://127.0.0.1:${port}`;
 const webhookSecret = "whsec_tend_route_test";
 const requestTimeoutMs = 60_000;
+const startupTimeoutMs = 120_000;
 const stateDir = await mkdtemp(path.join(tmpdir(), "tend-payment-routes-"));
 const dbPath = path.join(stateDir, "payments.sqlite");
 let server = null;
@@ -17,6 +39,10 @@ let serverOutput = "";
 const serverEnv = {
   ...process.env,
   APP_BASE_URL: baseUrl,
+  AUTH0_CLIENT_ID: "tend_payment_route_test",
+  AUTH0_CLIENT_SECRET: "tend_payment_route_test",
+  AUTH0_DOMAIN: "auth.tend.invalid",
+  AUTH0_SECRET: "0".repeat(64),
   STRIPE_SECRET_KEY: "sk_test_tend_route_test",
   STRIPE_WEBHOOK_SECRET: webhookSecret,
   TEND_DEMO_AUTH_BYPASS: "1",
@@ -53,7 +79,7 @@ async function startServer() {
   server.stdout.on("data", rememberOutput);
   server.stderr.on("data", rememberOutput);
 
-  const deadline = Date.now() + 60_000;
+  const deadline = Date.now() + startupTimeoutMs;
   while (Date.now() < deadline) {
     if (server.exitCode !== null) {
       throw new Error(`Next.js exited during startup:\n${serverOutput}`);
@@ -113,18 +139,36 @@ function checkoutSession(id, paymentStatus, tempoStream = false) {
   };
 }
 
-function stripeEvent(id, type, session) {
+function stripeEvent(id, type, session, livemode = false) {
   return JSON.stringify({
     id,
     object: "event",
     api_version: "2026-07-29.dahlia",
     created: 1_785_000_000,
     data: { object: session },
-    livemode: false,
+    livemode,
     pending_webhooks: 1,
     request: null,
     type,
   });
+}
+
+function paymentRows(eventId, sessionId) {
+  const db = new DatabaseSync(dbPath, { readOnly: true });
+  try {
+    return {
+      contribution: Boolean(
+        db
+          .prepare("SELECT 1 FROM contributions WHERE session_id = ?")
+          .get(sessionId),
+      ),
+      event: Boolean(
+        db.prepare("SELECT 1 FROM stripe_events WHERE id = ?").get(eventId),
+      ),
+    };
+  } finally {
+    db.close();
+  }
 }
 
 function signedWebhook(payload) {
@@ -212,6 +256,35 @@ try {
     body: "{}",
   });
   assert.equal(unsigned.status, 400);
+
+  console.log("Checking the signed live-event boundary.");
+  const liveEventId = "evt_route_live_rejected";
+  const liveSessionId = "cs_route_live_rejected";
+  const livePayload = stripeEvent(
+    liveEventId,
+    "checkout.session.completed",
+    checkoutSession(liveSessionId, "paid", true),
+    true,
+  );
+  const liveResult = await json(
+    "/api/stripe/webhook",
+    signedWebhook(livePayload),
+  );
+  assert.deepEqual(liveResult, {
+    body: { error: "Live Stripe events are not accepted." },
+    status: 400,
+  });
+  assert.deepEqual(paymentRows(liveEventId, liveSessionId), {
+    contribution: false,
+    event: false,
+  });
+  assert.deepEqual(
+    await json(`/api/tempo/stream?sessionId=${liveSessionId}`),
+    {
+      body: { status: "awaiting-confirmation", events: [] },
+      status: 200,
+    },
+  );
 
   console.log("Checking signed webhook idempotency and payment state.");
   const paidPayload = stripeEvent(

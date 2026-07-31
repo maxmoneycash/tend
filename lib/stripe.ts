@@ -2,10 +2,14 @@ import Stripe from "stripe";
 
 let _stripe: Stripe | null = null;
 let _preview: Stripe | null = null;
+const TEST_KEY_PREFIXES = ["sk_test_", "rk_test_", "rkcs_test_"] as const;
 
 function requireKey(): string {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) throw new Error("Missing STRIPE_SECRET_KEY");
+  if (!TEST_KEY_PREFIXES.some((prefix) => key.startsWith(prefix))) {
+    throw new Error("STRIPE_SECRET_KEY must use a Stripe test-mode key.");
+  }
   return key;
 }
 
