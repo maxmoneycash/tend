@@ -3260,15 +3260,6 @@ html:has(.landing-page) body {
    GLOBAL LEGIBILITY AND INTERACTION GUARDRAILS
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
-/* Keep repeated Tailwind micro-copy readable without changing page markup. */
-[class~="text-[9px]"],
-[class~="text-[10px]"],
-[class~="text-[10.5px]"],
-[class~="text-[11px]"] {
-  font-size: var(--text-caption);
-  line-height: var(--leading-caption);
-}
-
 [class~="text-[#8a8a8a]"] {
   color: #62625e;
 }
@@ -3298,6 +3289,7 @@ html:has(.landing-page) body {
   transition-property: color, background-color, border-color, opacity, box-shadow, transform;
 }
 
+/* Keep pledge and receipt microcopy at the 12px caption floor. */
 .pledge-kicker,
 .pledge-program small,
 .pledge-program em,
