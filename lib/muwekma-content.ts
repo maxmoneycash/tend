@@ -48,6 +48,8 @@ export const timeline: TimelineEntry[] = [
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",
+    evidenceNote:
+      "Evidence limit: Tend links to the Tribe’s summary. The BIA final determination and cited legal records are outside this guide.",
   },
   {
     date: "2002 and 2004",
