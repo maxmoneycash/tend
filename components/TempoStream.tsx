@@ -97,6 +97,124 @@ function streamTime(seconds?: number) {
   return seconds < 60 ? `${seconds}s` : `${seconds / 60}m`;
 }
 
+function getViewCopy(
+  status: ViewStatus,
+  settled: number,
+  total: number,
+  hasVerifiedPayment: boolean,
+) {
+  switch (status) {
+    case "connecting":
+      return {
+        announcement: "Loading your test receipt.",
+        heading: "Loading your test receipt.",
+        intro:
+          "Tend is checking this Checkout session for its latest test payment status.",
+        panel: "Checking the latest test payment status.",
+        stateLabel: "Loading receipt",
+      };
+    case "awaiting-confirmation":
+      return {
+        announcement: "Stripe is confirming the test payment.",
+        heading: "Confirming your contribution.",
+        intro:
+          "Stripe is confirming this test payment. Tempo testnet transfers will start after Stripe confirms it.",
+        panel: "Stripe is confirming the test payment.",
+        stateLabel: "Waiting for Stripe",
+      };
+    case "awaiting-payment":
+      return {
+        announcement: "The test payment is pending in Stripe.",
+        heading: "Your test payment is pending.",
+        intro:
+          "Stripe still lists this test payment as pending. Tempo testnet transfers will start after payment confirmation.",
+        panel: "Waiting for Stripe to confirm the test payment.",
+        stateLabel: "Payment pending (test mode)",
+      };
+    case "pending":
+      return {
+        announcement: "Test payment verified. Preparing the testnet receipt.",
+        heading: "Preparing the testnet receipt.",
+        intro:
+          "Stripe verified the test payment. Tend is preparing the pathUSD transfers on Tempo’s public testnet.",
+        panel: "Preparing the Tempo testnet stream.",
+        stateLabel: "Preparing test transfers",
+      };
+    case "running":
+      if (settled === 0) {
+        return {
+          announcement:
+            "Test payment verified. Preparing the first testnet transfer.",
+          heading: "Preparing the first testnet transfer.",
+          intro:
+            "Stripe verified the test payment. Tend is preparing the first pathUSD transfer on Tempo’s public testnet.",
+          panel: "Funding the Tempo testnet stream.",
+          stateLabel: "Preparing first transfer",
+        };
+      }
+      return {
+        announcement: `${settled} of ${total} testnet transfers settled.`,
+        heading: "The testnet transfers are moving.",
+        intro: `${settled} of ${total} pathUSD test transfers have settled on Tempo’s public testnet.`,
+        panel: "Waiting for the next testnet settlement.",
+        stateLabel: `${settled} of ${total} settled`,
+      };
+    case "complete":
+      return {
+        announcement:
+          total > 0
+            ? `Receipt complete. ${total} of ${total} testnet transfers settled.`
+            : "Receipt complete. All testnet transfers settled.",
+        heading: "Every settlement landed.",
+        intro:
+          total > 0
+            ? `Stripe verified the test payment. All ${total} pathUSD test transfers settled on Tempo’s public testnet.`
+            : "Stripe verified the test payment. All pathUSD test transfers settled on Tempo’s public testnet.",
+        panel: "All testnet settlements are confirmed.",
+        stateLabel: "Receipt complete",
+      };
+    case "error":
+      return {
+        announcement:
+          "The Tempo testnet transfers stopped. A Tend operator must review the receipt before any retry.",
+        heading: "The testnet transfers stopped.",
+        intro:
+          settled > 0 && total > 0
+            ? `Stripe verified the test payment. ${settled} of ${total} pathUSD test transfers settled before the stream stopped. A Tend operator must review the receipt before any retry to prevent a duplicate test transfer.`
+            : "Stripe verified the test payment. The Tempo testnet stream stopped before a transfer settled. A Tend operator must review the receipt before any retry to prevent a duplicate test transfer.",
+        panel:
+          settled > 0
+            ? "Confirmed test transfers remain below. A Tend operator must review the receipt before any retry."
+            : "A Tend operator must review the receipt before any test transfer can be retried.",
+        stateLabel: "Test transfers stopped",
+      };
+    case "payment-failed":
+      return {
+        announcement:
+          "Stripe marked the test payment as failed. No Tempo testnet transfers started.",
+        heading: "Test payment failed.",
+        intro:
+          "Stripe marked this test payment as failed. Tend did not start Tempo testnet transfers.",
+        panel: "No Tempo testnet transfers started.",
+        stateLabel: "Test payment failed",
+      };
+    case "unavailable":
+      return {
+        announcement: hasVerifiedPayment
+          ? "Receipt refresh failed. Showing the last confirmed test receipt details."
+          : "The latest test receipt status is unavailable.",
+        heading: "Receipt status unavailable.",
+        intro: hasVerifiedPayment
+          ? "Tend could not refresh this test receipt. The last confirmed details remain below."
+          : "Tend could not load the latest status for this test receipt. Check it again.",
+        panel: hasVerifiedPayment
+          ? "Showing the last confirmed testnet settlement status."
+          : "The latest test receipt status is unavailable.",
+        stateLabel: "Receipt unavailable",
+      };
+  }
+}
+
 export function TempoStream({
   sessionId,
   fallbackOrganization,
@@ -201,7 +319,8 @@ export function TempoStream({
   const latest = settlements.at(-1);
   const amountCents = ready?.amountCents ?? complete?.amountCents ?? 0;
   const streamedCents = latest?.streamedCents ?? (complete ? amountCents : 0);
-  const totalSettlements = ready?.settlements ?? complete?.settlements ?? 20;
+  const totalSettlements = ready?.settlements ?? complete?.settlements ?? 0;
+  const hasStreamPlan = Boolean(ready || complete);
   const progress =
     amountCents > 0 ? Math.min(100, (streamedCents / amountCents) * 100) : 0;
   const organization = ready?.organization ?? fallbackOrganization;
@@ -214,111 +333,146 @@ export function TempoStream({
     status === "pending" ||
     status === "running" ||
     status === "complete" ||
-    status === "error";
+    status === "error" ||
+    Boolean(ready || complete || eventError);
   const paymentFailed = status === "payment-failed";
   const error =
-    requestError ??
+    (requestError
+      ? `Tend could not refresh this test receipt. ${requestError}`
+      : null) ??
     eventError?.message ??
     (paymentFailed
-      ? "Stripe reported this payment as failed. No Tempo settlements were started."
+      ? "Stripe marked this test payment as failed. No Tempo testnet transfers started."
       : null);
+  const canRetry = Boolean(requestError) || status === "unavailable";
   const displayState =
     status === "unavailable" || paymentFailed ? "error" : status;
-  const heading = paymentFailed
-    ? "Payment not completed."
-    : !stripeVerified
-      ? "Confirming your contribution."
-      : status === "complete"
-        ? "Every settlement landed."
-        : status === "error"
-          ? "The testnet receipt needs attention."
-          : "The testnet transfers are moving.";
-  const stateLabel = {
-    connecting: "Loading receipt",
-    "awaiting-confirmation": "Waiting for Stripe",
-    "awaiting-payment": "Payment pending",
-    pending: "Preparing Tempo",
-    running: "Sending test transfers",
-    complete: "Complete",
-    error: "Tempo paused",
-    "payment-failed": "Payment failed",
-    unavailable: "Receipt unavailable",
-  }[status];
+  const viewCopy = getViewCopy(
+    status,
+    settlements.length,
+    totalSettlements,
+    stripeVerified,
+  );
   const stripeDetail = stripeVerified
-    ? "Payment verified"
+    ? "Test payment verified"
     : paymentFailed
-      ? "Payment failed"
+      ? "Test payment failed"
       : status === "awaiting-payment"
-        ? "Payment pending"
-        : "Awaiting confirmation";
+        ? "Test payment pending"
+        : status === "unavailable"
+          ? "Status unavailable"
+          : "Awaiting confirmation";
+  const tempoDetail = paymentFailed
+    ? "Skipped"
+    : status === "unavailable"
+      ? hasStreamPlan
+        ? `${settlements.length}/${totalSettlements} last confirmed`
+        : "Status unavailable"
+      : !stripeVerified
+        ? "Waiting for test payment"
+        : hasStreamPlan
+          ? `${settlements.length}/${totalSettlements} settled`
+          : "Preparing transfers";
+  const receiptDetail = paymentFailed
+    ? "Not created"
+    : status === "unavailable"
+      ? "Refresh failed"
+      : status === "complete"
+        ? "Complete"
+        : status === "error"
+          ? "Stopped"
+          : stripeVerified
+            ? "Building"
+            : "Pending";
+  const routeSteps = [
+    {
+      active: stripeVerified,
+      current:
+        !stripeVerified && !paymentFailed && status !== "unavailable",
+      detail: stripeDetail,
+      label: "Stripe",
+    },
+    {
+      active: stripeVerified && settlements.length > 0,
+      current:
+        stripeVerified &&
+        status !== "complete" &&
+        status !== "error" &&
+        status !== "unavailable",
+      detail: tempoDetail,
+      label: "Tempo",
+    },
+    {
+      active: status === "complete",
+      current: status === "complete",
+      detail: receiptDetail,
+      label: "Receipt",
+    },
+  ];
 
   return (
     <section className="tempo-stream" ref={streamRef}>
+      <p
+        className="sr-only"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {error ? "" : viewCopy.announcement}
+      </p>
+      {error && (
+        <p className="sr-only" role="alert" aria-atomic="true">
+          {error}
+        </p>
+      )}
       <header className="tempo-stream-hero">
         <div>
           <p className="pledge-kicker">
             {stripeVerified ? "Testnet receipt" : "Receipt status"}
           </p>
-          <h1>{heading}</h1>
-          <p>
-            {paymentFailed
-              ? "Stripe did not complete this payment, so Tend did not start any Tempo settlement work."
-              : !stripeVerified
-                ? "Stripe is still confirming this Checkout session. Tempo settlement will remain stopped until the payment webhook verifies it."
-                : status === "error"
-                  ? "Stripe verified the payment. The Tempo testnet receipt needs attention."
-                  : `Stripe verified the payment. Tend is mirroring it as ${totalSettlements} pathUSD transfers on Tempo’s public testnet.`}
-          </p>
+          <h1>{viewCopy.heading}</h1>
+          <p>{viewCopy.intro}</p>
         </div>
         <div
           className="tempo-stream-state"
           data-state={displayState}
-          role="status"
-          aria-live="polite"
         >
           {status === "complete" ? (
-            <Check size={15} />
+            <Check size={15} aria-hidden="true" />
           ) : paymentFailed ? (
-            <CircleX size={15} />
-          ) : status === "error" || status === "unavailable" ? (
-            <RotateCw size={15} />
+            <CircleX size={15} aria-hidden="true" />
+          ) : status === "error" ? (
+            <CircleX size={15} aria-hidden="true" />
+          ) : status === "unavailable" ? (
+            <RotateCw size={15} aria-hidden="true" />
           ) : (
-            <LoaderCircle className="pledge-spinner" size={15} />
+            <LoaderCircle
+              className="pledge-spinner"
+              size={15}
+              aria-hidden="true"
+            />
           )}
-          {stateLabel}
+          {viewCopy.stateLabel}
         </div>
       </header>
 
-      <div className="tempo-route-steps" aria-label="Payment settlement route">
-        {[
-          ["Stripe", stripeDetail, stripeVerified],
-          [
-            "Tempo",
-            paymentFailed
-              ? "Skipped"
-              : stripeVerified
-                ? `${settlements.length}/${totalSettlements} settled`
-                : "Waiting for payment",
-            stripeVerified && settlements.length > 0,
-          ],
-          [
-            "Receipt",
-            paymentFailed
-              ? "Unavailable"
-              : status === "complete"
-                ? "Auditable"
-                : stripeVerified
-                  ? "Building"
-                  : "Pending",
-            status === "complete",
-          ],
-        ].map(([label, detail, active], index) => (
+      <div
+        className="tempo-route-steps"
+        aria-label="Payment settlement route"
+        role="list"
+      >
+        {routeSteps.map(({ active, current, detail, label }, index) => (
           <div
-            key={String(label)}
+            key={label}
             className="tempo-route-step"
             data-active={active}
+            role="listitem"
+            aria-current={current ? "step" : undefined}
+            aria-label={`${label}: ${detail}`}
           >
-            <span>{active ? <Check size={13} /> : index + 1}</span>
+            <span aria-hidden="true">
+              {active ? <Check size={13} /> : index + 1}
+            </span>
             <div>
               <strong>{label}</strong>
               <small>{detail}</small>
@@ -333,7 +487,7 @@ export function TempoStream({
             kind="stream"
             status={
               status === "unavailable"
-                ? "error"
+                ? "unavailable"
                 : !stripeVerified
                   ? "unverified"
                   : status === "complete"
@@ -361,19 +515,19 @@ export function TempoStream({
       )}
 
       <div className="tempo-live-panel">
-        {stripeVerified ? (
+        {stripeVerified && hasStreamPlan ? (
           <>
             <div className="tempo-live-summary">
               <div>
-                <span>Streamed</span>
+                <span>Settled on testnet</span>
                 <strong>
                   {cents(streamedCents)}
                   <small> / {cents(amountCents)}</small>
                 </strong>
               </div>
-              <div className="tempo-live-counter" aria-live="polite">
-                <Radio size={14} />
-                {settlements.length} of {totalSettlements} · every{" "}
+              <div className="tempo-live-counter">
+                <Radio size={14} aria-hidden="true" />
+                {settlements.length} of {totalSettlements} test transfers · every{" "}
                 {streamTime(ready?.streamIntervalSeconds)}
               </div>
             </div>
@@ -381,35 +535,34 @@ export function TempoStream({
             <div
               className="tempo-progress"
               role="progressbar"
-              aria-label="Tempo payment stream progress"
+              aria-label="Tempo testnet transfer progress"
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={Math.round(progress)}
+              aria-valuetext={`${settlements.length} of ${totalSettlements} test transfers settled`}
             >
               <div style={{ transform: `scaleX(${progress / 100})` }} />
             </div>
           </>
         ) : (
-          <div className="tempo-transaction-empty" aria-live="polite">
+          <div className="tempo-transaction-empty">
             {paymentFailed ? (
-              <CircleX size={16} />
+              <CircleX size={16} aria-hidden="true" />
             ) : status === "unavailable" ? (
-              <RotateCw size={16} />
+              <RotateCw size={16} aria-hidden="true" />
             ) : (
-              <LoaderCircle className="pledge-spinner" size={16} />
+              <LoaderCircle
+                className="pledge-spinner"
+                size={16}
+                aria-hidden="true"
+              />
             )}
-            {paymentFailed
-              ? "No Tempo settlement was started."
-              : status === "awaiting-payment"
-                ? "Waiting for Stripe to complete the payment."
-                : status === "unavailable"
-                  ? "The receipt state is temporarily unavailable."
-                  : "Waiting for the Stripe webhook confirmation."}
+            {viewCopy.panel}
           </div>
         )}
 
-        {stripeVerified && (
-          <div className="tempo-latest-settlement" aria-live="polite">
+        {stripeVerified && hasStreamPlan && (
+          <div className="tempo-latest-settlement">
             {latest ? (
               <a
                 className="tempo-transaction"
@@ -418,22 +571,24 @@ export function TempoStream({
                 rel="noreferrer"
               >
                 <span>
-                  <Check size={12} /> Latest · #{latest.index}
+                  <Check size={12} aria-hidden="true" /> Latest · #{latest.index}
                 </span>
                 <strong>{cents(latest.amountCents)} pathUSD</strong>
                 <code>{shortHash(latest.hash)}</code>
-                <ExternalLink size={12} />
+                <ExternalLink size={12} aria-hidden="true" />
               </a>
             ) : (
               <div className="tempo-transaction-empty">
                 {status === "error" ? (
-                  <RotateCw size={16} />
+                  <CircleX size={16} aria-hidden="true" />
                 ) : (
-                  <LoaderCircle className="pledge-spinner" size={16} />
+                  <LoaderCircle
+                    className="pledge-spinner"
+                    size={16}
+                    aria-hidden="true"
+                  />
                 )}
-                {status === "error"
-                  ? "No new settlements are arriving."
-                  : "Funding the testnet stream."}
+                {viewCopy.panel}
               </div>
             )}
           </div>
@@ -442,7 +597,7 @@ export function TempoStream({
         {orderedSettlements.length > 0 && (
           <details className="tempo-transaction-details">
             <summary>
-              <span>Onchain transactions</span>
+              <span>Testnet transactions</span>
               <small>{orderedSettlements.length} confirmed</small>
             </summary>
             <div className="tempo-transactions">
@@ -455,11 +610,11 @@ export function TempoStream({
                   rel="noreferrer"
                 >
                   <span>
-                    <Check size={12} /> #{settlement.index}
+                    <Check size={12} aria-hidden="true" /> #{settlement.index}
                   </span>
                   <strong>{cents(settlement.amountCents)} pathUSD</strong>
                   <code>{shortHash(settlement.hash)}</code>
-                  <ExternalLink size={12} />
+                  <ExternalLink size={12} aria-hidden="true" />
                 </a>
               ))}
             </div>
@@ -467,9 +622,9 @@ export function TempoStream({
         )}
 
         {error && (
-          <div className="tempo-stream-error" role="alert">
+          <div className="tempo-stream-error">
             <p>{error}</p>
-            {!paymentFailed && (
+            {canRetry && (
               <button
                 type="button"
                 onClick={() => {

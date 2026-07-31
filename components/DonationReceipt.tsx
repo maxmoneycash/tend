@@ -9,7 +9,8 @@ type ReceiptStatus =
   | "verified"
   | "streaming"
   | "complete"
-  | "error";
+  | "error"
+  | "unavailable";
 
 type Props = {
   amountCents: number;
@@ -72,25 +73,58 @@ export function DonationReceipt({
   streamIntervalSeconds,
   streamedCents = 0,
 }: Props) {
-  const [copied, setCopied] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<
+    "idle" | "copied" | "failed"
+  >("idle");
   const isStream = kind === "stream";
   const isComplete = status === "complete" || status === "verified";
   const isUnverified = status === "unverified";
+  const isUnavailable = status === "unavailable";
+  const isPreparingAmount =
+    isStream && status === "processing" && amountCents === 0;
+  const isUnavailableAmount = isUnavailable && amountCents === 0;
+  const hasStreamDetails = isStream && amountCents > 0;
   const displayAmount = isStream ? streamedCents : amountCents;
   const copyValue = lastHash ?? reference ?? "";
+  const copyObject = lastHash
+    ? "Tempo transaction ID"
+    : "Stripe Checkout session ID";
+  const statusLabel = {
+    unverified: "Awaiting Stripe",
+    processing: "Preparing",
+    verified: "Test payment verified",
+    streaming: "Settling",
+    complete: "Complete",
+    error: "Stopped",
+    unavailable: "Unavailable",
+  }[status];
+  const confirmationLabel = {
+    unverified: "Waiting for Stripe test confirmation",
+    processing: "Preparing testnet transfers",
+    verified: "Test payment verified",
+    streaming: `${completedSettlements} of ${settlements} test settlements confirmed`,
+    complete: "All test settlements confirmed",
+    error: "Test settlements stopped",
+    unavailable: "Receipt refresh failed",
+  }[status];
 
   async function copyReference() {
     if (!copyValue) return;
-    await navigator.clipboard.writeText(copyValue);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
+    setCopyStatus("idle");
+    try {
+      await navigator.clipboard.writeText(copyValue);
+      setCopyStatus("copied");
+      window.setTimeout(() => setCopyStatus("idle"), 2000);
+    } catch {
+      setCopyStatus("failed");
+    }
   }
 
   return (
     <article
       className="tend-receipt-wrap"
       data-kind={kind}
-      data-state={status}
+      data-state={isUnavailable ? "error" : status}
     >
       {isComplete && <div className="tend-receipt-ring" aria-hidden="true" />}
       <div className="tend-receipt">
@@ -99,24 +133,37 @@ export function DonationReceipt({
           <header className="tend-receipt-header">
             <span>{isStream ? "Testnet transfer receipt" : "Stripe test receipt"}</span>
             <span className="tend-receipt-status">
-              {isUnverified && <Radio size={11} />}
-              {status === "processing" && <Radio size={11} />}
-              {status === "streaming" && <Radio size={11} />}
-              {isComplete && <Check size={11} />}
-              {status === "error"
-                ? "Interrupted"
-                : isUnverified
-                  ? "Pending"
-                  : status}
+              {(isUnverified ||
+                status === "processing" ||
+                status === "streaming") && (
+                <Radio size={11} aria-hidden="true" />
+              )}
+              {isComplete && <Check size={11} aria-hidden="true" />}
+              {statusLabel}
             </span>
           </header>
 
           <div className="tend-receipt-total">
             <strong>
-              {isUnverified ? "Pending" : `$${(displayAmount / 100).toFixed(2)}`}
+              {isUnverified
+                ? "Pending"
+                : isPreparingAmount
+                  ? "Preparing"
+                  : isUnavailableAmount
+                    ? "Unavailable"
+                    : `$${(displayAmount / 100).toFixed(2)}`}
             </strong>
-            {isUnverified && <span>awaiting Stripe confirmation</span>}
-            {isStream && !isUnverified && (
+            {isUnverified && <span>waiting for Stripe test confirmation</span>}
+            {isPreparingAmount && (
+              <span>test payment verified; preparing transfers</span>
+            )}
+            {isUnavailableAmount && (
+              <span>receipt amount could not be loaded</span>
+            )}
+            {isStream &&
+              !isUnverified &&
+              !isPreparingAmount &&
+              !isUnavailableAmount && (
               <span>of ${(amountCents / 100).toFixed(2)} pathUSD</span>
             )}
             {!isStream && (
@@ -131,7 +178,7 @@ export function DonationReceipt({
               <dt>Program reference</dt>
               <dd>{organization}</dd>
             </div>
-            {isStream && !isUnverified ? (
+            {hasStreamDetails ? (
               <>
                 <div>
                   <dt>Paid with</dt>
@@ -150,12 +197,13 @@ export function DonationReceipt({
                 <div>
                   <dt>Cadence</dt>
                   <dd>
-                    Every {streamIntervalSeconds ?? "pending"}s for{" "}
-                    {streamDurationSeconds
-                      ? streamDurationSeconds < 60
-                        ? `${streamDurationSeconds}s`
-                        : `${streamDurationSeconds / 60}m`
-                      : "pending"}
+                    {streamIntervalSeconds && streamDurationSeconds
+                      ? `Every ${streamIntervalSeconds}s for ${
+                          streamDurationSeconds < 60
+                            ? `${streamDurationSeconds}s`
+                            : `${streamDurationSeconds / 60}m`
+                        }`
+                      : "Preparing"}
                   </dd>
                 </div>
                 <div>
@@ -164,11 +212,11 @@ export function DonationReceipt({
                 </div>
                 <div>
                   <dt>Demo treasury</dt>
-                  <dd>{short(recipient)}</dd>
+                  <dd>{recipient ? short(recipient) : "Preparing"}</dd>
                 </div>
                 <div>
                   <dt>Last transaction</dt>
-                  <dd>{short(lastHash)}</dd>
+                  <dd>{lastHash ? short(lastHash) : "None yet"}</dd>
                 </div>
               </>
             ) : !isStream ? (
@@ -199,24 +247,42 @@ export function DonationReceipt({
           <div className="tend-receipt-confirmation">
             <span>
               <i aria-hidden="true" />
-              {status === "complete"
-                ? "All settlements confirmed"
-                : status === "verified"
-                  ? "Payment verified"
-                  : isUnverified
-                    ? "Awaiting Stripe"
-                  : status === "error"
-                    ? "Needs attention"
-                    : isStream
-                      ? "Settling on Tempo"
-                      : "Verifying payment"}
+              {confirmationLabel}
             </span>
             {copyValue && (
-              <button type="button" onClick={copyReference}>
-                {copied ? <Check size={12} /> : <Copy size={12} />}
-                {copied ? "Copied" : "Copy ID"}
+              <button
+                type="button"
+                onClick={copyReference}
+                aria-label={
+                  copyStatus === "failed"
+                    ? `Try to copy ${copyObject} again`
+                    : `Copy ${copyObject}`
+                }
+              >
+                {copyStatus === "copied" ? (
+                  <Check size={12} aria-hidden="true" />
+                ) : (
+                  <Copy size={12} aria-hidden="true" />
+                )}
+                {copyStatus === "copied"
+                  ? "Copied"
+                  : copyStatus === "failed"
+                    ? "Retry copy"
+                    : "Copy ID"}
               </button>
             )}
+            <div
+              className="sr-only"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {copyStatus === "copied"
+                ? `${copyObject} copied.`
+                : copyStatus === "failed"
+                  ? `Could not copy the ${copyObject}. Try again.`
+                  : ""}
+            </div>
           </div>
         </div>
         <ReceiptEdge bottom />
@@ -230,8 +296,9 @@ export function DonationReceipt({
               href={receiptUrl}
               target="_blank"
               rel="noreferrer"
+              aria-label="Open Stripe test receipt in a new tab"
             >
-              Stripe receipt <ExternalLink size={13} />
+              Stripe test receipt <ExternalLink size={13} aria-hidden="true" />
             </a>
           )}
           {lastHash && (
@@ -240,8 +307,9 @@ export function DonationReceipt({
               href={`https://explore.testnet.tempo.xyz/tx/${lastHash}`}
               target="_blank"
               rel="noreferrer"
+              aria-label="Open Tempo testnet transaction in a new tab"
             >
-              Tempo transaction <ExternalLink size={13} />
+              Tempo transaction <ExternalLink size={13} aria-hidden="true" />
             </a>
           )}
         </div>
