@@ -22,6 +22,8 @@ export const timeline: TimelineEntry[] = [
     evidence: "documented",
     sourceName: "National Park Service",
     sourceUrl: "https://www.nps.gov/places/000/8-home-of-the-yelamu.htm",
+    evidenceNote:
+      "Evidence limit: The NPS page reports no known Yelamu descendants living today and recognizes a broader contemporary Ohlone community. This entry uses the page only for mapped place names and makes no lineage claim.",
   },
   {
     date: "1914 to 1927",
