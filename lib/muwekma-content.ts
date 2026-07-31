@@ -134,6 +134,7 @@ interface TribeFact extends SourcedEntry {
   label: string;
   value: string;
   note: string;
+  sourceAction?: string;
 }
 
 export const tribeFacts: TribeFact[] = [
@@ -160,11 +161,12 @@ export const tribeFacts: TribeFact[] = [
       "https://news.stanford.edu/stories/2022/03/genomic-analysis-supports-ancient-muwekma-ohlone-connection",
   },
   {
-    label: "Counties named",
-    value: "9",
-    note: "four are listed only in part",
+    label: "Published territory",
+    value: "9 counties",
+    note: "Most of Santa Clara and portions of four others",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/history.html",
+    sourceAction: "Read the Tribe’s Bay Area history page",
   },
 ];
 
