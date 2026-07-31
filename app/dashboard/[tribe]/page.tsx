@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { AmbientBlobs } from "@/components/layout/AmbientBlobs";
 import { auth0 } from "@/lib/auth0";
 import { canAccessTribe } from "@/lib/access";
+import { readAuthorizedDashboardData } from "@/lib/dashboard-access";
 import { demoMode } from "@/lib/demo";
 import { getStripe } from "@/lib/stripe";
 import { getTribe, getTribeAccount, type TribeId } from "@/lib/tribes";
@@ -48,76 +49,87 @@ export default async function TribeDashboard({
   const tribe = getTribe(tribeParam);
   if (!tribe) redirect("/dashboard");
 
-  const demo = demoMode();
-  const authBypass = process.env.TEND_DEMO_AUTH_BYPASS === "1";
+  const session = await auth0.getSession();
+  const access = await readAuthorizedDashboardData(
+    session?.user,
+    (user) => canAccessTribe(user, tribe.id as TribeId),
+    async () => {
+      const demo = demoMode();
+      const account = getTribeAccount(tribe.id as TribeId);
+      let pledges: PledgeRow[] = [];
+      let machine: MachineRow[] = [];
+      let stripeNote: string | null = null;
 
-  if (!demo && !authBypass) {
-    const session = await auth0.getSession();
-    if (!session) redirect(`/auth/login?returnTo=/dashboard/${tribe.id}`);
-    if (!canAccessTribe(session.user, tribe.id as TribeId)) {
-      return (
-        <div className="min-h-screen">
-          <Navbar />
-          <div style={{ paddingTop: "108px" }} />
-          <div className="max-w-6xl mx-auto px-6 sm:px-10 py-8">
-            <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111111] tracking-[-0.02em]">
-              Not your tenant
-            </h1>
-            <p className="mt-3 text-[13px] text-[#555555] max-w-lg leading-relaxed">
-              {session.user.email} isn&apos;t on the {tribe.name} admin list.
-              The current Auth0 and environment settings do not grant access
-              to this test tenant.
-            </p>
-          </div>
+      if (!demo) {
+        try {
+          const stripe = getStripe();
+          const res = await stripe.subscriptions.list(
+            { status: "active", limit: 100 },
+            account ? { stripeAccount: account } : undefined,
+          );
+          const subs = account
+            ? res.data
+            : res.data.filter((s) => s.metadata?.tribe === tribe.id);
+          pledges = subs.map((s: Stripe.Subscription) => {
+            const item = s.items.data[0];
+            return {
+              id: s.id,
+              created: s.created,
+              amountCents: item?.price?.unit_amount ?? 0,
+              interval:
+                item?.price?.recurring?.interval === "year"
+                  ? "year"
+                  : "month",
+            };
+          });
+
+          // Machine (MPP) payments settle on the platform account before routing.
+          const pis = await stripe.paymentIntents.list({ limit: 100 });
+          machine = pis.data
+            .filter(
+              (pi) =>
+                pi.metadata?.source === "tend-mpp" &&
+                pi.metadata?.tribe === tribe.id,
+            )
+            .map((pi) => ({
+              id: pi.id,
+              created: pi.created,
+              amountCents: pi.amount,
+              status: pi.status,
+            }));
+        } catch (err) {
+          stripeNote = `Stripe is unavailable (${(err as Error).message}). Check STRIPE_SECRET_KEY.`;
+        }
+      }
+
+      return { account, demo, machine, pledges, stripeNote };
+    },
+  );
+
+  if (access.status === "signed-out") {
+    redirect(`/auth/login?returnTo=/dashboard/${tribe.id}`);
+  }
+
+  if (access.status === "forbidden") {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div style={{ paddingTop: "108px" }} />
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 py-8">
+          <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111111] tracking-[-0.02em]">
+            Not your tenant
+          </h1>
+          <p className="mt-3 text-[13px] text-[#555555] max-w-lg leading-relaxed">
+            {access.user.email} isn&apos;t on the {tribe.name} admin list. The
+            current Auth0 and environment settings do not grant access to this
+            test tenant.
+          </p>
         </div>
-      );
-    }
+      </div>
+    );
   }
 
-  const account = getTribeAccount(tribe.id as TribeId);
-  let pledges: PledgeRow[] = [];
-  let machine: MachineRow[] = [];
-  let stripeNote: string | null = null;
-
-  if (!demo) {
-    try {
-      const stripe = getStripe();
-      const res = await stripe.subscriptions.list(
-        { status: "active", limit: 100 },
-        account ? { stripeAccount: account } : undefined,
-      );
-      const subs = account
-        ? res.data
-        : res.data.filter((s) => s.metadata?.tribe === tribe.id);
-      pledges = subs.map((s: Stripe.Subscription) => {
-        const item = s.items.data[0];
-        return {
-          id: s.id,
-          created: s.created,
-          amountCents: item?.price?.unit_amount ?? 0,
-          interval:
-            item?.price?.recurring?.interval === "year" ? "year" : "month",
-        };
-      });
-
-      // Machine (MPP) payments settle on the platform account before routing.
-      const pis = await stripe.paymentIntents.list({ limit: 100 });
-      machine = pis.data
-        .filter(
-          (pi) =>
-            pi.metadata?.source === "tend-mpp" &&
-            pi.metadata?.tribe === tribe.id,
-        )
-        .map((pi) => ({
-          id: pi.id,
-          created: pi.created,
-          amountCents: pi.amount,
-          status: pi.status,
-        }));
-    } catch (err) {
-      stripeNote = `Stripe is unavailable (${(err as Error).message}). Check STRIPE_SECRET_KEY.`;
-    }
-  }
+  const { account, demo, machine, pledges, stripeNote } = access.data;
 
   const mrr = pledges.reduce((sum, p) => sum + monthly(p), 0);
   const machineTotal = machine
@@ -148,16 +160,14 @@ export default async function TribeDashboard({
             </p>
           </div>
 
-          {(demo || authBypass) && (
+          {demo && (
             <div className="animate-enter mb-4 surface-1 rounded-[12px] px-4 py-3 flex items-center gap-2.5">
               <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 uppercase tracking-wider shrink-0">
-                {demo ? "Demo" : "Test mode"}
+                Demo
               </span>
               <p className="text-[12px] text-[#555555] leading-relaxed">
-                {demo
-                  ? "Empty demonstration state, sign-in bypassed."
-                  : "Real test transactions, sign-in bypassed for recording."}{" "}
-                Production access is isolated with Auth0 Organizations.
+                This view shows no sample activity and does not load Stripe
+                data.
               </p>
             </div>
           )}
