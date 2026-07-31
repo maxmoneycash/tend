@@ -178,7 +178,7 @@ export function DonationReceipt({
           className="tend-receipt-explorer"
           href={
             lastHash
-              ? `https://explore.tempo.xyz/tx/${lastHash}`
+              ? `https://explore.testnet.tempo.xyz/tx/${lastHash}`
               : receiptUrl
           }
           target="_blank"

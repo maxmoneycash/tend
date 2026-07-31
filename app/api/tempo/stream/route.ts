@@ -12,7 +12,7 @@ const Body = z.object({
 });
 
 const ALPHA_USD = "0x20c0000000000000000000000000000000000001";
-const EXPLORER_URL = "https://explore.tempo.xyz/tx/";
+const EXPLORER_URL = "https://explore.testnet.tempo.xyz/tx/";
 const SETTLEMENT_COUNT = 20;
 
 type StreamEvent =

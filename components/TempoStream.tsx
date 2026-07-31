@@ -279,7 +279,7 @@ export function TempoStream({
               <a
                 key={settlement.hash}
                 className="tempo-transaction"
-                href={`https://explore.tempo.xyz/tx/${settlement.hash}`}
+                href={`https://explore.testnet.tempo.xyz/tx/${settlement.hash}`}
                 target="_blank"
                 rel="noreferrer"
               >
