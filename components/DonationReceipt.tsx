@@ -3,7 +3,13 @@
 import { Check, Copy, ExternalLink, Radio } from "lucide-react";
 import { useState } from "react";
 
-type ReceiptStatus = "processing" | "verified" | "streaming" | "complete" | "error";
+type ReceiptStatus =
+  | "unverified"
+  | "processing"
+  | "verified"
+  | "streaming"
+  | "complete"
+  | "error";
 
 type Props = {
   amountCents: number;
@@ -24,7 +30,7 @@ type Props = {
 };
 
 function short(value?: string, start = 8, end = 6) {
-  if (!value) return "—";
+  if (!value) return "Pending";
   if (value.length <= start + end + 1) return value;
   return `${value.slice(0, start)}…${value.slice(-end)}`;
 }
@@ -69,6 +75,7 @@ export function DonationReceipt({
   const [copied, setCopied] = useState(false);
   const isStream = kind === "stream";
   const isComplete = status === "complete" || status === "verified";
+  const isUnverified = status === "unverified";
   const displayAmount = isStream ? streamedCents : amountCents;
   const copyValue = lastHash ?? reference ?? "";
 
@@ -90,22 +97,30 @@ export function DonationReceipt({
         <ReceiptEdge />
         <div className="tend-receipt-paper">
           <header className="tend-receipt-header">
-            <span>{isStream ? "Donation stream receipt" : "Stripe donation"}</span>
+            <span>{isStream ? "Testnet transfer receipt" : "Stripe test receipt"}</span>
             <span className="tend-receipt-status">
+              {isUnverified && <Radio size={11} />}
               {status === "processing" && <Radio size={11} />}
               {status === "streaming" && <Radio size={11} />}
               {isComplete && <Check size={11} />}
-              {status === "error" ? "Interrupted" : status}
+              {status === "error"
+                ? "Interrupted"
+                : isUnverified
+                  ? "Pending"
+                  : status}
             </span>
           </header>
 
           <div className="tend-receipt-total">
-            <strong>${(displayAmount / 100).toFixed(2)}</strong>
-            {isStream && (
+            <strong>
+              {isUnverified ? "Pending" : `$${(displayAmount / 100).toFixed(2)}`}
+            </strong>
+            {isUnverified && <span>awaiting Stripe confirmation</span>}
+            {isStream && !isUnverified && (
               <span>of ${(amountCents / 100).toFixed(2)} pathUSD</span>
             )}
             {!isStream && (
-              <span>{interval === "once" ? "one-time contribution" : `${interval}ly contribution`}</span>
+              <span>{interval === "once" ? "one-time test payment" : `${interval}ly test payment`}</span>
             )}
           </div>
 
@@ -113,10 +128,10 @@ export function DonationReceipt({
 
           <dl className="tend-receipt-lines">
             <div>
-              <dt>{isStream ? "For" : "To"}</dt>
+              <dt>Program reference</dt>
               <dd>{organization}</dd>
             </div>
-            {isStream ? (
+            {isStream && !isUnverified ? (
               <>
                 <div>
                   <dt>Paid with</dt>
@@ -135,12 +150,12 @@ export function DonationReceipt({
                 <div>
                   <dt>Cadence</dt>
                   <dd>
-                    Every {streamIntervalSeconds ?? "—"}s for{" "}
+                    Every {streamIntervalSeconds ?? "pending"}s for{" "}
                     {streamDurationSeconds
                       ? streamDurationSeconds < 60
                         ? `${streamDurationSeconds}s`
                         : `${streamDurationSeconds / 60}m`
-                      : "—"}
+                      : "pending"}
                   </dd>
                 </div>
                 <div>
@@ -156,7 +171,7 @@ export function DonationReceipt({
                   <dd>{short(lastHash)}</dd>
                 </div>
               </>
-            ) : (
+            ) : !isStream ? (
               <>
                 <div>
                   <dt>Paid with</dt>
@@ -171,6 +186,11 @@ export function DonationReceipt({
                   <dd>{short(reference, 10, 5)}</dd>
                 </div>
               </>
+            ) : (
+              <div>
+                <dt>Checkout session</dt>
+                <dd>{short(reference, 10, 5)}</dd>
+              </div>
             )}
           </dl>
 
@@ -183,6 +203,8 @@ export function DonationReceipt({
                 ? "All settlements confirmed"
                 : status === "verified"
                   ? "Payment verified"
+                  : isUnverified
+                    ? "Awaiting Stripe"
                   : status === "error"
                     ? "Needs attention"
                     : isStream
