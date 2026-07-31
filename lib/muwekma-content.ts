@@ -180,4 +180,5 @@ export const languageFacts = {
   evidence: "documented" as Evidence,
   sourceName: "Muwekma Ohlone Tribe",
   sourceUrl: "https://www.muwekma.org/language-revitalization.html",
+  sourceAction: "Read the Tribe’s Chochenyo language page",
 };

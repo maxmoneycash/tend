@@ -189,7 +189,11 @@ export default function ExplorerPage() {
               </p>
               <EvidenceBadge tier={languageFacts.evidence} />
             </div>
-            <SourceLink name={languageFacts.sourceName} url={languageFacts.sourceUrl} />
+            <SourceLink
+              action={languageFacts.sourceAction}
+              name={languageFacts.sourceName}
+              url={languageFacts.sourceUrl}
+            />
           </div>
 
           {/* CTA */}
