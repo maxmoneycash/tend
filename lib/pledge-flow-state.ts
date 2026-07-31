@@ -182,11 +182,11 @@ export function pledgeTempoPlanExplanation(
   interval: CheckoutInterval,
 ): string {
   if (interval === "once") {
-    return "Stripe records a one-time test payment after you complete checkout. Tend attempts this Tempo testnet plan once after Stripe confirms it.";
+    return "If checkout succeeds, Stripe records a one-time test payment. Tend attempts this Tempo testnet plan after Stripe confirms the payment.";
   }
 
   const schedule = interval === "month" ? "monthly" : "yearly";
-  return `Stripe creates a ${schedule} test subscription after you complete checkout. Tend attempts this Tempo testnet plan after Stripe confirms the first payment; later subscription invoices do not trigger another attempt.`;
+  return `If checkout succeeds, Stripe creates a ${schedule} test subscription. Tend attempts this Tempo testnet plan after Stripe confirms the first payment. Later subscription invoices do not trigger another attempt.`;
 }
 
 export function buildPledgeCheckoutIntent({

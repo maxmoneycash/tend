@@ -436,7 +436,7 @@ export function PledgeFlow({
             .{" "}
             {demo
               ? "The demo below shows a sample receipt. Stripe and Tempo stay idle."
-              : "Stripe will record the test payment or subscription shown below after you complete checkout. No real funds move."}
+              : "Review the Stripe test payment or subscription and timing below before continuing. No real funds move."}
           </p>
 
           <div className="pledge-amount-grid">
@@ -558,7 +558,9 @@ export function PledgeFlow({
                   </strong>
                 </div>
                 <div>
-                  <span>{demo ? "Preview schedule" : "Stripe will record"}</span>
+                  <span>
+                    {demo ? "Preview schedule" : "If checkout succeeds"}
+                  </span>
                   <strong>
                     {demo
                       ? interval === "once"

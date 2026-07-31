@@ -203,9 +203,19 @@ test("the pledge names the Stripe record and Tempo boundary before checkout", ()
     "Open Stripe checkout for a $100.00 yearly test subscription (no real charge)",
   );
   assert.equal(
-    pledgeTempoPlanExplanation("month"),
-    "Stripe creates a monthly test subscription after you complete checkout. Tend attempts this Tempo testnet plan after Stripe confirms the first payment; later subscription invoices do not trigger another attempt.",
+    pledgeTempoPlanExplanation("once"),
+    "If checkout succeeds, Stripe records a one-time test payment. Tend attempts this Tempo testnet plan after Stripe confirms the payment.",
   );
+  assert.equal(
+    pledgeTempoPlanExplanation("month"),
+    "If checkout succeeds, Stripe creates a monthly test subscription. Tend attempts this Tempo testnet plan after Stripe confirms the first payment. Later subscription invoices do not trigger another attempt.",
+  );
+  assert.match(
+    pledgeFlowSource,
+    /Review the Stripe test payment or subscription and timing below before continuing\./,
+  );
+  assert.match(pledgeFlowSource, /"If checkout succeeds"/);
+  assert.doesNotMatch(pledgeFlowSource, /Stripe will record/);
 });
 
 test("checkout errors focus the enabled retry linked to the alert", () => {
