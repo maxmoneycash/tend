@@ -25,7 +25,7 @@ export default async function Thanks({
       <>
         <Navbar />
         <div style={{ paddingTop: "108px" }} />
-        <main className="tempo-thanks-shell">
+        <div className="tempo-thanks-shell">
           <TempoStream
             sessionId={sessionId}
             fallbackOrganization={
@@ -40,7 +40,7 @@ export default async function Thanks({
               Open dashboard
             </Link>
           </div>
-        </main>
+        </div>
       </>
     );
   }

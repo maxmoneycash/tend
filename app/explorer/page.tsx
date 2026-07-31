@@ -46,7 +46,7 @@ export default function ExplorerPage() {
       <div style={{ paddingTop: "108px" }} />
       <div className="relative" style={{ overflow: "clip" }}>
         <AmbientBlobs variant="earn" />
-        <main className="relative z-10 max-w-6xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
           {/* Hero */}
           <div className="mb-8 animate-enter">
             <span className="inline-block text-[11px] font-display font-medium px-2.5 py-1 rounded-[10px] bg-[#FA4616]/10 text-[#FA4616] border border-[#FA4616]/20 uppercase tracking-wider mb-3">
@@ -188,7 +188,7 @@ export default function ExplorerPage() {
               See the programs
             </Link>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

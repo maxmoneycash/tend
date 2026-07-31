@@ -14,7 +14,7 @@ function TenantGrid({ ids, note }: { ids: TribeId[]; note: string }) {
       <div style={{ paddingTop: "108px" }} />
       <div className="relative" style={{ overflow: "clip" }}>
         <AmbientBlobs variant="earn" />
-        <main className="relative z-10 max-w-6xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
           <div className="mb-6 sm:mb-8 animate-enter">
             <span className="inline-block text-[11px] font-display font-medium px-2.5 py-1 rounded-[10px] bg-[#FA4616]/10 text-[#FA4616] border border-[#FA4616]/20 uppercase tracking-wider mb-3">
               Dashboards
@@ -46,7 +46,7 @@ function TenantGrid({ ids, note }: { ids: TribeId[]; note: string }) {
               </Link>
             ))}
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );
@@ -79,7 +79,7 @@ export default async function DashboardIndex() {
       <div className="min-h-screen">
         <Navbar />
         <div style={{ paddingTop: "108px" }} />
-        <main className="max-w-6xl mx-auto px-6 sm:px-10 py-8">
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 py-8">
           <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111111] tracking-[-0.02em]">
             No tenant access
           </h1>
@@ -89,7 +89,7 @@ export default async function DashboardIndex() {
             TEND_ADMINS_RAMAYTUSH or TEND_ADMINS_MUWEKMA in .env.local, or
             assign an Auth0 Organization.
           </p>
-        </main>
+        </div>
       </div>
     );
   }

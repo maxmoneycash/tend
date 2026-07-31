@@ -29,7 +29,7 @@ export default async function ProgramDetail({
       <div style={{ paddingTop: "108px" }} />
       <div className="relative" style={{ overflow: "clip" }}>
         <AmbientBlobs variant="earn" />
-        <main className="relative z-10 mx-auto max-w-6xl px-5 py-7 sm:px-10 sm:py-10">
+        <div className="relative z-10 mx-auto max-w-6xl px-5 py-7 sm:px-10 sm:py-10">
           <div className="animate-enter">
             <Link
               href="/programs"
@@ -156,7 +156,7 @@ export default async function ProgramDetail({
               </div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

@@ -59,7 +59,7 @@ export default async function TribeDashboard({
         <div className="min-h-screen">
           <Navbar />
           <div style={{ paddingTop: "108px" }} />
-          <main className="max-w-6xl mx-auto px-6 sm:px-10 py-8">
+          <div className="max-w-6xl mx-auto px-6 sm:px-10 py-8">
             <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111111] tracking-[-0.02em]">
               Not your tenant
             </h1>
@@ -68,7 +68,7 @@ export default async function TribeDashboard({
               The current Auth0 and environment settings do not grant access
               to this test tenant.
             </p>
-          </main>
+          </div>
         </div>
       );
     }
@@ -130,7 +130,7 @@ export default async function TribeDashboard({
       <div style={{ paddingTop: "108px" }} />
       <div className="relative" style={{ overflow: "clip" }}>
         <AmbientBlobs variant="earn" />
-        <main className="relative z-10 max-w-6xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
           {/* Hero */}
           <div className="mb-6 sm:mb-8 animate-enter">
             <span className="inline-block text-[11px] font-display font-medium px-2.5 py-1 rounded-[10px] bg-[#FA4616]/10 text-[#FA4616] border border-[#FA4616]/20 uppercase tracking-wider mb-3">
@@ -268,7 +268,7 @@ export default async function TribeDashboard({
               )}
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );
