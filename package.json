@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test:keyboard-recovery": "node scripts/test-keyboard-recovery.mjs",
     "test:payments": "node scripts/test-payment-routes.mjs",
     "test:e2e": "node scripts/test-donation-journey.mjs"
   },

@@ -80,8 +80,16 @@ export function PledgeFlow({
   const [locationError, setLocationError] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const resumeAttempted = useRef(false);
+  const addressInputRef = useRef<HTMLInputElement>(null);
+  const checkoutButtonRef = useRef<HTMLButtonElement>(null);
+  const locationRecoveryRef = useRef<HTMLElement | null>(null);
 
   async function locate(body: { address?: string; county?: string }) {
+    locationRecoveryRef.current = body.address
+      ? addressInputRef.current
+      : document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     setBusyAction("locate");
     setLocationError(null);
     setCheckoutError(null);
@@ -142,6 +150,18 @@ export function PledgeFlow({
       void openCheckout(intent, true);
     });
   }, [openCheckout]);
+
+  useEffect(() => {
+    if (locationError && busyAction === null) {
+      locationRecoveryRef.current?.focus();
+    }
+  }, [busyAction, locationError]);
+
+  useEffect(() => {
+    if (checkoutError && busyAction === null) {
+      checkoutButtonRef.current?.focus();
+    }
+  }, [busyAction, checkoutError]);
 
   function checkout() {
     if (
@@ -224,6 +244,7 @@ export function PledgeFlow({
           <span className="sr-only">Street address</span>
           <MapPin size={17} aria-hidden="true" />
           <input
+            ref={addressInputRef}
             name="address"
             autoComplete="street-address"
             placeholder="Street address in the Bay Area"
@@ -507,11 +528,15 @@ export function PledgeFlow({
               </p>
 
               <button
+                ref={checkoutButtonRef}
                 type="button"
                 onClick={checkout}
                 disabled={busy || !amountValid}
                 className="pledge-checkout-button"
                 data-state={state}
+                aria-describedby={
+                  checkoutError ? "pledge-checkout-error" : undefined
+                }
               >
                 {busyAction === "checkout" ? (
                   <>
