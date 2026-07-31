@@ -22,6 +22,14 @@ export function ProgramOfficialHero({
   counties: string[];
   program: Tribe;
 }) {
+  const isYunakinKindfulCampaign = program.id === "ramaytush";
+  const donationButtonLabel = isYunakinKindfulCampaign
+    ? "Continue to Yunakin on Kindful"
+    : "Open official donation page";
+  const donationHandoff = isYunakinKindfulCampaign
+    ? `Opens the ${program.name}’s ${program.taxName} campaign at ${host(program.officialDonationUrl)} in a new tab.`
+    : `The donation button opens ${host(program.officialDonationUrl)}, the official link listed for this program.`;
+
   return (
     <section className="overflow-hidden rounded-[24px] border border-black/[0.1] bg-white shadow-[0_24px_70px_rgba(28,20,14,0.08)] lg:grid lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
       <div className="p-5 sm:p-8 lg:p-10">
@@ -57,7 +65,7 @@ export function ProgramOfficialHero({
             rel="noreferrer"
             target="_blank"
           >
-            Open official donation page
+            {donationButtonLabel}
             <ExternalLink aria-hidden="true" size={15} />
           </a>
           <a
@@ -78,8 +86,7 @@ export function ProgramOfficialHero({
               className="mt-0.5 shrink-0"
               size={13}
             />
-            The donation button opens {host(program.officialDonationUrl)}, the
-            official link listed for this program.
+            {donationHandoff}
           </p>
           <p className="flex items-center gap-2 font-semibold text-[#8f520d]">
             <FlaskConical aria-hidden="true" className="shrink-0" size={13} />
