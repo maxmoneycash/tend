@@ -12,7 +12,7 @@ function requireKey(): string {
 export function getStripe(): Stripe {
   if (!_stripe) {
     _stripe = new Stripe(requireKey(), {
-      apiVersion: "2026-02-25.clover" as Stripe.LatestApiVersion,
+      apiVersion: "2026-07-29.dahlia",
       typescript: true,
     });
   }

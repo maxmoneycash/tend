@@ -1,8 +1,14 @@
+import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { z } from "zod";
 import { auth0 } from "@/lib/auth0";
-import { destinationChargeData, destinationChargesEnabled } from "@/lib/connect";
+import {
+  assertDestinationAccountReady,
+  ConnectConfigurationError,
+  destinationChargeAccount,
+  destinationChargeData,
+} from "@/lib/connect";
 import { demoMode } from "@/lib/demo";
 import { getStripe } from "@/lib/stripe";
 import {
@@ -48,6 +54,13 @@ function requestOrigin(req: Request) {
     ?.trim();
   if (host) return `${forwardedProto ?? new URL(req.url).protocol.slice(0, -1)}://${host}`;
   return new URL(req.url).origin;
+}
+
+function integrationIdentifier() {
+  const suffix = Array.from(randomBytes(8), (byte) =>
+    String.fromCharCode(97 + (byte % 26)),
+  ).join("");
+  return `tend_checkout_${suffix}`;
 }
 
 export async function POST(req: Request) {
@@ -102,11 +115,26 @@ export async function POST(req: Request) {
     stream_duration_seconds: String(streamDurationSeconds),
     stream_interval_seconds: String(streamIntervalSeconds),
   };
-  // Destination-charge scaffolding (TEND_CONNECT_DESTINATION_CHARGES=1,
-  // default off): charge on the platform account, full amount transferred to
-  // the tribe's connected account. Off means today's direct-charge behavior.
-  const useDestinationCharge = destinationChargesEnabled() && !!account;
+  // Destination-charge scaffolding is default-off and fails closed: when the
+  // flag is enabled, a test-mode, transfer-ready recipient must be configured.
+  let destinationAccount: string | null;
+  try {
+    destinationAccount = destinationChargeAccount(account);
+    if (destinationAccount) {
+      await assertDestinationAccountReady(stripe, destinationAccount);
+    }
+  } catch (error) {
+    if (!(error instanceof ConnectConfigurationError)) {
+      console.error("[tend] Connect account readiness check failed", error);
+    }
+    return NextResponse.json(
+      { error: "The beneficiary payment account is not ready." },
+      { status: 503 },
+    );
+  }
+
   const params: Stripe.Checkout.SessionCreateParams = {
+    integration_identifier: integrationIdentifier(),
     mode: interval === "once" ? "payment" : "subscription",
     line_items: [
       {
@@ -130,16 +158,16 @@ export async function POST(req: Request) {
       ? {
           payment_intent_data: {
             metadata,
-            ...(useDestinationCharge && account
-              ? destinationChargeData(account)
+            ...(destinationAccount
+              ? destinationChargeData(destinationAccount)
               : {}),
           },
         }
       : {
           subscription_data: {
             metadata,
-            ...(useDestinationCharge && account
-              ? destinationChargeData(account)
+            ...(destinationAccount
+              ? destinationChargeData(destinationAccount)
               : {}),
           },
         }),
@@ -153,7 +181,7 @@ export async function POST(req: Request) {
   // Zero platform fee. Destination-charge mode instead creates the session on
   // the platform account with an immediate full transfer to the tribe.
   const session =
-    account && !useDestinationCharge
+    account && !destinationAccount
       ? await stripe.checkout.sessions.create(params, { stripeAccount: account })
       : await stripe.checkout.sessions.create(params);
 

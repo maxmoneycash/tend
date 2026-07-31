@@ -39,10 +39,10 @@ export async function GET() {
  *  - test-mode Stripe key only — refuses live keys
  *  - signed-in tribe admin (canAccessTribe), unless TEND_DEMO_AUTH_BYPASS=1
  *
- * Creates a connected account with controller properties (platform pays
- * Stripe fees and owns losses — the destination-charge configuration) and
- * returns a hosted onboarding link. The operator pastes the printed env line
- * into .env.local; checkout picks it up via getTribeAccount().
+ * Creates an Accounts v2 recipient with an Express dashboard (the platform
+ * pays fees and owns losses for destination charges) and returns a
+ * Stripe-hosted onboarding link. The operator pastes the printed env line into
+ * .env.local; checkout picks it up via getTribeAccount().
  */
 export async function POST(req: Request) {
   if (!destinationChargesEnabled()) {
@@ -78,43 +78,63 @@ export async function POST(req: Request) {
   // Reuse an already-provisioned account instead of minting duplicates.
   let accountId = getTribeAccount(tribeId);
   if (!accountId) {
-    const account = await stripe.accounts.create({
-      country: "US",
-      email: undefined,
-      business_type: "non_profit",
-      // Controller properties (not top-level `type`): the platform pays
-      // Stripe fees and owns payment losses — the destination-charge shape.
-      controller: {
-        fees: { payer: "application" },
-        losses: { payments: "application" },
-        stripe_dashboard: { type: "express" },
+    const account = await stripe.v2.core.accounts.create({
+      configuration: {
+        recipient: {
+          capabilities: {
+            stripe_balance: {
+              stripe_transfers: { requested: true },
+            },
+          },
+        },
       },
-      capabilities: {
-        card_payments: { requested: true },
-        transfers: { requested: true },
+      dashboard: "express",
+      defaults: {
+        currency: "usd",
+        profile: {
+          business_url: tribe.siteUrl,
+          doing_business_as: tribe.name,
+          product_description: "Voluntary land tax contributions",
+        },
+        responsibilities: {
+          fees_collector: "application",
+          losses_collector: "application",
+        },
       },
-      business_profile: {
-        name: tribe.name,
-        url: tribe.siteUrl,
-        mcc: "8398",
-        product_description: "Voluntary land tax contributions",
+      display_name: tribe.name,
+      identity: {
+        country: "US",
+        entity_type: "non_profit",
+        business_details: {
+          registered_name: tribe.name,
+        },
       },
+      include: ["configuration.recipient"],
       metadata: { source: "tend", tend_tribe: tribeId },
     });
     accountId = account.id;
   }
 
-  const link = await stripe.accountLinks.create({
+  const link = await stripe.v2.core.accountLinks.create({
     account: accountId,
-    type: "account_onboarding",
-    refresh_url: `${origin}/onboarding/setup?connect=refresh&tribe=${tribeId}`,
-    return_url: `${origin}/onboarding/setup?connect=done&tribe=${tribeId}`,
+    use_case: {
+      type: "account_onboarding",
+      account_onboarding: {
+        configurations: ["recipient"],
+        collection_options: {
+          fields: "eventually_due",
+          future_requirements: "include",
+        },
+        refresh_url: `${origin}/onboarding/setup?connect=refresh&tribe=${tribeId}`,
+        return_url: `${origin}/onboarding/setup?connect=done&tribe=${tribeId}`,
+      },
+    },
   });
 
   return NextResponse.json({
     accountId,
     onboardingUrl: link.url,
     envLine: `${tribes[tribeId].accountEnv}=${accountId}`,
-    note: "Paste envLine into .env.local so checkout routes charges to this account.",
+    note: "Paste envLine into .env.local. Checkout will enable destination charges after Stripe activates the recipient transfer capability.",
   });
 }

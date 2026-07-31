@@ -95,8 +95,8 @@ async function receiptDetails(sessionId: string, stripeAccount: string | null) {
  * Start the Tempo settlement stream for a paid contribution if nobody has
  * yet. Safe to call from every relevant webhook delivery, including
  * replays: the run is claimed atomically in the store, so duplicate calls
- * and concurrent deliveries are no-ops. A previously *failed* run may be
- * reclaimed, which gives operators a retry path via webhook replay.
+ * and concurrent deliveries are no-ops. Failed or interrupted runs remain
+ * terminal until an operator reconciles them, avoiding duplicate transfers.
  */
 export async function maybeStartTempoSettlement(
   sessionId: string,
@@ -203,7 +203,7 @@ export async function maybeStartTempoSettlement(
     appendTempoEvent(sessionId, {
       type: "error",
       message:
-        "The Stripe payment is safe, but the Tempo testnet stream stopped. It will restart when the Stripe webhook event is replayed.",
+        "The Stripe payment is safe, but the Tempo testnet stream stopped. It will not restart automatically because that could duplicate a transfer.",
     });
     finishTempoRun(sessionId, "error");
   }

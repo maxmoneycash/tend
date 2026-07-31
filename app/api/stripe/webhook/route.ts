@@ -2,9 +2,7 @@ import { NextResponse } from "next/server";
 import { after } from "next/server";
 import type Stripe from "stripe";
 import {
-  claimStripeEvent,
-  releaseStripeEvent,
-  updatePaymentStatus,
+  processStripeEventOnce,
   upsertContribution,
 } from "@/lib/payment-store";
 import { getStripe } from "@/lib/stripe";
@@ -52,27 +50,24 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  // Durable idempotency: first delivery claims the event id; replays are
-  // acknowledged without reprocessing.
-  const firstDelivery = claimStripeEvent(event.id, event.type);
-
   let tempoSessionId: string | null = null;
-  if (firstDelivery) {
-    try {
+  let firstDelivery: boolean;
+  try {
+    firstDelivery = processStripeEventOnce(event.id, event.type, () => {
       tempoSessionId = processEvent(event);
-    } catch (error) {
-      // Release the claim so Stripe's retry can process the event again.
-      releaseStripeEvent(event.id);
-      console.error(`[tend] webhook processing failed for ${event.id}`, error);
-      return NextResponse.json({ error: "Processing failed" }, { status: 500 });
-    }
-  } else {
+    });
+  } catch (error) {
+    console.error(`[tend] webhook processing failed for ${event.id}`, error);
+    return NextResponse.json({ error: "Processing failed" }, { status: 500 });
+  }
+
+  if (!firstDelivery) {
     tempoSessionId = tempoSessionFor(event);
   }
 
   // Settlement kickoff is guarded by its own atomic claim in the store, so
-  // calling it on every delivery (including replays) is safe. Replaying a
-  // webhook event is the sanctioned way to restart a failed Tempo run.
+  // calling it on every delivery (including replays) is safe and failed runs
+  // cannot produce duplicate Tempo transfers.
   if (tempoSessionId) {
     const sessionId = tempoSessionId;
     after(() => maybeStartTempoSettlement(sessionId));
@@ -97,14 +92,16 @@ function processEvent(event: Stripe.Event): string | null {
     case "checkout.session.async_payment_succeeded": {
       const session = event.data.object;
       if (session.metadata?.source !== "tend") return null;
-      recordSession(session, eventAccount(event));
-      updatePaymentStatus(session.id, "paid");
+      recordSession(session, eventAccount(event), "paid");
       return session.id;
     }
     case "checkout.session.async_payment_failed": {
       const session = event.data.object;
       if (session.metadata?.source !== "tend") return null;
-      updatePaymentStatus(session.id, "failed");
+      // Record the full session as well as the terminal status. Stripe doesn't
+      // guarantee webhook delivery order, so the failed event may arrive
+      // before checkout.session.completed.
+      recordSession(session, eventAccount(event), "failed");
       return null;
     }
     case "invoice.payment_succeeded":
@@ -138,6 +135,7 @@ function eventAccount(event: Stripe.Event): string | null {
 function recordSession(
   session: Stripe.Checkout.Session,
   stripeAccount: string | null,
+  paymentStatus = session.payment_status,
 ) {
   const requestedDuration = Number(session.metadata?.stream_duration_seconds);
   const requestedInterval = Number(session.metadata?.stream_interval_seconds);
@@ -154,7 +152,7 @@ function recordSession(
     streamIntervalSeconds: isStreamIntervalSeconds(requestedInterval)
       ? requestedInterval
       : DEFAULT_STREAM_INTERVAL_SECONDS,
-    paymentStatus: session.payment_status,
+    paymentStatus,
     mode: session.mode,
     tempoStream:
       session.metadata?.tempo_stream === "true" && !!session.amount_total,

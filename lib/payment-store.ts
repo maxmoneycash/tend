@@ -122,25 +122,43 @@ function openDb(): DatabaseSync {
 }
 
 /**
- * Claim a Stripe event id for processing. Returns false when the event was
- * already processed (webhook replay / duplicate delivery) — callers must
- * treat that as a no-op.
+ * Apply a Stripe event's synchronous state mutation exactly once.
+ *
+ * The event claim and contribution writes share one SQLite transaction. This
+ * avoids the crash gap where an event id could be persisted but its payment
+ * state was not, which would make every later Stripe retry look like a
+ * duplicate. `process` must remain synchronous so the transaction never spans
+ * an awaited operation.
  */
-export function claimStripeEvent(eventId: string, eventType: string): boolean {
-  const result = openDb()
-    .prepare(
-      "INSERT OR IGNORE INTO stripe_events (id, type, received_at) VALUES (?, ?, ?)",
-    )
-    .run(eventId, eventType, Date.now());
-  return Number(result.changes) === 1;
-}
+export function processStripeEventOnce(
+  eventId: string,
+  eventType: string,
+  process: () => void,
+): boolean {
+  const db = openDb();
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    const result = db
+      .prepare(
+        "INSERT OR IGNORE INTO stripe_events (id, type, received_at) VALUES (?, ?, ?)",
+      )
+      .run(eventId, eventType, Date.now());
+    if (Number(result.changes) === 0) {
+      db.exec("COMMIT");
+      return false;
+    }
 
-/**
- * Release a claimed event after a processing failure so Stripe's retry
- * delivery can process it again.
- */
-export function releaseStripeEvent(eventId: string): void {
-  openDb().prepare("DELETE FROM stripe_events WHERE id = ?").run(eventId);
+    process();
+    db.exec("COMMIT");
+    return true;
+  } catch (error) {
+    try {
+      db.exec("ROLLBACK");
+    } catch {
+      // Preserve the original processing error.
+    }
+    throw error;
+  }
 }
 
 export function upsertContribution(record: ContributionRecord): void {
@@ -153,8 +171,21 @@ export function upsertContribution(record: ContributionRecord): void {
          payment_status, mode, tempo_stream, created_at, updated_at
        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(session_id) DO UPDATE SET
-         stripe_account = excluded.stripe_account,
-         payment_status = excluded.payment_status,
+         stripe_account = COALESCE(excluded.stripe_account, contributions.stripe_account),
+         tribe_id = excluded.tribe_id,
+         amount_cents = excluded.amount_cents,
+         currency = excluded.currency,
+         interval = excluded.interval,
+         stream_duration_seconds = excluded.stream_duration_seconds,
+         stream_interval_seconds = excluded.stream_interval_seconds,
+         payment_status = CASE
+           WHEN contributions.payment_status IN ('paid', 'failed')
+             AND excluded.payment_status NOT IN ('paid', 'failed')
+           THEN contributions.payment_status
+           ELSE excluded.payment_status
+         END,
+         mode = excluded.mode,
+         tempo_stream = excluded.tempo_stream,
          updated_at = excluded.updated_at`,
     )
     .run(
@@ -232,16 +263,17 @@ export function getContribution(
 
 /**
  * Atomically take ownership of the Tempo settlement run for a session.
- * Succeeds from 'pending' (first attempt) or 'error' (webhook replay after a
- * failed run). Returns false when another runner owns it or it already
- * completed.
+ * Only the first attempt may succeed. A failed or interrupted run is not
+ * automatically retried because the external Tempo transfer could have landed
+ * immediately before the local progress write; retrying could duplicate a
+ * public testnet transfer.
  */
 export function claimTempoRun(sessionId: string): boolean {
   const result = openDb()
     .prepare(
       `UPDATE contributions
        SET tempo_status = 'running', tempo_events = '[]', updated_at = ?
-       WHERE session_id = ? AND tempo_status IN ('pending', 'error')`,
+       WHERE session_id = ? AND tempo_status = 'pending'`,
     )
     .run(Date.now(), sessionId);
   return Number(result.changes) === 1;
@@ -278,9 +310,9 @@ export function finishTempoRun(
 }
 
 /**
- * Read-only state for the receipt page. Marks runs that died without a
+ * Read-only state for the receipt page. Reports a run that died without a
  * terminal write (process restart mid-stream) as errored so the UI doesn't
- * spin forever.
+ * spin forever, without mutating payment state from a display endpoint.
  */
 export function getTempoState(sessionId: string): TempoState | undefined {
   const row = getRow(sessionId);
@@ -296,14 +328,9 @@ export function getTempoState(sessionId: string): TempoState | undefined {
       {
         type: "error",
         message:
-          "The Stripe payment is safe, but the Tempo testnet stream stopped mid-run. Replay the Stripe webhook event to restart it.",
+          "The Stripe payment is safe, but the Tempo testnet stream stopped mid-run. It will not restart automatically because that could duplicate a transfer.",
       },
     ];
-    openDb()
-      .prepare(
-        "UPDATE contributions SET tempo_status = 'error', tempo_events = ?, updated_at = ? WHERE session_id = ?",
-      )
-      .run(JSON.stringify(events), Date.now(), sessionId);
   }
 
   return {

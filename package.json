@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:payments": "node scripts/test-payment-routes.mjs"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "^5.2.1",
