@@ -25,10 +25,10 @@ export function ProgramOfficialHero({
   const isYunakinKindfulCampaign = program.id === "ramaytush";
   const donationButtonLabel = isYunakinKindfulCampaign
     ? "Continue to Yunakin on Kindful"
-    : "Open the Foundation donation form";
+    : "Donate on the Foundation’s site";
   const donationHandoff = isYunakinKindfulCampaign
     ? `Opens the ${program.name}’s ${program.taxName} campaign at ${host(program.officialDonationUrl)} in a new tab.`
-    : `Opens the donation form published by ${program.name} at ${host(program.officialDonationUrl)} in a new tab.`;
+    : `Opens ${program.name}’s general donation form at ${host(program.officialDonationUrl)} in a new tab.`;
 
   return (
     <section className="overflow-hidden rounded-[24px] border border-black/[0.1] bg-white shadow-[0_24px_70px_rgba(28,20,14,0.08)] lg:grid lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
