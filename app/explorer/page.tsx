@@ -34,7 +34,9 @@ function SourceLink({ name, url }: { name: string; url: string }) {
       target="_blank"
     >
       <span>Source: {name}</span>
-      <span className="font-mono text-[12px] text-[#666666]">{host} ↗</span>
+      <span className="font-mono text-[12px] text-[#666666]">
+        {host} <span aria-hidden="true">↗</span>
+      </span>
       <span className="sr-only">(opens in a new tab)</span>
     </a>
   );
