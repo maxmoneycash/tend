@@ -73,6 +73,15 @@ export function ProgramOfficialHero({
           </span>
         </p>
 
+        <p className="mt-3 flex max-w-xl items-start gap-2 text-[10px] leading-relaxed text-[#777069] sm:text-[11px]">
+          <ExternalLink
+            aria-hidden="true"
+            className="mt-0.5 shrink-0"
+            size={13}
+          />
+          {donationHandoff}
+        </p>
+
         <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <a
             className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[12px] bg-[#171411] px-5 text-[13px] font-semibold text-white transition hover:bg-[#38322d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
@@ -94,20 +103,10 @@ export function ProgramOfficialHero({
           </a>
         </div>
 
-        <div className="mt-3 grid max-w-xl gap-2 text-[10px] leading-relaxed text-[#777069] sm:text-[11px]">
-          <p className="flex items-start gap-2">
-            <ExternalLink
-              aria-hidden="true"
-              className="mt-0.5 shrink-0"
-              size={13}
-            />
-            {donationHandoff}
-          </p>
-          <p className="flex items-center gap-2 font-semibold text-[#8f520d]">
-            <FlaskConical aria-hidden="true" className="shrink-0" size={13} />
-            Tend checkout below uses test funds only.
-          </p>
-        </div>
+        <p className="mt-3 flex max-w-xl items-center gap-2 text-[10px] font-semibold leading-relaxed text-[#8f520d] sm:text-[11px]">
+          <FlaskConical aria-hidden="true" className="shrink-0" size={13} />
+          Tend checkout below uses test funds only.
+        </p>
       </div>
 
       <div
