@@ -12,7 +12,6 @@ const NAV_LINKS = [
   { href: "/programs", label: "Programs" },
   { href: "/onboarding/setup", label: "Create Program" },
   { href: "/explorer", label: "Explorer" },
-  { href: "/rewards", label: "Rewards" },
   { href: "/dashboard", label: "Dashboards" },
 ];
 
@@ -208,7 +207,7 @@ export function Navbar() {
               <Link href="/" className="nav-logo" onClick={() => setMobileOpen(false)}>
                 <img
                   src={isLightPage ? LOGO_DARK : LOGO_LIGHT}
-                  alt="Content Rewards"
+                  alt="Tend"
                   style={{ height: 41, width: "auto" }}
                 />
               </Link>
