@@ -136,11 +136,13 @@ export function pledgeCheckoutButtonLabel({
   amountValid,
   checkoutError,
   demo,
+  interval,
   selectedAmount,
 }: {
   amountValid: boolean;
   checkoutError: string | null;
   demo: boolean;
+  interval: CheckoutInterval;
   selectedAmount: number;
 }): string {
   if (checkoutError) {
@@ -150,9 +152,30 @@ export function pledgeCheckoutButtonLabel({
   }
 
   const amount = amountValid ? selectedAmount.toFixed(2) : "0.00";
-  return demo
-    ? `Continue to $${amount} demo receipt preview`
-    : `Open $${amount} Stripe test checkout (no real charge)`;
+  if (demo) return `Continue to $${amount} demo receipt preview`;
+
+  const record = pledgeStripeRecordLabel(interval).toLowerCase();
+  return `Open Stripe checkout for a $${amount} ${record} (no real charge)`;
+}
+
+export function pledgeStripeRecordLabel(
+  interval: CheckoutInterval,
+): string {
+  if (interval === "once") return "One-time test payment";
+  return interval === "month"
+    ? "Monthly test subscription"
+    : "Yearly test subscription";
+}
+
+export function pledgeTempoPlanExplanation(
+  interval: CheckoutInterval,
+): string {
+  if (interval === "once") {
+    return "Stripe records a one-time test payment after you complete checkout. Tend attempts this Tempo testnet plan once after Stripe confirms it.";
+  }
+
+  const schedule = interval === "month" ? "monthly" : "yearly";
+  return `Stripe creates a ${schedule} test subscription after you complete checkout. Tend attempts this Tempo testnet plan after Stripe confirms the first payment; later subscription invoices do not trigger another attempt.`;
 }
 
 export function buildPledgeCheckoutIntent({

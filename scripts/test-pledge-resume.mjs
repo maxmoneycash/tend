@@ -9,6 +9,8 @@ import {
   pledgeCheckoutCanceledError,
   pledgeCheckoutError,
   pledgeResumeError,
+  pledgeStripeRecordLabel,
+  pledgeTempoPlanExplanation,
   resolvePledgeProgram,
   restorePledgeDraft,
   restorePledgeSelection,
@@ -55,6 +57,7 @@ test("a restored pledge keeps its selection, failure, and retry action", () => {
       amountValid: true,
       checkoutError,
       demo: false,
+      interval: restored.interval,
       selectedAmount: restored.amount,
     }),
     "Try Stripe test checkout again",
@@ -64,9 +67,10 @@ test("a restored pledge keeps its selection, failure, and retry action", () => {
       amountValid: true,
       checkoutError: null,
       demo: false,
+      interval: restored.interval,
       selectedAmount: restored.amount,
     }),
-    "Open $73.50 Stripe test checkout (no real charge)",
+    "Open Stripe checkout for a $73.50 monthly test subscription (no real charge)",
   );
   assert.deepEqual(
     buildPledgeCheckoutIntent({
@@ -110,6 +114,7 @@ test("a canceled checkout returns to a visible retry with its intent", () => {
       amountValid: true,
       checkoutError: pledgeCheckoutCanceledError(false),
       demo: false,
+      interval: intent.interval,
       selectedAmount: intent.amountCents / 100,
     }),
     "Try Stripe test checkout again",
@@ -141,6 +146,7 @@ test("a rejected checkout return keeps valid details and gives a recovery action
       amountValid: true,
       checkoutError: pledgeResumeError({ demo: false, hasProgram: true }),
       demo: false,
+      interval: "once",
       selectedAmount: restored.amount,
     }),
     "Try Stripe test checkout again",
@@ -166,5 +172,30 @@ test("a rejected checkout return keeps valid details and gives a recovery action
   assert.equal(
     pledgeResumeError({ demo: false, hasProgram: false }),
     "We couldn’t restore the saved program. Enter your address or choose a county to rebuild the test checkout.",
+  );
+});
+
+test("the pledge names the Stripe record and Tempo boundary before checkout", () => {
+  assert.equal(
+    pledgeStripeRecordLabel("once"),
+    "One-time test payment",
+  );
+  assert.equal(
+    pledgeStripeRecordLabel("month"),
+    "Monthly test subscription",
+  );
+  assert.equal(
+    pledgeCheckoutButtonLabel({
+      amountValid: true,
+      checkoutError: null,
+      demo: false,
+      interval: "year",
+      selectedAmount: 100,
+    }),
+    "Open Stripe checkout for a $100.00 yearly test subscription (no real charge)",
+  );
+  assert.equal(
+    pledgeTempoPlanExplanation("month"),
+    "Stripe creates a monthly test subscription after you complete checkout. Tend attempts this Tempo testnet plan after Stripe confirms the first payment; later subscription invoices do not trigger another attempt.",
   );
 });

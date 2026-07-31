@@ -23,6 +23,8 @@ import {
   pledgeCheckoutCanceledError,
   pledgeCheckoutError,
   pledgeResumeError,
+  pledgeStripeRecordLabel,
+  pledgeTempoPlanExplanation,
   resolvePledgeProgram,
   restorePledgeDraft,
   restorePledgeSelection,
@@ -54,12 +56,6 @@ type Located = {
 };
 
 const AMOUNT_CHIPS = [25, 50, 100, 250];
-const INTERVAL_LABELS: Record<CheckoutInterval, string> = {
-  once: "One time",
-  month: "Monthly",
-  year: "Yearly",
-};
-
 function cleanAmount(value: string) {
   const clean = value.replace(/[^0-9.]/g, "");
   const [whole, ...decimals] = clean.split(".");
@@ -224,6 +220,7 @@ export function PledgeFlow({
     amountValid,
     checkoutError,
     demo,
+    interval,
     selectedAmount,
   });
 
@@ -397,7 +394,7 @@ export function PledgeFlow({
             .{" "}
             {demo
               ? "The demo below shows a sample receipt. Stripe and Tempo stay idle."
-              : "Tend’s checkout below uses test funds."}
+              : "Stripe will record the test payment or subscription shown below after you complete checkout. No real funds move."}
           </p>
 
           <div className="pledge-amount-grid">
@@ -522,8 +519,16 @@ export function PledgeFlow({
                   </strong>
                 </div>
                 <div>
-                  <span>{demo ? "Preview schedule" : "Stripe test schedule"}</span>
-                  <strong>{INTERVAL_LABELS[interval]}</strong>
+                  <span>{demo ? "Preview schedule" : "Stripe will record"}</span>
+                  <strong>
+                    {demo
+                      ? interval === "once"
+                        ? "One time"
+                        : interval === "month"
+                          ? "Monthly"
+                          : "Yearly"
+                      : pledgeStripeRecordLabel(interval)}
+                  </strong>
                 </div>
                 <div>
                   <span>
@@ -556,10 +561,8 @@ export function PledgeFlow({
                   </>
                 ) : (
                   <>
-                    The button asks Stripe to open a test checkout for this
-                    amount and schedule. Tend attempts this Tempo plan once
-                    after Stripe confirms the payment. The receipt lists only
-                    testnet transfers that settle. No real money reaches{" "}
+                    {pledgeTempoPlanExplanation(interval)} The receipt lists
+                    only testnet transfers that settle. No real money reaches{" "}
                     {selectedTribe.name}.
                   </>
                 )}
