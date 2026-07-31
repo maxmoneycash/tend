@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import {
   awaitingPaidTestPaymentCopy,
   awaitingPaymentUpdateCopy,
+  preparingFirstTestnetTransferCopy,
   receiptRefreshRecoveryCopy,
   terminalPaymentFailureRecoveryCopy,
   terminalSettlementErrorCopy,
@@ -12,10 +13,11 @@ import {
   tempoTestnetTransactionUrl,
 } from "../lib/receipt-proof.ts";
 
-const [receipt, stream, route] = await Promise.all([
+const [receipt, stream, route, paymentStore] = await Promise.all([
   readFile(new URL("../components/DonationReceipt.tsx", import.meta.url), "utf8"),
   readFile(new URL("../components/TempoStream.tsx", import.meta.url), "utf8"),
   readFile(new URL("../app/api/tempo/stream/route.ts", import.meta.url), "utf8"),
+  readFile(new URL("../lib/payment-store.ts", import.meta.url), "utf8"),
 ]);
 
 const tempoTransactionId = `0x${"a".repeat(64)}`;
@@ -94,6 +96,15 @@ assert.deepEqual(awaitingPaidTestPaymentCopy(), {
   receiptStatusLabel: "Waiting for paid status",
   stateLabel: "Waiting for paid status (test mode)",
 });
+assert.deepEqual(preparingFirstTestnetTransferCopy(), {
+  announcement:
+    "Test payment verified. Tend is setting up the first Tempo testnet transfer. Keep this page open for the next receipt update.",
+  heading: "Setting up the first testnet transfer.",
+  intro:
+    "Stripe verified the test payment. Tend is setting up the first pathUSD transfer on Tempo’s public testnet. Keep this page open for the next receipt update.",
+  panel: "Setting up the first Tempo testnet transfer. Keep this page open.",
+  stateLabel: "Setting up first transfer",
+});
 assert.equal(
   receiptRefreshRecoveryCopy(true),
   "Tend could not refresh this test receipt. The last confirmed details remain below. Use Check receipt again to request the latest saved status. Payment and Tempo transfer retries stay disabled.",
@@ -125,6 +136,11 @@ assert.match(
   "The receipt route must pass the stored terminal status and events to the client.",
 );
 assert.match(
+  paymentStore,
+  /SET tempo_status = 'running', tempo_events = '\[\]'[\s\S]*?WHERE session_id = \? AND tempo_status = 'pending'/,
+  "The runner must expose running before it writes a receipt event.",
+);
+assert.match(
   stream,
   /status === "error"[\s\S]*?terminalSettlementErrorCopy\([\s\S]*?settlements\.length,[\s\S]*?totalSettlements/,
   "The terminal UI must build its recovery copy from the confirmed settlement count.",
@@ -143,6 +159,11 @@ assert.match(
   stream,
   /case "awaiting-payment":\s*return awaitingPaidTestPaymentCopy\(\)/,
   "A stored non-paid state must avoid claiming that Stripe calls the payment pending.",
+);
+assert.match(
+  stream,
+  /case "running":[\s\S]*?if \(settled === 0\)[\s\S]*?return preparingFirstTestnetTransferCopy\(\)/,
+  "A claimed run without a settlement must name setup instead of claiming funding started.",
 );
 assert.match(
   stream,

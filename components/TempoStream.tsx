@@ -14,6 +14,7 @@ import { DonationReceipt } from "@/components/DonationReceipt";
 import {
   awaitingPaidTestPaymentCopy,
   awaitingPaymentUpdateCopy,
+  preparingFirstTestnetTransferCopy,
   receiptRefreshRecoveryCopy,
   terminalPaymentFailureRecoveryCopy,
   terminalSettlementErrorCopy,
@@ -136,15 +137,7 @@ function getViewCopy(
       };
     case "running":
       if (settled === 0) {
-        return {
-          announcement:
-            "Test payment verified. Preparing the first testnet transfer.",
-          heading: "Preparing the first testnet transfer.",
-          intro:
-            "Stripe verified the test payment. Tend is preparing the first pathUSD transfer on Tempo’s public testnet.",
-          panel: "Funding the Tempo testnet stream.",
-          stateLabel: "Preparing first transfer",
-        };
+        return preparingFirstTestnetTransferCopy();
       }
       return {
         announcement: `${settled} of ${total} testnet transfers settled.`,

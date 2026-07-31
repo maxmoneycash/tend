@@ -44,6 +44,19 @@ export function awaitingPaidTestPaymentCopy() {
   } as const;
 }
 
+export function preparingFirstTestnetTransferCopy() {
+  return {
+    announcement:
+      "Test payment verified. Tend is setting up the first Tempo testnet transfer. Keep this page open for the next receipt update.",
+    heading: "Setting up the first testnet transfer.",
+    intro:
+      "Stripe verified the test payment. Tend is setting up the first pathUSD transfer on Tempo’s public testnet. Keep this page open for the next receipt update.",
+    panel:
+      "Setting up the first Tempo testnet transfer. Keep this page open.",
+    stateLabel: "Setting up first transfer",
+  } as const;
+}
+
 export function receiptRefreshRecoveryCopy(hasConfirmedDetails: boolean) {
   const state = hasConfirmedDetails
     ? "Tend could not refresh this test receipt. The last confirmed details remain below."
