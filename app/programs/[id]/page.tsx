@@ -108,28 +108,28 @@ export default async function ProgramDetail({
                 </p>
               ))}
 
-              <div className="mt-5 pt-4 border-t border-black/[0.06] grid grid-cols-3 gap-3">
-                <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">
+              <div className="mt-5 grid gap-2 border-t border-black/[0.06] pt-4 sm:grid-cols-3 sm:gap-3">
+                <div className="surface-2 flex min-h-11 items-center justify-between gap-3 rounded-[10px] p-3 sm:block sm:min-h-0 sm:p-2.5 sm:text-center">
+                  <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-muted-foreground uppercase tracking-wider">
                     Real funds sent
                   </p>
-                  <p className="text-[15px] font-bold text-[#111111] font-display">
+                  <p className="shrink-0 text-[15px] font-bold text-foreground font-display">
                     $0
                   </p>
                 </div>
-                <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">
+                <div className="surface-2 flex min-h-11 items-center justify-between gap-3 rounded-[10px] p-3 sm:block sm:min-h-0 sm:p-2.5 sm:text-center">
+                  <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-muted-foreground uppercase tracking-wider">
                     Checkout
                   </p>
-                  <p className="text-[15px] font-bold text-[#111111] font-display">
+                  <p className="shrink-0 text-[15px] font-bold text-foreground font-display">
                     test only
                   </p>
                 </div>
-                <div className="surface-2 rounded-[10px] p-2.5 text-center">
-                  <p className="text-[9px] text-[#8a8a8a] uppercase tracking-wider">
+                <div className="surface-2 flex min-h-11 items-center justify-between gap-3 rounded-[10px] p-3 sm:block sm:min-h-0 sm:p-2.5 sm:text-center">
+                  <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-muted-foreground uppercase tracking-wider">
                     Machine path
                   </p>
-                  <p className="text-[15px] font-bold text-[#111111] font-display">
+                  <p className="shrink-0 text-[15px] font-bold text-foreground font-display">
                     MPP
                   </p>
                 </div>
