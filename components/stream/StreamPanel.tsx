@@ -48,6 +48,7 @@ export function StreamPanel({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const resumeAttempted = useRef(false);
+  const checkoutButtonRef = useRef<HTMLButtonElement>(null);
 
   const selectedAmount = custom ? Number(custom) : amount;
   const amountValid =
@@ -103,6 +104,12 @@ export function StreamPanel({
       void openCheckout(intent, true);
     });
   }, [openCheckout, tribeId]);
+
+  useEffect(() => {
+    if (error && !busy) {
+      checkoutButtonRef.current?.focus();
+    }
+  }, [busy, error]);
 
   function checkout() {
     if (!amountValid) return;
@@ -202,11 +209,13 @@ export function StreamPanel({
       </details>
 
       <button
+        ref={checkoutButtonRef}
         type="button"
         className="pledge-checkout-button"
         data-state={error ? "error" : busy ? "loading" : "default"}
         disabled={busy || !amountValid}
         onClick={checkout}
+        aria-describedby={error ? "stream-checkout-error" : undefined}
       >
         {busy ? (
           <>
@@ -237,7 +246,7 @@ export function StreamPanel({
       )}
 
       {error && (
-        <p className="pledge-error" role="alert">
+        <p id="stream-checkout-error" className="pledge-error" role="alert">
           {error}
         </p>
       )}

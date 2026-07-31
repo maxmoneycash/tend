@@ -1,10 +1,14 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const [layout, navbar, pledge] = await Promise.all([
+const [layout, navbar, pledge, streamPanel] = await Promise.all([
   readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   readFile(new URL("../components/layout/Navbar.tsx", import.meta.url), "utf8"),
   readFile(new URL("../components/PledgeFlow.tsx", import.meta.url), "utf8"),
+  readFile(
+    new URL("../components/stream/StreamPanel.tsx", import.meta.url),
+    "utf8",
+  ),
 ]);
 
 assert.match(
@@ -51,6 +55,21 @@ assert.match(
   pledge,
   /id="pledge-checkout-error"[\s\S]*?role="alert"/,
   "The checkout error must remain an assertive live-region message.",
+);
+assert.match(
+  streamPanel,
+  /if \(error && !busy\)[\s\S]*?checkoutButtonRef\.current\?\.focus\(\)/,
+  "A program checkout failure must move focus to its retry action.",
+);
+assert.match(
+  streamPanel,
+  /aria-describedby=\{error \? "stream-checkout-error" : undefined\}/,
+  "The program checkout retry action must describe its error.",
+);
+assert.match(
+  streamPanel,
+  /id="stream-checkout-error"[\s\S]*?role="alert"/,
+  "The program checkout error must remain an assertive live-region message.",
 );
 
 console.log("Keyboard recovery source checks passed.");
