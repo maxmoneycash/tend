@@ -19,12 +19,12 @@ const serverEnv = {
   STRIPE_SECRET_KEY: "sk_test_tend_route_test",
   STRIPE_WEBHOOK_SECRET: webhookSecret,
   TEND_DEMO_AUTH_BYPASS: "1",
+  TEND_DEMO: "1",
   TEND_PAYMENT_DB_PATH: dbPath,
 };
 delete serverEnv.TEND_ACCT_MUWEKMA;
 delete serverEnv.TEND_ACCT_RAMAYTUSH;
 delete serverEnv.TEND_CONNECT_DESTINATION_CHARGES;
-delete serverEnv.TEND_DEMO;
 
 function rememberOutput(chunk) {
   serverOutput = `${serverOutput}${chunk}`.slice(-12_000);
@@ -159,6 +159,26 @@ try {
   });
   assert.equal(invalidCheckout.status, 400);
 
+  const canonicalCheckout = await fetch(`${baseUrl}/api/checkout`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-forwarded-host": "attacker.example",
+      "x-forwarded-proto": "https",
+    },
+    body: JSON.stringify({
+      tribeId: "ramaytush",
+      amountCents: 2500,
+      interval: "once",
+    }),
+    signal: AbortSignal.timeout(30_000),
+  });
+  assert.equal(canonicalCheckout.status, 200);
+  assert.equal(
+    (await canonicalCheckout.json()).url,
+    `${baseUrl}/thanks?tribe=ramaytush&demo=1&amount=2500`,
+  );
+
   const disabledOnboarding = await json("/api/stripe/connect/onboard", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -249,6 +269,7 @@ try {
 
   console.log("Restarting with the same SQLite database.");
   await stopServer();
+  delete serverEnv.TEND_DEMO;
   serverEnv.TEND_CONNECT_DESTINATION_CHARGES = "1";
   await startServer();
 

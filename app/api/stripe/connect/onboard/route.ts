@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { canAccessTribe } from "@/lib/access";
+import {
+  appOrigin,
+  AppOriginConfigurationError,
+} from "@/lib/app-origin";
 import { auth0 } from "@/lib/auth0";
 import { destinationChargesEnabled, stripeTestMode } from "@/lib/connect";
 import { getStripe } from "@/lib/stripe";
@@ -11,17 +15,6 @@ export const runtime = "nodejs";
 const Body = z.object({
   tribeId: z.enum(["ramaytush", "muwekma"]),
 });
-
-function requestOrigin(req: Request) {
-  const forwardedHost = req.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
-  const host = forwardedHost ?? req.headers.get("host");
-  const forwardedProto = req.headers
-    .get("x-forwarded-proto")
-    ?.split(",")[0]
-    ?.trim();
-  if (host) return `${forwardedProto ?? new URL(req.url).protocol.slice(0, -1)}://${host}`;
-  return new URL(req.url).origin;
-}
 
 /** Feature-flag status, so ops can verify config without creating anything. */
 export async function GET() {
@@ -36,7 +29,7 @@ export async function GET() {
  *
  * Gated three ways:
  *  - TEND_CONNECT_DESTINATION_CHARGES=1 (default off)
- *  - test-mode Stripe key only — refuses live keys
+ *  - test-mode Stripe key only
  *  - signed-in tribe admin (canAccessTribe), unless TEND_DEMO_AUTH_BYPASS=1
  *
  * Creates an Accounts v2 recipient with an Express dashboard (the platform
@@ -73,7 +66,17 @@ export async function POST(req: Request) {
 
   const tribe = getTribe(tribeId)!;
   const stripe = getStripe();
-  const origin = requestOrigin(req);
+  let origin: string;
+  try {
+    origin = appOrigin(req);
+  } catch (error) {
+    if (!(error instanceof AppOriginConfigurationError)) throw error;
+    console.error("[tend] Invalid Connect return URL configuration", error);
+    return NextResponse.json(
+      { error: "Connect return links are not configured." },
+      { status: 503 },
+    );
+  }
 
   // Reuse an already-provisioned account instead of minting duplicates.
   let accountId = getTribeAccount(tribeId);
@@ -125,8 +128,8 @@ export async function POST(req: Request) {
           fields: "eventually_due",
           future_requirements: "include",
         },
-        refresh_url: `${origin}/onboarding/setup?connect=refresh&tribe=${tribeId}`,
-        return_url: `${origin}/onboarding/setup?connect=done&tribe=${tribeId}`,
+        refresh_url: `${origin}/dashboard/${tribeId}?connect=refresh`,
+        return_url: `${origin}/dashboard/${tribeId}?connect=done`,
       },
     },
   });

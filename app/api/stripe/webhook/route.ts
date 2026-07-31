@@ -29,11 +29,11 @@ export const maxDuration = 120;
  *   contribution and kick off the Tempo testnet receipt stream. The receipt
  *   page only displays the state written here.
  *
- * Local dev (direct charges are created ON the tribe's connected account, so
- * both flavors must be forwarded):
+ * Local development receives events from the platform and connected test
+ * accounts. Forward both sources:
  *   stripe listen \
- *     --forward-to localhost:3102/api/stripe/webhook \
- *     --forward-connect-to localhost:3102/api/stripe/webhook
+ *     --forward-to localhost:3100/api/stripe/webhook \
+ *     --forward-connect-to localhost:3100/api/stripe/webhook
  */
 export async function POST(req: Request) {
   const body = await req.text();

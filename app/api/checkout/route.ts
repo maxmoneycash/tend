@@ -2,6 +2,10 @@ import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { z } from "zod";
+import {
+  appOrigin,
+  AppOriginConfigurationError,
+} from "@/lib/app-origin";
 import { auth0 } from "@/lib/auth0";
 import {
   assertDestinationAccountReady,
@@ -45,17 +49,6 @@ const Body = z.object({
     .optional(),
 });
 
-function requestOrigin(req: Request) {
-  const forwardedHost = req.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
-  const host = forwardedHost ?? req.headers.get("host");
-  const forwardedProto = req.headers
-    .get("x-forwarded-proto")
-    ?.split(",")[0]
-    ?.trim();
-  if (host) return `${forwardedProto ?? new URL(req.url).protocol.slice(0, -1)}://${host}`;
-  return new URL(req.url).origin;
-}
-
 function integrationIdentifier() {
   const suffix = Array.from(randomBytes(8), (byte) =>
     String.fromCharCode(97 + (byte % 26)),
@@ -92,7 +85,17 @@ export async function POST(req: Request) {
 
   const tribe = getTribe(tribeId)!;
   const account = getTribeAccount(tribeId as TribeId);
-  const origin = requestOrigin(req);
+  let origin: string;
+  try {
+    origin = appOrigin(req);
+  } catch (error) {
+    if (!(error instanceof AppOriginConfigurationError)) throw error;
+    console.error("[tend] Invalid payment return URL configuration", error);
+    return NextResponse.json(
+      { error: "Payment return links are not configured." },
+      { status: 503 },
+    );
+  }
 
   if (demoMode()) {
     return NextResponse.json({
@@ -115,8 +118,8 @@ export async function POST(req: Request) {
     stream_duration_seconds: String(streamDurationSeconds),
     stream_interval_seconds: String(streamIntervalSeconds),
   };
-  // Destination-charge scaffolding is default-off and fails closed: when the
-  // flag is enabled, a test-mode, transfer-ready recipient must be configured.
+  // The destination-charge scaffold starts disabled. Enabling it requires a
+  // test recipient whose account can receive transfers.
   let destinationAccount: string | null;
   try {
     destinationAccount = destinationChargeAccount(account);
@@ -144,7 +147,7 @@ export async function POST(req: Request) {
           ...(recurring ? { recurring } : {}),
           unit_amount: amountCents,
           product_data: {
-            name: `${tribe.taxName} — ${tribe.name}`,
+            name: `${tribe.taxName} for ${tribe.name}`,
             description:
               interval === "once"
                 ? "One-time voluntary contribution. Tend takes no platform fee; processing fees may apply."
@@ -175,11 +178,9 @@ export async function POST(req: Request) {
     cancel_url: `${origin}${returnTo}?canceled=1`,
   };
 
-  // Sovereignty by architecture: with a connected account configured (and
-  // destination charges off), the subscription is created directly ON the
-  // tribe's own Stripe account — their customers, their data, their payout.
-  // Zero platform fee. Destination-charge mode instead creates the session on
-  // the platform account with an immediate full transfer to the tribe.
+  // Direct charges use the configured connected account. Destination charges
+  // use the platform account and transfer the contribution to the recipient.
+  // Tend does not set a platform fee in either mode.
   const session =
     account && !destinationAccount
       ? await stripe.checkout.sessions.create(params, { stripeAccount: account })
