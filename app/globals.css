@@ -1340,10 +1340,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   main {
     zoom: 1.12;
   }
-  /* Disable zoom on campaign create — needs viewport-locked layout */
-  .campaign-create-page main {
-    zoom: 1;
-  }
 }
 
 /* Terminal animation cursor blink */

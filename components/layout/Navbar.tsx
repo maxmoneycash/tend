@@ -10,7 +10,6 @@ import "@/styles/landing.css";
 
 const NAV_LINKS = [
   { href: "/programs", label: "Programs" },
-  { href: "/onboarding/setup", label: "Create Program" },
   { href: "/explorer", label: "Explorer" },
   { href: "/dashboard", label: "Dashboards" },
 ];
@@ -325,7 +324,7 @@ export function Navbar() {
                 style={{ marginTop: 20 }}
               >
                 <Link
-                  href="/onboarding/creator"
+                  href="/programs"
                   onClick={() => setMobileOpen(false)}
                   style={{
                     display: "flex",
@@ -341,7 +340,7 @@ export function Navbar() {
                     textDecoration: "none",
                   }}
                 >
-                  Become a Creator
+                  Start a pledge
                 </Link>
               </motion.div>
 
