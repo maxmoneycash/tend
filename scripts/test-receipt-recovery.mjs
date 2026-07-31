@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import {
+  awaitingPaidTestPaymentCopy,
   awaitingPaymentUpdateCopy,
   receiptRefreshRecoveryCopy,
   terminalPaymentFailureRecoveryCopy,
@@ -54,6 +55,18 @@ assert.deepEqual(awaitingPaymentUpdateCopy(), {
   receiptStatusLabel: "Waiting for update",
   stateLabel: "Waiting for Stripe update",
 });
+assert.deepEqual(awaitingPaidTestPaymentCopy(), {
+  announcement:
+    "Stripe has not marked this test payment as paid. Keep this page open while Tend checks again.",
+  heading: "Stripe has not marked the test payment as paid.",
+  intro:
+    "Tend received a Checkout update without a paid status. Keep this page open while Tend checks Stripe again.",
+  panel: "Checking again for a paid Stripe test payment.",
+  receiptConfirmation: "Waiting for a paid Stripe status",
+  receiptDetail: "not marked paid by Stripe",
+  receiptStatusLabel: "Waiting for paid status",
+  stateLabel: "Waiting for paid status (test mode)",
+});
 assert.equal(
   receiptRefreshRecoveryCopy(true),
   "Tend could not refresh this test receipt. The last confirmed details remain below. Use Check receipt again to request the latest saved status. Payment and Tempo transfer retries stay disabled.",
@@ -73,6 +86,11 @@ assert.match(
   route,
   /state\.paymentStatus === "failed"[\s\S]*?status: "payment-failed", events: \[\]/,
   "A stored failed payment must reach the client as a terminal payment failure.",
+);
+assert.match(
+  route,
+  /state\.paymentStatus !== "paid"[\s\S]*?status: "awaiting-payment", events: \[\]/,
+  "A stored non-paid payment must reach the client as awaiting-payment.",
 );
 assert.match(
   route,
@@ -96,13 +114,23 @@ assert.match(
 );
 assert.match(
   stream,
+  /case "awaiting-payment":\s*return awaitingPaidTestPaymentCopy\(\)/,
+  "A stored non-paid state must avoid claiming that Stripe calls the payment pending.",
+);
+assert.match(
+  stream,
   /role="status"[\s\S]*?aria-live="polite"[\s\S]*?\{error \? "" : viewCopy\.announcement\}/,
   "The waiting state must announce status changes without interrupting the donor.",
 );
 assert.match(
   stream,
-  /unverifiedConfirmation=\{awaitingPaymentUpdate\?\.receiptConfirmation\}[\s\S]*?unverifiedDetail=\{awaitingPaymentUpdate\?\.receiptDetail\}[\s\S]*?unverifiedStatusLabel=\{awaitingPaymentUpdate\?\.receiptStatusLabel\}/,
-  "The receipt card must use the same waiting state as the surrounding panel.",
+  /const unverifiedReceiptCopy =[\s\S]*?status === "awaiting-confirmation"[\s\S]*?awaitingPaymentUpdateCopy\(\)[\s\S]*?status === "awaiting-payment"[\s\S]*?awaitingPaidTestPaymentCopy\(\)/,
+  "Each unverified server state must provide its exact receipt-card copy.",
+);
+assert.match(
+  stream,
+  /unverifiedConfirmation=\{unverifiedReceiptCopy\?\.receiptConfirmation\}[\s\S]*?unverifiedDetail=\{unverifiedReceiptCopy\?\.receiptDetail\}[\s\S]*?unverifiedStatusLabel=\{unverifiedReceiptCopy\?\.receiptStatusLabel\}/,
+  "The receipt card must use the same unverified state as the surrounding panel.",
 );
 assert.match(
   stream,

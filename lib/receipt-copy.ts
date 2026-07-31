@@ -29,6 +29,21 @@ export function awaitingPaymentUpdateCopy() {
   } as const;
 }
 
+export function awaitingPaidTestPaymentCopy() {
+  return {
+    announcement:
+      "Stripe has not marked this test payment as paid. Keep this page open while Tend checks again.",
+    heading: "Stripe has not marked the test payment as paid.",
+    intro:
+      "Tend received a Checkout update without a paid status. Keep this page open while Tend checks Stripe again.",
+    panel: "Checking again for a paid Stripe test payment.",
+    receiptConfirmation: "Waiting for a paid Stripe status",
+    receiptDetail: "not marked paid by Stripe",
+    receiptStatusLabel: "Waiting for paid status",
+    stateLabel: "Waiting for paid status (test mode)",
+  } as const;
+}
+
 export function receiptRefreshRecoveryCopy(hasConfirmedDetails: boolean) {
   const state = hasConfirmedDetails
     ? "Tend could not refresh this test receipt. The last confirmed details remain below."

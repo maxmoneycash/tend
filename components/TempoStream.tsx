@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DonationReceipt } from "@/components/DonationReceipt";
 import {
+  awaitingPaidTestPaymentCopy,
   awaitingPaymentUpdateCopy,
   receiptRefreshRecoveryCopy,
   terminalPaymentFailureRecoveryCopy,
@@ -123,14 +124,7 @@ function getViewCopy(
     case "awaiting-confirmation":
       return awaitingPaymentUpdateCopy();
     case "awaiting-payment":
-      return {
-        announcement: "The test payment is pending in Stripe.",
-        heading: "Your test payment is pending.",
-        intro:
-          "Stripe still lists this test payment as pending. Tempo testnet transfers will start after payment confirmation.",
-        panel: "Waiting for Stripe to confirm the test payment.",
-        stateLabel: "Payment pending (test mode)",
-      };
+      return awaitingPaidTestPaymentCopy();
     case "pending":
       return {
         announcement: "Test payment verified. Preparing the testnet receipt.",
@@ -369,8 +363,12 @@ export function TempoStream({
     totalSettlements,
     stripeVerified,
   );
-  const awaitingPaymentUpdate =
-    status === "awaiting-confirmation" ? awaitingPaymentUpdateCopy() : null;
+  const unverifiedReceiptCopy =
+    status === "awaiting-confirmation"
+      ? awaitingPaymentUpdateCopy()
+      : status === "awaiting-payment"
+        ? awaitingPaidTestPaymentCopy()
+        : null;
   const stripeDetail = stripeVerified
     ? "Test payment verified"
     : paymentFailed
@@ -530,9 +528,9 @@ export function TempoStream({
             lastHash={lastHash}
             streamDurationSeconds={ready?.streamDurationSeconds}
             streamIntervalSeconds={ready?.streamIntervalSeconds}
-            unverifiedConfirmation={awaitingPaymentUpdate?.receiptConfirmation}
-            unverifiedDetail={awaitingPaymentUpdate?.receiptDetail}
-            unverifiedStatusLabel={awaitingPaymentUpdate?.receiptStatusLabel}
+            unverifiedConfirmation={unverifiedReceiptCopy?.receiptConfirmation}
+            unverifiedDetail={unverifiedReceiptCopy?.receiptDetail}
+            unverifiedStatusLabel={unverifiedReceiptCopy?.receiptStatusLabel}
           />
         </div>
       )}
