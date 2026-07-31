@@ -43,7 +43,7 @@ async function createPayToAddress(
   const paymentIntent = await getStripePreview().paymentIntents.create({
     amount: Math.round(Number(amountUsd) * 100),
     currency: "usd",
-    description: `Annual land tax (machine) — ${tribes[tribeId].name}`,
+    description: `Tend machine payment test for ${tribes[tribeId].name}`,
     metadata: { tribe: tribeId, source: "tend-mpp" },
     payment_method_data: { type: "crypto" } as never,
     payment_method_options: {
@@ -138,12 +138,12 @@ export async function POST(request: Request) {
         amount: tribe.annualMachineTaxCents,
         currency: "usd",
         destination: account,
-        description: `Tend MPP land tax routing — ${tribe.name}`,
+        description: `Tend MPP test routing for ${tribe.name}`,
       });
       routed = true;
     } catch (err) {
       console.log(
-        `[tend] MPP transfer deferred (${(err as Error).message}) — route manually or rely on settlement timing`,
+        `[tend] MPP transfer deferred (${(err as Error).message}). Reconcile the test payment manually.`,
       );
     }
   }
@@ -152,7 +152,7 @@ export async function POST(request: Request) {
     Response.json({
       ok: true,
       tribe: tribe.id,
-      receipt: `Annual land tax received for ${tribe.name}.`,
+      receipt: `Tend recorded a test machine payment for the ${tribe.name} program reference.`,
       amountUsd,
       routedToTribeAccount: routed,
       note: routed

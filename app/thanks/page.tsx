@@ -52,7 +52,7 @@ export default async function Thanks({
     <div className="mx-auto max-w-2xl px-6 pt-24 text-center">
       {demo === "1" && (
         <p className="mb-6 rounded-lg border border-amber bg-parch px-4 py-3 text-sm">
-          <strong>Demo preview</strong> — no payment or subscription was
+          <strong>Demo preview.</strong> No payment or subscription was
           created.
         </p>
       )}

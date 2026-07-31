@@ -65,8 +65,8 @@ export default async function TribeDashboard({
             </h1>
             <p className="mt-3 text-[13px] text-[#555555] max-w-lg leading-relaxed">
               {session.user.email} isn&apos;t on the {tribe.name} admin list.
-              Each tribe&apos;s tenant is sovereign — access is granted by that
-              tribe alone.
+              The current Auth0 and environment settings do not grant access
+              to this test tenant.
             </p>
           </main>
         </div>
@@ -115,7 +115,7 @@ export default async function TribeDashboard({
           status: pi.status,
         }));
     } catch (err) {
-      stripeNote = `Stripe not reachable (${(err as Error).message}) — configure STRIPE_SECRET_KEY.`;
+      stripeNote = `Stripe is unavailable (${(err as Error).message}). Check STRIPE_SECRET_KEY.`;
     }
   }
 
@@ -197,7 +197,7 @@ export default async function TribeDashboard({
               <h2 className="text-[15px] font-semibold text-[#111111] mb-3">Pledges</h2>
               {pledges.length === 0 ? (
                 <p className="text-[12px] text-[#8a8a8a]">
-                  No pledges yet — the land is patient.
+                  No test subscriptions yet.
                 </p>
               ) : (
                 <>
@@ -229,7 +229,7 @@ export default async function TribeDashboard({
               {machine.length === 0 ? (
                 <div>
                   <p className="text-[12px] text-[#8a8a8a]">
-                    No agent has paid its land tax yet. Point one at:
+                    No test machine payments yet. Send a test request to:
                   </p>
                   <pre className="mt-3 rounded-[10px] bg-[#0f0f0f] p-3 font-mono text-[10.5px] leading-relaxed text-[#b4b4b4] overflow-x-auto">
                     {`POST /api/mpp/land-tax?tribe=${tribe.id}`}

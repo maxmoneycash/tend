@@ -61,8 +61,8 @@ export default async function DashboardIndex() {
         ids={Object.keys(tribes) as TribeId[]}
         note={
           authBypass
-            ? "Stripe test mode — sign-in is bypassed for this recording."
-            : "Demo mode — both tenants are open with sample data."
+            ? "Stripe test mode. Sign-in is bypassed for this recording."
+            : "Demo mode. Both tenant previews are open."
         }
       />
     );
@@ -97,7 +97,7 @@ export default async function DashboardIndex() {
   return (
     <TenantGrid
       ids={ids}
-      note="Each tenant is sovereign — access is granted by that tribe alone."
+      note="Local Auth0 and environment settings grant access to these test tenant views."
     />
   );
 }

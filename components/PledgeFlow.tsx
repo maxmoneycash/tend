@@ -366,7 +366,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
               <div className="pledge-payment-heading">
                 <div>
                   <p className="pledge-kicker">Review</p>
-                  <h4>Confirm your contribution</h4>
+                  <h4>Review the test checkout</h4>
                 </div>
                 <span className="pledge-test-badge">
                   Test mode
@@ -375,7 +375,7 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
 
               <div className="pledge-payment-review">
                 <div>
-                  <span>To</span>
+                  <span>Program reference</span>
                   <strong>{selectedTribe?.name ?? "Selected program"}</strong>
                 </div>
                 <div>
@@ -394,8 +394,8 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
               </div>
 
               <p className="pledge-payment-note">
-                Stripe handles the test payment. Tend then mirrors the amount
-                as faucet-funded pathUSD on Tempo Moderato.
+                Stripe handles a test payment. A verified webhook can start
+                faucet-funded pathUSD transfers on Tempo Moderato.
               </p>
 
               <button

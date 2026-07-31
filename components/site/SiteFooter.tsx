@@ -7,21 +7,20 @@ export function SiteFooter() {
         </p>
         <div className="mt-6 grid gap-6 sm:grid-cols-2 text-[12px] leading-relaxed text-[#6b6b6b]">
           <p>
-            Tend is a hackathon prototype (Auth0 × Stripe, July 2026). It is
-            not affiliated with, or endorsed by, the Association of Ramaytush
-            Ohlone or the Muwekma Ohlone Tribe — nothing launches in a
-            tribe&apos;s name without that tribe&apos;s direction.
+            Tend is a test-only hackathon prototype from July 2026. The
+            Association of Ramaytush Ohlone, Muwekma Ohlone Preservation
+            Foundation, and Sogorea Te&apos; Land Trust have not approved,
+            endorsed, or joined it.
           </p>
           <p>
-            Where territorial definitions differ, Tend shows every tribe whose
-            published definition includes your county and lets you choose — it
-            never arbitrates boundaries. No real payments are accepted by this
-            prototype.
+            County matches are informational. Real donations belong on the
+            official organization pages linked throughout Tend. The checkout
+            here accepts Stripe test keys only.
           </p>
         </div>
         <div className="mt-8 pt-5 border-t border-black/[0.06] flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-[#8a8a8a] uppercase tracking-wider">
-          <span>Ramaytush &amp; Muwekma Ohlone land · San Francisco Bay</span>
-          <span>Stripe test mode · MPP prototype for machines</span>
+          <span>Ohlone-led programs around San Francisco Bay</span>
+          <span>Stripe test mode · Tempo public testnet</span>
         </div>
       </div>
     </footer>

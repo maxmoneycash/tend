@@ -23,7 +23,7 @@ export const tribes: Record<TribeId, Tribe> = {
     taxName: "Yunakin Land Tax",
     region: "San Francisco Peninsula",
     blurb:
-      "The Ramaytush Ohlone are the original peoples of the San Francisco Peninsula. Yunakin — from the Ramaytush word for village — is their voluntary land tax for people living on the Peninsula.",
+      'Yunakin means "village" in the Ramaytush language. It is a financial contribution for people in San Francisco, San Mateo, and part of Santa Clara County. Supporters can give once or set a recurring contribution.',
     siteUrl: "https://www.ramaytush.org",
     officialProgramUrl: "https://www.ramaytush.org/donate.html",
     officialDonationUrl:
@@ -33,11 +33,11 @@ export const tribes: Record<TribeId, Tribe> = {
   },
   muwekma: {
     id: "muwekma",
-    name: "Muwekma Ohlone Tribe",
-    taxName: "Muwekma Ohlone contribution",
-    region: "East & South San Francisco Bay",
+    name: "Muwekma Ohlone Preservation Foundation",
+    taxName: "Shuumi Land Tax",
+    region: "San Francisco Bay Area",
     blurb:
-      "The Muwekma Ohlone Preservation Foundation supports cultural revitalization, community education, land access, and the Tribe's work toward restored federal recognition.",
+      'The foundation’s Shuumi Land Tax is a voluntary annual contribution. Shuumi means "gift" in Chochenyo.',
     siteUrl: "https://www.muwekmafoundation.org/home",
     officialProgramUrl: "https://www.muwekmafoundation.org/shuumi",
     officialDonationUrl: "https://www.muwekmafoundation.org/donate",
@@ -66,8 +66,8 @@ export const relatedGivingPrograms = [
  * matching tribe is shown and the contributor chooses.
  */
 export const countyTribes: Record<string, TribeId[]> = {
-  "San Francisco": ["ramaytush"],
-  "San Mateo": ["ramaytush"],
+  "San Francisco": ["ramaytush", "muwekma"],
+  "San Mateo": ["ramaytush", "muwekma"],
   "Santa Clara": ["ramaytush", "muwekma"],
   Alameda: ["muwekma"],
   "Contra Costa": ["muwekma"],

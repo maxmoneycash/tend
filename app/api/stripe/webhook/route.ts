@@ -20,7 +20,7 @@ export const runtime = "nodejs";
 export const maxDuration = 120;
 
 /**
- * Stripe webhook — the single trigger for post-payment work.
+ * Stripe webhook. This is the single trigger for post-payment work.
  *
  * - Signature-verified against STRIPE_WEBHOOK_SECRET.
  * - Durably idempotent: processed event ids are persisted in SQLite, so

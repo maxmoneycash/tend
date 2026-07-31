@@ -1,73 +1,68 @@
 # Tend demo recording
 
-Target length: 70–80 seconds. Record one clean take at 1440×900 and 100% browser
-zoom. Keep the pointer still while speaking.
+Target length: 75 seconds. Record at 1440 by 900 with the browser toolbar
+hidden. Keep Stripe in test mode.
 
 ## Before recording
 
-1. Run `npm run dev` and open `http://localhost:3100`.
-2. Turn on Do Not Disturb and close unrelated tabs.
-3. Use macOS `Shift-Command-5` → **Record Selected Portion** and include only
-   the browser content.
-4. Confirm the microphone is selected.
-5. Reload the home page so the demo begins at the top.
+1. Start Tend with `npm run dev`.
+2. Confirm that `/` opens `/programs`.
+3. Open each official source link in a separate tab.
+4. Run `npm run test:payments` and `npm run test:e2e`.
+5. Keep a Stripe `sk_test_` key in the local environment.
 
-## Shot list and narration
+## 0:00 to 0:18
 
-### 0:00–0:12 — Problem and product
+Open the program directory.
 
-**Screen:** Tend home page and headline.
+> Tend is a careful guide to Indigenous-led contribution programs around the
+> Bay. The organizations shown here run their own programs. Real donations
+> happen on their official sites.
 
-**Say:**
+Pause on the disclosure below the title. Show Yunakin and the Muwekma Shuumi
+Land Tax as separate cards.
 
-> Land acknowledgements usually stop at words. Tend turns them into a direct,
-> recurring contribution. A resident finds a verified Indigenous-led program,
-> while each organization keeps control of its payments, supporters, and data.
+## 0:18 to 0:36
 
-### 0:12–0:35 — Resident flow
+Open Yunakin. Point to the program summary and both official links.
 
-**Screen:** Scroll to **Find my land tax**. Click **San Francisco**, leave the
-default monthly amount at `$25`, then click **Preview — $25/month, no Tend
-fee**.
+> Public sources explain who runs the program, what its name means, and which
+> places it describes. The primary action opens the organization’s official
+> donation page.
 
-**Say:**
+Do not submit the official donation form.
 
-> I can locate by address or county. San Francisco resolves to the Association
-> of Ramaytush Ohlone and its official Yunakin Land Tax. I choose a monthly
-> amount, and Stripe Checkout creates the recurring contribution directly on
-> the organization's connected account. This recording uses the clearly
-> labelled sandbox, so no real charge is created.
+## 0:36 to 0:52
 
-### 0:35–0:58 — Multi-tenant SaaS
+Return to Tend. Scroll to the checkout preview and open the $20 test checkout.
 
-**Screen:** On the confirmation page, click **Dashboards** in the header. Open
-the Ramaytush tenant and pause on the three summary cards and ledgers.
+> Tend also demonstrates a payment flow. Every control says test mode. Stripe
+> returns a hosted test session, and the demo stops before payment details.
 
-**Say:**
+Close Stripe Checkout without entering card information.
 
-> Tend is multi-tenant by design. Auth0 Organizations isolate each
-> organization's admins. Their dashboard combines recurring human
-> contributions and machine payments, while Stripe Connect keeps every
-> organization's transactions and supporter data separate.
+## 0:52 to 1:05
 
-### 0:58–1:15 — Agent payments and close
+Show a prepared test receipt state.
 
-**Screen:** Click **Tend** in the header, then scroll to the dark machine
-payment example.
+> A signed Stripe webhook records payment state. The receipt page only reads
+> that record. A configured Tempo wallet can add faucet-funded transfers on
+> the public testnet.
 
-**Say:**
+Point to the Stripe session reference and Tempo explorer link.
 
-> Agents can contribute too. Tend exposes a Stripe Machine Payments Protocol
-> endpoint: the agent receives an HTTP 402 challenge, pays, and gets a
-> verifiable receipt with routing status. Tend is one contribution system for
-> people, organizations, and the autonomous software operating on their land.
+## 1:05 to 1:15
 
-Stop recording immediately after the final sentence.
+Open the program directory’s related-giving section.
 
-## If the live flow misbehaves
+> Sogorea Te’ Land Trust runs a separate Shuumi Land Tax for Lisjan Ohlone
+> work. Tend keeps the two Shuumi programs distinct and sends people to the
+> official source.
 
-- Use the county buttons instead of the Census address lookup.
-- Do not attempt a real Stripe payment during the recording.
-- Open `http://localhost:3100/dashboard/ramaytush` directly if dashboard
-  navigation is slow.
-- Restart with `npm run dev` if a stale page appears.
+End on the official-program button.
+
+## Recovery
+
+If Stripe is unavailable, show the recorded end-to-end test output and stay
+on the test checkout panel. If address lookup fails, use a county button.
+Keep the prototype disclosure visible whenever a payment screen appears.

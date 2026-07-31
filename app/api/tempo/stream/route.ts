@@ -11,7 +11,7 @@ const SessionId = z.string().startsWith("cs_").max(256);
  *
  * Settlement work is triggered exclusively by the Stripe webhook
  * (app/api/stripe/webhook). This endpoint just reports the durable state the
- * webhook + settlement runner wrote — the receipt page polls it and can
+ * webhook and settlement runner wrote. The receipt page polls it and can
  * never start Tempo actions.
  */
 export async function GET(request: Request) {

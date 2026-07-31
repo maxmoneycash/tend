@@ -152,7 +152,8 @@ export default async function Home() {
           ))}
         </div>
         <p className="mt-4 text-[11px] leading-relaxed text-[#8a8a8a] max-w-2xl">
-          Santa Clara appears in both tribes&apos; definitions — Tend shows both and never decides.
+          Santa Clara appears in more than one published description. Tend
+          shows every possible match for the county.
         </p>
       </section>
 
@@ -183,8 +184,8 @@ export default async function Home() {
               body: "No real funds move in this prototype. Beneficiary-managed Stripe accounts require each organization to onboard and approve the arrangement.",
             },
             {
-              title: "Sovereignty as architecture",
-              body: "Each tribe controls its counties, rates, words, and access. No shared pot, no boundary decisions made for them.",
+              title: "A model for beneficiary control",
+              body: "A production tenant would let each approved organization manage its own words, settings, accounts, and access.",
             },
           ].map((f) => (
             <div key={f.title} className="surface-1 rounded-[16px] p-5">
@@ -208,7 +209,8 @@ export default async function Home() {
           </div>
           <div className="mt-7 grid gap-8 lg:grid-cols-[1fr_1.1fr] items-start">
             <p className="text-[14px] leading-relaxed text-[#3a3a3a] max-w-md">
-              AI agents run on this land too — one line in your automation.
+              The machine-payment prototype accepts one test request from an
+              automated client.
             </p>
             <div>
               <pre className="terminal">

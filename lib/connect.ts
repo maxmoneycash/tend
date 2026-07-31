@@ -8,7 +8,7 @@ import type Stripe from "stripe";
  * created on the tribe's connected account when TEND_ACCT_* is set, platform
  * charges otherwise. With the flag on (and a connected account configured),
  * checkout creates destination charges per
- * https://docs.stripe.com/connect/destination-charges — the charge lands on
+ * https://docs.stripe.com/connect/destination-charges. The charge lands on
  * the platform account and the full amount transfers to the tribe's account.
  * Flipping the flag is config, not code.
  */

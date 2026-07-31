@@ -1,11 +1,11 @@
-/* Muwekma & Ohlone content for Tend — drawn from the Muwekma Atlas
- * (presidio-atlas), the user's evidence-tiered research app. Every entry
- * keeps the Atlas's discipline: documented / reported / oral-history /
- * analysis, and summaries stay short with the Atlas as the deep record. */
-
 export type Evidence = "documented" | "reported" | "oral-history" | "analysis";
 
-export interface TimelineEntry {
+type SourcedEntry = {
+  sourceName: string;
+  sourceUrl: string;
+};
+
+export interface TimelineEntry extends SourcedEntry {
   date: string;
   title: string;
   body: string;
@@ -14,95 +14,88 @@ export interface TimelineEntry {
 
 export const timeline: TimelineEntry[] = [
   {
-    date: "c. 8000 BCE",
-    title: "First peoples of the Bay",
-    body: "Human presence around San Francisco Bay reaches back at least ten thousand years; the Presidio's own archaeology records 5,000–10,000 years of use across 450+ documented sites.",
+    date: "Before 1776",
+    title: "Home of the Yelamu",
+    body: "The National Park Service maps Petlenuc near the Presidio, with Sitlintac and Chutchui farther south on the San Francisco Peninsula.",
     evidence: "documented",
+    sourceName: "National Park Service",
+    sourceUrl: "https://www.nps.gov/places/000/8-home-of-the-yelamu.htm",
   },
   {
-    date: "Deep time",
-    title: "The world begins at Tuyshtak",
-    body: "Ohlone and Bay Miwok creation narratives place the world's origin on the twin peaks of Mount Diablo — Tuyshtak — where the First People were made after the flood waters receded.",
-    evidence: "oral-history",
+    date: "1914 to 1927",
+    title: "The Verona Band in federal records",
+    body: "The Muwekma recognition history quotes a 1996 Bureau of Indian Affairs finding that the Pleasanton or Verona Band was previously acknowledged during this period.",
+    evidence: "documented",
+    sourceName: "Muwekma Ohlone Tribe",
+    sourceUrl: "https://www.muwekma.org/recognition-process.html",
   },
   {
-    date: "c. 3000 BCE",
-    title: "Shellmounds rise around the Bay",
-    body: "The oldest strata of the West Berkeley Shellmound are roughly five thousand years old — older than the pyramids — first of 425+ mounds mapped around the Bay: burial grounds, ceremonial platforms, village monuments.",
+    date: "1995",
+    title: "A recognition petition reaches the White House",
+    body: "The Muwekma Tribal Council delivered its federal acknowledgment petition during a White House meeting on January 25.",
     evidence: "documented",
+    sourceName: "Muwekma Ohlone Tribe",
+    sourceUrl: "https://www.muwekma.org/recognition-process.html",
   },
   {
-    date: "c. 100 CE",
-    title: "The genomic through-line",
-    body: "People buried at Bay Area sites nearly two thousand years ago were shown by a 2022 Stanford/PNAS study to be genetically continuous with living Muwekma Ohlone members.",
+    date: "2002",
+    title: "The federal petition is denied",
+    body: "The Tribe’s account records the Bureau of Indian Affairs final determination and explains which acknowledgment criteria the agency found satisfied.",
     evidence: "documented",
-  },
-  {
-    date: "c. 1500",
-    title: "The Yelamu villages",
-    body: "Petlenuc near the future Presidio, with Sitlintac and Chutchui by Mission Creek, anchored a Ramaytush Ohlone tribelet tied by trade and marriage to some fifty Ohlone polities around the Bay.",
-    evidence: "documented",
-  },
-  {
-    date: "1769–1776",
-    title: "Colonization reaches the Bay",
-    body: "Portolá's expedition sights the Bay in 1769; the Presidio and Mission Dolores follow in 1776, opening the forty-year unraveling of Bay Area tribal society that scholars call the time of little choice.",
-    evidence: "documented",
-  },
-  {
-    date: "1910–1914",
-    title: "The Verona Band, federally recognized",
-    body: "The ancestors of today's Muwekma are officially designated the Verona Band of Alameda County — a recognition Congress never terminated.",
-    evidence: "documented",
-  },
-  {
-    date: "1927",
-    title: "Dropped, not dissolved",
-    body: "A federal agent's report simply stops dealing with the Verona Band. No act of Congress ended the relationship; the tribe continued while the paperwork went silent.",
-    evidence: "documented",
-  },
-  {
-    date: "1995–2002",
-    title: "Petition #111",
-    body: "Muwekma petitions for restored recognition in 1995 and receives a positive preliminary finding in 1996 — then a denial in 2002, even as the government concedes the tribe descends from the never-terminated Verona Band.",
-    evidence: "documented",
-  },
-  {
-    date: "2013",
-    title: "Muwekma v. Salazar",
-    body: "The D.C. Circuit affirms the denial, holding that previously recognized tribes can 'fade away' — the ruling the tribe has contested ever since.",
-    evidence: "documented",
+    sourceName: "Muwekma Ohlone Tribe",
+    sourceUrl: "https://www.muwekma.org/recognition-process.html",
   },
   {
     date: "2022",
-    title: "The Stanford genomics study",
-    body: "Published in PNAS: living Muwekma members are genetically continuous with ancestors buried around the Bay for two millennia — the strongest new evidence in the recognition record.",
+    title: "Genomic research finds an ancient connection",
+    body: "A collaborative PNAS study found shared ancestry between present-day Muwekma participants and people buried at nearby sites more than 1,900 years ago.",
     evidence: "documented",
+    sourceName: "Stanford Report",
+    sourceUrl:
+      "https://news.stanford.edu/stories/2022/03/genomic-analysis-supports-ancient-muwekma-ohlone-connection",
   },
   {
-    date: "2025–2030",
-    title: "The re-petition window",
-    body: "A January 2025 federal rule allows denied petitioners to seek re-petition until February 2030. The tribe also petitions for a Presidio land base, invoking the Secretary's authority to proclaim new reservations.",
+    date: "Today",
+    title: "Chochenyo language work continues",
+    body: "The Muwekma Language Committee teaches Chochenyo and publishes language materials under the Tribe’s authority.",
     evidence: "documented",
+    sourceName: "Muwekma Ohlone Tribe",
+    sourceUrl: "https://www.muwekma.org/language-revitalization.html",
   },
 ];
 
-export interface OhloneSite {
+export interface OhloneSite extends SourcedEntry {
   name: string;
   subtitle: string;
   evidence: Evidence;
 }
 
 export const presidioSites: OhloneSite[] = [
-  { name: "Petlenuc", subtitle: "Yelamu village near the northern Presidio", evidence: "documented" },
-  { name: "El Polín Spring", subtitle: "Freshwater spring with thousands of years of Ohlone habitation", evidence: "documented" },
-  { name: "Tennessee Hollow", subtitle: "Watershed with documented shell midden deposits", evidence: "documented" },
-  { name: "Officers' Club dig", subtitle: "Ohlone artifacts beneath San Francisco's oldest building", evidence: "documented" },
-  { name: "Lobos Creek", subtitle: "Western creek drainage with Yelamu village evidence", evidence: "documented" },
-  { name: "Sitlintac & Chutchui", subtitle: "Principal Yelamu villages near Mission Creek", evidence: "documented" },
+  {
+    name: "Petlenuc",
+    subtitle: "A Yelamu village in the area now known as the Presidio",
+    evidence: "documented",
+    sourceName: "National Park Service",
+    sourceUrl: "https://www.nps.gov/places/000/8-home-of-the-yelamu.htm",
+  },
+  {
+    name: "El Polín Spring",
+    subtitle: "A spring where Yelamu Ohlone people and their ancestors lived for thousands of years",
+    evidence: "documented",
+    sourceName: "National Park Service",
+    sourceUrl: "https://www.nps.gov/places/000/el-pol-n-spring.htm",
+  },
+  {
+    name: "Fort Mason",
+    subtitle: "Ohlone cooking hearths show human presence before Spanish colonization",
+    evidence: "documented",
+    sourceName: "National Park Service",
+    sourceUrl:
+      "https://www.nps.gov/places/000/3-fort-mason-historic-district.htm",
+  },
 ];
 
-export interface Signal {
+export interface Signal extends SourcedEntry {
   date: string;
   title: string;
   detail: string;
@@ -111,34 +104,59 @@ export interface Signal {
 
 export const signals: Signal[] = [
   {
-    date: "Jul 2026",
-    title: "Quarterly lobbying filings watched",
-    detail: "The public record shows whether the tribe's federal advocacy continued into the anniversary quarter — disclosures are the campaign's heartbeat.",
+    date: "Territory",
+    title: "The Tribe publishes its own Bay Area description",
+    detail: "The official history names San Francisco, San Mateo, most of Santa Clara, Alameda, and Contra Costa, with portions of four other counties.",
     evidence: "documented",
+    sourceName: "Muwekma Ohlone Tribe",
+    sourceUrl: "https://www.muwekma.org/history.html",
   },
   {
-    date: "Apr 2026",
-    title: "The lobbying target is Interior",
-    detail: "Disclosed filings name the Interior Department and 'tribal recognition' — recognition first, land second.",
+    date: "Recognition",
+    title: "The Tribe documents the federal process",
+    detail: "The official recognition page collects the petition history, agency findings, court decisions, and the Tribe’s position.",
     evidence: "documented",
+    sourceName: "Muwekma Ohlone Tribe",
+    sourceUrl: "https://www.muwekma.org/recognition-process.html",
   },
   {
-    date: "Sep 17, 2026",
-    title: "The Presidio's 250th anniversary",
-    detail: "A quarter-millennium since the Presidio's founding on Yelamu land — the campaign's most visible date on the calendar.",
+    date: "Research",
+    title: "The 2022 study was built with tribal participation",
+    detail: "Stanford describes a collaboration involving Muwekma leadership from the research request through publication.",
     evidence: "documented",
+    sourceName: "Stanford Report",
+    sourceUrl:
+      "https://news.stanford.edu/stories/2022/03/genomic-analysis-supports-ancient-muwekma-ohlone-connection",
   },
 ];
 
 export const tribeFacts = [
-  { label: "Years on this land", value: "10,000+", note: "documented archaeology around the Bay" },
-  { label: "Enrolled members", value: "~600", note: "documented descendants of the Verona Band" },
-  { label: "Acres held today", value: "0", note: "no land base in their ancestral territory" },
-  { label: "Re-petition window", value: "2030", note: "the federal door open until February 2030" },
+  {
+    label: "Previous acknowledgment",
+    value: "1914–1927",
+    note: "period quoted in the Tribe’s recognition record",
+  },
+  {
+    label: "Petition delivered",
+    value: "1995",
+    note: "federal acknowledgment petition",
+  },
+  {
+    label: "Genomic study",
+    value: "2022",
+    note: "published in PNAS",
+  },
+  {
+    label: "Core counties named",
+    value: "5",
+    note: "plus portions of four others",
+  },
 ];
 
 export const languageFacts = {
-  headline: "A language coming home",
-  body: "Chochenyo — the Muwekma Ohlone language — is being reawakened from wax cylinders, field notebooks, and community teaching. The Muwekma Atlas language workspace indexes nearly two thousand dictionary entries and over a hundred archival recordings across eight documented Ohlone varieties, with the tribal language community as the authority over spelling, pronunciation, and use.",
+  headline: "Chochenyo language work",
+  body: "The Muwekma Language Committee began its revitalization program in 2002. Tribal members continue to teach, speak, and publish Chochenyo language materials.",
   evidence: "documented" as Evidence,
+  sourceName: "Muwekma Ohlone Tribe",
+  sourceUrl: "https://www.muwekma.org/language-revitalization.html",
 };

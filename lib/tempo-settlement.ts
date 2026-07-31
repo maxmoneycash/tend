@@ -3,7 +3,7 @@
  *
  * Triggered exclusively by the Stripe webhook after a Checkout Session is
  * verifiably paid. The receipt page only *reads* the progress this runner
- * writes into the payment store — it can never start settlement work.
+ * writes into the payment store. It cannot start settlement work.
  */
 import { Account, Actions, Secp256k1, createClient } from "viem/tempo";
 import type Stripe from "stripe";
@@ -86,7 +86,7 @@ async function receiptDetails(sessionId: string, stripeAccount: string | null) {
       stripeReceiptUrl: latestCharge?.receipt_url ?? undefined,
     };
   } catch {
-    // Receipt embellishments are optional — settle regardless.
+    // Receipt details are optional. Settlement can continue without them.
     return { paymentMethodLabel: "Stripe Checkout", stripeReceiptUrl: undefined };
   }
 }
@@ -203,7 +203,7 @@ export async function maybeStartTempoSettlement(
     appendTempoEvent(sessionId, {
       type: "error",
       message:
-        "The Stripe payment is safe, but the Tempo testnet stream stopped. It will not restart automatically because that could duplicate a transfer.",
+        "The Tempo testnet stream stopped. An operator must reconcile it before any retry to avoid a duplicate transfer.",
     });
     finishTempoRun(sessionId, "error");
   }

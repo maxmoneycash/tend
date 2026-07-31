@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       county: null,
       geocoded: false,
       tribes: [],
-      note: "We couldn't place that address — choose your county below.",
+      note: "We couldn't place that address. Choose your county below.",
       coveredCounties,
     });
   }

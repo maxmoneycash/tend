@@ -3,7 +3,7 @@ const GEOCODER =
 
 /**
  * Resolve a free-form address to a county name via the US Census Bureau
- * geocoder (public, keyless). Returns null when nothing matches — the UI
+ * geocoder (public, keyless). Returns null when nothing matches. The UI
  * falls back to a manual county picker, so the demo never depends on
  * this API being up.
  */

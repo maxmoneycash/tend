@@ -24,12 +24,9 @@ function EvidenceBadge({ tier }: { tier: Evidence }) {
   );
 }
 
-function PartHeader({ n, title, sub }: { n: number; title: string; sub: string }) {
+function PartHeader({ title, sub }: { title: string; sub: string }) {
   return (
     <div className="mb-5 mt-12">
-      <span className="inline-block text-[10px] font-display font-semibold px-2 py-0.5 rounded bg-[#FA4616]/10 text-[#FA4616] uppercase tracking-wider mb-2">
-        Part {n}
-      </span>
       <h2 className="text-[18px] sm:text-[22px] font-bold text-[#111111] mb-1 tracking-[-0.02em]">
         {title}
       </h2>
@@ -53,16 +50,15 @@ export default function ExplorerPage() {
           {/* Hero */}
           <div className="mb-8 animate-enter">
             <span className="inline-block text-[11px] font-display font-medium px-2.5 py-1 rounded-[10px] bg-[#FA4616]/10 text-[#FA4616] border border-[#FA4616]/20 uppercase tracking-wider mb-3">
-              Research Report · from the Muwekma Atlas
+              Sourced research guide
             </span>
             <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111111] mb-2 tracking-[-0.02em]">
               The Land Beneath the Bay
             </h1>
             <p className="text-[13px] sm:text-[14px] text-[#7d7d7d] max-w-xl text-pretty leading-relaxed">
-              Ten thousand years of Ohlone presence, a recognition the United
-              States never lawfully ended, and the campaign to come home —
-              every claim carries its evidence tier, with the Muwekma Atlas as
-              the deep record.
+              A source-labeled prototype about Muwekma history, language, and
+              the federal recognition case. The evidence labels show how the
+              research team classified each entry.
             </p>
           </div>
 
@@ -77,11 +73,10 @@ export default function ExplorerPage() {
             ))}
           </div>
 
-          {/* Part 1 — deep time to now */}
+          {/* Sourced timeline */}
           <PartHeader
-            n={1}
-            title="Ten thousand years, in twelve moments"
-            sub="From the first peoples of the Bay to the re-petition window open until 2030 — the through-line the 2022 Stanford genomics study made unbreakable."
+            title="A short sourced timeline"
+            sub="The prototype follows the research record from deep history through the 2022 Stanford genomics study."
           />
           <div className="space-y-2">
             {timeline.map((t) => (
@@ -93,17 +88,24 @@ export default function ExplorerPage() {
                 <div>
                   <p className="text-[13px] font-semibold text-[#111111]">{t.title}</p>
                   <p className="text-[12px] text-[#555555] leading-relaxed mt-1">{t.body}</p>
+                  <a
+                    className="mt-2 inline-block text-[11px] font-medium text-[#555555] underline underline-offset-4 hover:text-[#111111]"
+                    href={t.sourceUrl}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    Source: {t.sourceName}
+                  </a>
                 </div>
                 <EvidenceBadge tier={t.evidence} />
               </div>
             ))}
           </div>
 
-          {/* Part 2 — the campaign signals */}
+          {/* Source guide */}
           <PartHeader
-            n={2}
-            title="The recognition fight, documented"
-            sub="Petition #111 was denied in 2002 even as the government conceded the tribe's descent from the never-terminated Verona Band. These are the current signals."
+            title="Read each claim at its source"
+            sub="These cards point to the Tribe’s history, recognition record, and research collaboration."
           />
           <div className="grid gap-3 sm:grid-cols-3">
             {signals.map((s) => (
@@ -114,15 +116,22 @@ export default function ExplorerPage() {
                 </div>
                 <p className="text-[13px] font-semibold text-[#111111]">{s.title}</p>
                 <p className="text-[12px] text-[#555555] leading-relaxed mt-1.5">{s.detail}</p>
+                <a
+                  className="mt-2 inline-block text-[11px] font-medium text-[#555555] underline underline-offset-4 hover:text-[#111111]"
+                  href={s.sourceUrl}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Source: {s.sourceName}
+                </a>
               </div>
             ))}
           </div>
 
-          {/* Part 3 — the Presidio sites */}
+          {/* National Park Service places */}
           <PartHeader
-            n={3}
-            title="The Presidio is Yelamu land"
-            sub="Under the former Army post: village sites, shell middens, a freshwater spring with millennia of habitation. The Presidio's own archaeology documents it."
+            title="Yelamu places in the National Park Service record"
+            sub="Federal park pages document villages, hearths, and long habitation around the Presidio."
           />
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {presidioSites.map((site) => (
@@ -132,15 +141,31 @@ export default function ExplorerPage() {
                   <EvidenceBadge tier={site.evidence} />
                 </div>
                 <p className="text-[11px] text-[#6b6b6b] leading-relaxed mt-1">{site.subtitle}</p>
+                <a
+                  className="mt-2 inline-block text-[11px] font-medium text-[#555555] underline underline-offset-4 hover:text-[#111111]"
+                  href={site.sourceUrl}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Source: {site.sourceName}
+                </a>
               </div>
             ))}
           </div>
 
-          {/* Part 4 — language */}
-          <PartHeader n={4} title={languageFacts.headline} sub="" />
+          {/* Language source */}
+          <PartHeader title={languageFacts.headline} sub="" />
           <div className="surface-1 rounded-[16px] p-5 flex items-start justify-between gap-4">
             <p className="text-[13px] text-[#3a3a3a] leading-relaxed max-w-2xl">
-              {languageFacts.body}
+              {languageFacts.body}{" "}
+              <a
+                className="font-medium text-[#555555] underline underline-offset-4 hover:text-[#111111]"
+                href={languageFacts.sourceUrl}
+                rel="noreferrer"
+                target="_blank"
+              >
+                Source: {languageFacts.sourceName}
+              </a>
             </p>
             <EvidenceBadge tier={languageFacts.evidence} />
           </div>
@@ -149,11 +174,11 @@ export default function ExplorerPage() {
           <div className="mt-12 surface-1 rounded-[16px] p-6 flex flex-wrap items-center justify-between gap-4">
             <div>
               <p className="text-[15px] font-semibold text-[#111111]">
-                The history is the reason. The programs are the response.
+                Continue with the official program sources.
               </p>
               <p className="text-[12px] text-[#6b6b6b] mt-1">
-                A voluntary land tax turns acknowledgment into standing support
-                — direct to the tribe, no platform fee.
+                Tend explains the programs. Each official organization page
+                handles real donations.
               </p>
             </div>
             <Link

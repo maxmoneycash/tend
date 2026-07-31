@@ -2,9 +2,9 @@
  * Durable payment state for webhook-driven processing, backed by node:sqlite.
  *
  * Two jobs:
- *  1. Webhook idempotency — processed Stripe event ids are recorded so
+ *  1. Webhook idempotency. Processed Stripe event ids are recorded so
  *     replayed deliveries are no-ops.
- *  2. Contribution state — the receipt page reads this; it never mutates it.
+ *  2. Contribution state. The receipt page reads this and never mutates it.
  *     Only the Stripe webhook (and the Tempo settlement runner it triggers)
  *     writes here.
  *
@@ -328,7 +328,7 @@ export function getTempoState(sessionId: string): TempoState | undefined {
       {
         type: "error",
         message:
-          "The Stripe payment is safe, but the Tempo testnet stream stopped mid-run. It will not restart automatically because that could duplicate a transfer.",
+          "The Tempo testnet stream stopped mid-run. An operator must reconcile it before any retry to avoid a duplicate transfer.",
       },
     ];
   }

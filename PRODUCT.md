@@ -1,58 +1,66 @@
-# Tend — PRODUCT.md
+# Tend product brief
 
-## What this is
+## Purpose
 
-A land-tax platform for Bay Area Ohlone tribes. Residents type an address,
-learn whose ancestral land they're on (by each tribe's own published
-definition), and start a recurring pledge that lands 100% on that tribe's own
-Stripe account. Tribes get a sovereign dashboard tenant (Auth0). AI agents pay
-an annual land tax over Stripe's Machine Payments Protocol. Built at the
-Auth0 × Stripe hackathon, July 2026; a prototype until the tribes direct
-otherwise.
+Tend helps a Bay Area resident learn about Indigenous-led contribution
+programs and reach the correct official donation page. Its internal checkout
+demonstrates a possible payment and receipt system with test funds.
 
-## Register
+The current project has no beneficiary partnerships. Geography is
+informational. Each organization’s published description remains the source
+of truth.
 
-Brand-led. The landing page is the argument; the dashboards serve it.
-Surfaces: `/` (landing + pledge flow), `/dashboard/[tribe]` (tenant),
-`/variants` (component lab), `/thanks`.
+## Organizations in the guide
 
-## Audience
+The Association of Ramaytush Ohlone offers Yunakin Land Tax. The Muwekma
+Ohlone Preservation Foundation offers its Shuumi Land Tax. Sogorea Te’ Land
+Trust runs a separate Shuumi Land Tax for Lisjan Ohlone work.
 
-SF Bay residents converting a land acknowledgment into a standing order;
-tribal staff (3-person orgs — zero admin tolerance); hackathon judges;
-corporate/agent payers.
+Copy must keep these names, programs, and links separate.
+
+## Primary journey
+
+A visitor opens the program directory, reads a concise explanation, and
+chooses an official donation link. The test checkout sits below that action.
+It carries a persistent test-mode label and stops before any real payment.
+
+County search can surface several possible programs. The interface explains
+why and leaves territorial interpretation to the organizations.
+
+## Prototype systems
+
+Stripe Checkout creates test sessions. Signed webhooks write durable payment
+state and guard against duplicate event handling. A configured Tempo testnet
+wallet can send faucet-funded `pathUSD` transfers after the webhook confirms
+the test payment.
+
+Auth0 and local environment settings protect test tenant dashboards. A future
+beneficiary-managed tenant needs the organization’s approval, its own
+onboarding, and a reviewed funds-flow agreement.
 
 ## Voice
 
-Grounded, testimonial, unhurried. A national-park interpretive panel crossed
-with a land record — not a SaaS page, not a charity appeal. Copy states
-facts ("100% to the tribe", "the platform can vanish; the pledges keep
-billing") and lets them carry the weight.
+Write like a careful guide. Name the organization responsible for each fact.
+Prefer short sentences and ordinary words. State the prototype boundary near
+every payment action.
 
-## Design direction (v2 — the redesign)
+Avoid territorial certainty, partnership language, tax advice, and claims
+about where money lands. Link to the official source when a visitor can act
+on the information.
 
-- **Scene**: the Bay at dawn from the shoreline — dark cold water, pale sky,
-  one low band of sun.
-- **Color strategy**: Committed. Deep bay-teal ground (hero, footer, machine
-  section) over document off-white; a single warm sun accent reserved for
-  the pledge CTA and key highlights. No cream/parchment neutrals, no
-  earth-tone cultural shorthand — the land reads through imagery and copy.
-- **Type**: poster display (Bricolage Grotesque) over bookish text serif
-  (Spectral); mono only where the subject is literally a machine.
-- **Imagery**: a crafted layered SVG panorama of bay water, tule marsh, and
-  fog bands (self-contained; no network dependency), motion-drifted subtly.
-- **Layout grammar**: ruled headline rows (rule + poster-size section title +
-  right-aligned functional note) — no uppercase eyebrow labels, no numbered
-  scaffolding. Long scroll, one idea per fold, deep-teal blocks pacing the
-  paper sections.
-- **Components**: basecn (Base UI) primitives restyled by tokens;
-  the `/variants` lab is where alternatives are compared before adoption.
+## Interface
 
-## Non-negotiables
+Use the existing off-white canvas, dark text, and restrained orange accent.
+Program names carry more weight than technology labels. Official donation
+links come before the test checkout.
 
-- Evidence-grade honesty: the Santa Clara overlap shows both tribes; Tend
-  never arbitrates boundaries; the 0%-fee and account-ownership claims stay
-  literal.
-- Nothing ships in a tribe's name without that tribe's direction.
-- Demo must run with zero credentials (demo mode) and offline-safe fonts and
-  imagery (venue wifi is hostile).
+Mobile layouts must work at 390 by 844 pixels without horizontal scrolling.
+Payment status must remain readable with reduced motion, keyboard navigation,
+and screen-reader status announcements.
+
+## Completion standard
+
+The product is ready for a public prototype review when every donor action
+names its destination, every test control says test, all official links work,
+and the full verification suite passes. Production fundraising requires
+written beneficiary approval and completed payment onboarding.
