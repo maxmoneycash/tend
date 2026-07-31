@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import {
+  awaitingPaymentUpdateCopy,
   terminalPaymentFailureRecoveryCopy,
   terminalSettlementErrorCopy,
 } from "../lib/receipt-copy.ts";
@@ -26,6 +27,23 @@ assert.equal(
   "Tend will not retry this Checkout session. Start a new test pledge to try another test payment.",
   "A terminal payment failure must direct the donor to a new test pledge.",
 );
+assert.deepEqual(awaitingPaymentUpdateCopy(), {
+  announcement:
+    "Tend has not received a Stripe test payment update yet. Keep this page open while Tend checks again.",
+  heading: "Waiting for a Stripe update.",
+  intro:
+    "Tend has not received a test payment update for this Checkout session. Keep this page open while Tend checks again.",
+  panel: "Checking again for a Stripe test payment update.",
+  receiptConfirmation: "Waiting for a Stripe test payment update",
+  receiptDetail: "waiting for a Stripe test payment update",
+  receiptStatusLabel: "Waiting for update",
+  stateLabel: "Waiting for Stripe update",
+});
+assert.match(
+  route,
+  /if \(!state\)[\s\S]*?status: "awaiting-confirmation", events: \[\]/,
+  "A missing payment record must reach the client as awaiting-confirmation.",
+);
 assert.match(
   route,
   /state\.paymentStatus === "failed"[\s\S]*?status: "payment-failed", events: \[\]/,
@@ -45,6 +63,21 @@ assert.match(
   stream,
   /const paymentFailureRecovery = paymentFailed[\s\S]*?terminalPaymentFailureRecoveryCopy\(\)/,
   "The payment-failed view must use the terminal payment recovery copy.",
+);
+assert.match(
+  stream,
+  /case "awaiting-confirmation":\s*return awaitingPaymentUpdateCopy\(\)/,
+  "The missing-record state must use the honest waiting copy.",
+);
+assert.match(
+  stream,
+  /role="status"[\s\S]*?aria-live="polite"[\s\S]*?\{error \? "" : viewCopy\.announcement\}/,
+  "The waiting state must announce status changes without interrupting the donor.",
+);
+assert.match(
+  stream,
+  /unverifiedConfirmation=\{awaitingPaymentUpdate\?\.receiptConfirmation\}[\s\S]*?unverifiedDetail=\{awaitingPaymentUpdate\?\.receiptDetail\}[\s\S]*?unverifiedStatusLabel=\{awaitingPaymentUpdate\?\.receiptStatusLabel\}/,
+  "The receipt card must use the same waiting state as the surrounding panel.",
 );
 assert.match(
   stream,
@@ -77,4 +110,4 @@ assert.match(
   "The visible copy action must name the identifier it copies.",
 );
 
-console.log("Receipt terminal recovery source checks passed.");
+console.log("Receipt state source checks passed.");

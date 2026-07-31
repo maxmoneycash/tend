@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DonationReceipt } from "@/components/DonationReceipt";
 import {
+  awaitingPaymentUpdateCopy,
   terminalPaymentFailureRecoveryCopy,
   terminalSettlementErrorCopy,
 } from "@/lib/receipt-copy";
@@ -119,14 +120,7 @@ function getViewCopy(
         stateLabel: "Loading receipt",
       };
     case "awaiting-confirmation":
-      return {
-        announcement: "Stripe is confirming the test payment.",
-        heading: "Confirming your contribution.",
-        intro:
-          "Stripe is confirming this test payment. Tempo testnet transfers will start after Stripe confirms it.",
-        panel: "Stripe is confirming the test payment.",
-        stateLabel: "Waiting for Stripe",
-      };
+      return awaitingPaymentUpdateCopy();
     case "awaiting-payment":
       return {
         announcement: "The test payment is pending in Stripe.",
@@ -372,6 +366,8 @@ export function TempoStream({
     totalSettlements,
     stripeVerified,
   );
+  const awaitingPaymentUpdate =
+    status === "awaiting-confirmation" ? awaitingPaymentUpdateCopy() : null;
   const stripeDetail = stripeVerified
     ? "Test payment verified"
     : paymentFailed
@@ -380,7 +376,9 @@ export function TempoStream({
         ? "Test payment pending"
         : status === "unavailable"
           ? "Status unavailable"
-          : "Awaiting confirmation";
+          : status === "awaiting-confirmation"
+            ? "Waiting for Stripe update"
+            : "Checking status";
   const tempoDetail = paymentFailed
     ? "Skipped"
     : status === "unavailable"
@@ -529,6 +527,9 @@ export function TempoStream({
             lastHash={lastHash}
             streamDurationSeconds={ready?.streamDurationSeconds}
             streamIntervalSeconds={ready?.streamIntervalSeconds}
+            unverifiedConfirmation={awaitingPaymentUpdate?.receiptConfirmation}
+            unverifiedDetail={awaitingPaymentUpdate?.receiptDetail}
+            unverifiedStatusLabel={awaitingPaymentUpdate?.receiptStatusLabel}
           />
         </div>
       )}

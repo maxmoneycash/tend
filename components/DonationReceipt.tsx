@@ -28,6 +28,9 @@ type Props = {
   streamDurationSeconds?: number;
   streamIntervalSeconds?: number;
   streamedCents?: number;
+  unverifiedConfirmation?: string;
+  unverifiedDetail?: string;
+  unverifiedStatusLabel?: string;
 };
 
 function short(value?: string, start = 8, end = 6) {
@@ -72,6 +75,9 @@ export function DonationReceipt({
   streamDurationSeconds,
   streamIntervalSeconds,
   streamedCents = 0,
+  unverifiedConfirmation = "Waiting for Stripe test confirmation",
+  unverifiedDetail = "waiting for Stripe test confirmation",
+  unverifiedStatusLabel = "Awaiting Stripe",
 }: Props) {
   const [copyStatus, setCopyStatus] = useState<
     "idle" | "copied" | "failed"
@@ -93,7 +99,7 @@ export function DonationReceipt({
     ? "Copy session ID"
     : "Copy transaction ID";
   const statusLabel = {
-    unverified: "Awaiting Stripe",
+    unverified: unverifiedStatusLabel,
     processing: "Preparing",
     verified: "Test payment verified",
     streaming: "Settling",
@@ -102,7 +108,7 @@ export function DonationReceipt({
     unavailable: "Unavailable",
   }[status];
   const confirmationLabel = {
-    unverified: "Waiting for Stripe test confirmation",
+    unverified: unverifiedConfirmation,
     processing: "Preparing testnet transfers",
     verified: "Test payment verified",
     streaming: `${completedSettlements} of ${settlements} test settlements confirmed`,
@@ -156,7 +162,7 @@ export function DonationReceipt({
                     ? "Unavailable"
                     : `$${(displayAmount / 100).toFixed(2)}`}
             </strong>
-            {isUnverified && <span>waiting for Stripe test confirmation</span>}
+            {isUnverified && <span>{unverifiedDetail}</span>}
             {isPreparingAmount && (
               <span>test payment verified; preparing transfers</span>
             )}
