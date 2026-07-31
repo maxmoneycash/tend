@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Figtree,
   Geist_Mono,
@@ -25,6 +25,11 @@ export const metadata: Metadata = {
     "Explore demonstration listings for Indigenous-led contribution programs and preview the test-mode donation flow.",
 };
 
+export const viewport: Viewport = {
+  colorScheme: "light",
+  themeColor: "#f7f7f7",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -33,9 +38,8 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} ${figtree.variable} ${geistMono.variable}`}
       lang="en"
     >
-      <body className="min-h-screen flex flex-col antialiased">
-        <main className="flex-1">{children}</main>
-
+      <body className="flex min-h-svh min-w-0 flex-col antialiased">
+        <div className="min-w-0 flex-1">{children}</div>
         <SiteFooter />
       </body>
     </html>

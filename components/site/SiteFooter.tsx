@@ -1,11 +1,11 @@
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-black/[0.08] bg-[#efefef]">
-      <div className="mx-auto max-w-6xl px-5 py-12">
-        <p className="font-display text-[24px] font-bold text-[#111111]">
+    <footer className="mt-20 border-t border-black/[0.1] bg-[#efefef] sm:mt-24">
+      <div className="mx-auto max-w-6xl px-5 pt-10 pb-[calc(2.5rem+env(safe-area-inset-bottom))] sm:px-10 sm:pt-12 sm:pb-[calc(3rem+env(safe-area-inset-bottom))]">
+        <h2 className="font-display text-[clamp(22px,5vw,28px)] font-bold tracking-[-0.02em] text-[#111111] text-balance">
           Tend the land you live on.
-        </p>
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 text-[12px] leading-relaxed text-[#6b6b6b]">
+        </h2>
+        <div className="mt-5 grid gap-4 text-[14px] leading-6 text-[#555555] sm:mt-6 sm:grid-cols-2 sm:gap-8">
           <p>
             Tend is a test-only hackathon prototype from July 2026. The
             Association of Ramaytush Ohlone, Muwekma Ohlone Preservation
@@ -18,7 +18,7 @@ export function SiteFooter() {
             here accepts Stripe test keys only.
           </p>
         </div>
-        <div className="mt-8 pt-5 border-t border-black/[0.06] flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-[#8a8a8a] uppercase tracking-wider">
+        <div className="mt-8 flex flex-col items-start gap-2 border-t border-black/[0.08] pt-5 font-mono text-[11px] leading-5 tracking-[0.08em] text-[#666666] uppercase sm:flex-row sm:items-center sm:justify-between sm:gap-6">
           <span>Ohlone-led programs around San Francisco Bay</span>
           <span>Stripe test mode · Tempo public testnet</span>
         </div>
