@@ -5,12 +5,26 @@ import {
   terminalPaymentFailureRecoveryCopy,
   terminalSettlementErrorCopy,
 } from "../lib/receipt-copy.ts";
+import { tempoTestnetTransactionUrl } from "../lib/receipt-proof.ts";
 
 const [receipt, stream, route] = await Promise.all([
   readFile(new URL("../components/DonationReceipt.tsx", import.meta.url), "utf8"),
   readFile(new URL("../components/TempoStream.tsx", import.meta.url), "utf8"),
   readFile(new URL("../app/api/tempo/stream/route.ts", import.meta.url), "utf8"),
 ]);
+
+const tempoTransactionId = `0x${"a".repeat(64)}`;
+
+assert.equal(
+  tempoTestnetTransactionUrl(tempoTransactionId),
+  `https://explore.testnet.tempo.xyz/tx/${tempoTransactionId}`,
+  "A valid transaction ID must open on the Tempo testnet explorer.",
+);
+assert.equal(
+  tempoTestnetTransactionUrl("https://example.com/not-a-tempo-transaction"),
+  null,
+  "An unexpected transaction value must not become an external receipt link.",
+);
 
 assert.equal(
   terminalSettlementErrorCopy(2, 5),
@@ -106,8 +120,18 @@ assert.match(
 );
 assert.match(
   receipt,
+  /<dt>Last Tempo transaction ID<\/dt>/,
+  "The receipt must identify the shortened Tempo proof value.",
+);
+assert.match(
+  receipt,
+  /href=\{lastTransactionUrl\}[\s\S]*?rel="noopener noreferrer"[\s\S]*?aria-label="View the last Tempo testnet transaction in a new tab"[\s\S]*?View Tempo transaction on testnet/,
+  "The receipt proof link must name its destination and use the validated testnet URL.",
+);
+assert.match(
+  receipt,
   /reference\s*\? "Copy session ID"\s*:\s*"Copy transaction ID"/s,
   "The visible copy action must name the identifier it copies.",
 );
 
-console.log("Receipt state source checks passed.");
+console.log("Receipt state and proof checks passed.");

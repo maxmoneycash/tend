@@ -2,6 +2,7 @@
 
 import { Check, Copy, ExternalLink, Radio } from "lucide-react";
 import { useState } from "react";
+import { tempoTestnetTransactionUrl } from "@/lib/receipt-proof";
 
 type ReceiptStatus =
   | "unverified"
@@ -98,6 +99,7 @@ export function DonationReceipt({
   const copyButtonLabel = reference
     ? "Copy session ID"
     : "Copy transaction ID";
+  const lastTransactionUrl = tempoTestnetTransactionUrl(lastHash);
   const statusLabel = {
     unverified: unverifiedStatusLabel,
     processing: "Preparing",
@@ -224,7 +226,7 @@ export function DonationReceipt({
                   <dd>{recipient ? short(recipient) : "Preparing"}</dd>
                 </div>
                 <div>
-                  <dt>Last transaction</dt>
+                  <dt>Last Tempo transaction ID</dt>
                   <dd>{lastHash ? short(lastHash) : "None yet"}</dd>
                 </div>
               </>
@@ -301,7 +303,7 @@ export function DonationReceipt({
         <ReceiptEdge bottom />
       </div>
 
-      {(lastHash || receiptUrl) && (
+      {(lastTransactionUrl || receiptUrl) && (
         <div className="tend-receipt-links">
           {receiptUrl && (
             <a
@@ -314,15 +316,16 @@ export function DonationReceipt({
               Stripe test receipt <ExternalLink size={13} aria-hidden="true" />
             </a>
           )}
-          {lastHash && (
+          {lastTransactionUrl && (
             <a
               className="tend-receipt-explorer"
-              href={`https://explore.testnet.tempo.xyz/tx/${lastHash}`}
+              href={lastTransactionUrl}
               target="_blank"
-              rel="noreferrer"
-              aria-label="Open Tempo testnet transaction in a new tab"
+              rel="noopener noreferrer"
+              aria-label="View the last Tempo testnet transaction in a new tab"
             >
-              Tempo transaction <ExternalLink size={13} aria-hidden="true" />
+              View Tempo transaction on testnet{" "}
+              <ExternalLink size={13} aria-hidden="true" />
             </a>
           )}
         </div>
