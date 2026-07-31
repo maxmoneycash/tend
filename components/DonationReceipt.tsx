@@ -18,6 +18,8 @@ type Props = {
   receiptUrl?: string;
   settlements?: number;
   status: ReceiptStatus;
+  streamDurationSeconds?: number;
+  streamIntervalSeconds?: number;
   streamedCents?: number;
 };
 
@@ -60,6 +62,8 @@ export function DonationReceipt({
   receiptUrl,
   settlements = 20,
   status,
+  streamDurationSeconds,
+  streamIntervalSeconds,
   streamedCents = 0,
 }: Props) {
   const [copied, setCopied] = useState(false);
@@ -98,7 +102,7 @@ export function DonationReceipt({
           <div className="tend-receipt-total">
             <strong>${(displayAmount / 100).toFixed(2)}</strong>
             {isStream && (
-              <span>of ${(amountCents / 100).toFixed(2)} AlphaUSD</span>
+              <span>of ${(amountCents / 100).toFixed(2)} pathUSD</span>
             )}
             {!isStream && (
               <span>{interval === "once" ? "one-time contribution" : `${interval}ly contribution`}</span>
@@ -118,6 +122,17 @@ export function DonationReceipt({
                   <dt>Settled</dt>
                   <dd>
                     {completedSettlements} / {settlements}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Cadence</dt>
+                  <dd>
+                    Every {streamIntervalSeconds ?? "—"}s for{" "}
+                    {streamDurationSeconds
+                      ? streamDurationSeconds < 60
+                        ? `${streamDurationSeconds}s`
+                        : `${streamDurationSeconds / 60}m`
+                      : "—"}
                   </dd>
                 </div>
                 <div>

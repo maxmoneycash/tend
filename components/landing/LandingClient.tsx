@@ -1691,7 +1691,7 @@ export function LandingClient() {
                           <div className="dash-earnings-row">
                             <span className="dash-earnings-big" id="dashEarningsNum">$620</span>
                           </div>
-                          <div className="dash-earnings-sub">USDC on Tempo · offramped with Stripe</div>
+                          <div className="dash-earnings-sub">pathUSD on Tempo Moderato · sample data</div>
                         </div>
                         <div className="dash-campaigns-count">
                           <div className="dash-count-num">2</div>
@@ -1705,7 +1705,7 @@ export function LandingClient() {
                           <span className="dash-active-name">Yunakin Land Tax</span>
                           <span className="dash-active-badge">Active</span>
                         </div>
-                        <div className="dash-active-meta">Streaming · Tempo → Stripe offramp</div>
+                        <div className="dash-active-meta">Streaming · Tempo testnet receipt demo</div>
                         <div className="dash-active-bar">
                           <div className="dash-active-bar-fill" id="dashBarFill" style={{ width: '32.7%' }}></div>
                         </div>
@@ -1724,7 +1724,7 @@ export function LandingClient() {
                               <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>N</div>
                               <div className="dash-camp-info">
                                 <span className="dash-camp-name">natasha_r</span>
-                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
+                                <span className="dash-camp-cat">Streaming · Tempo testnet receipts</span>
                               </div>
                             </div>
                             <span className="dash-td-sponsor" data-base-views="1485618">1,485,618</span>
@@ -1735,7 +1735,7 @@ export function LandingClient() {
                               <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>C</div>
                               <div className="dash-camp-info">
                                 <span className="dash-camp-name">ci-runner @ acme</span>
-                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
+                                <span className="dash-camp-cat">Streaming · Tempo testnet receipts</span>
                               </div>
                             </div>
                             <span className="dash-td-sponsor" data-base-views="3962">3,962</span>
@@ -1746,7 +1746,7 @@ export function LandingClient() {
                               <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>J</div>
                               <div className="dash-camp-info">
                                 <span className="dash-camp-name">j.wong</span>
-                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
+                                <span className="dash-camp-cat">Streaming · Tempo testnet receipts</span>
                               </div>
                             </div>
                             <span className="dash-td-sponsor" data-base-views="388078">388,078</span>
@@ -1757,14 +1757,14 @@ export function LandingClient() {
                               <div className="dash-clip-thumb" style={{background:"#FA4616",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"13px"}}>F</div>
                               <div className="dash-camp-info">
                                 <span className="dash-camp-name">fleet-7 @ mission-labs</span>
-                                <span className="dash-camp-cat">Streaming · Tempo zone</span>
+                                <span className="dash-camp-cat">Streaming · Tempo testnet receipts</span>
                               </div>
                             </div>
                             <span className="dash-td-sponsor" data-base-views="12173">12,173</span>
                             <span className="dash-td-balance dash-td-earned" data-base="8.67">+$8.67</span>
                           </div>
                         </div>
-                        <div className="dash-table-footer">Auto-refreshing · donations stream in real time</div>
+                        <div className="dash-table-footer">Sample activity · animated for the prototype</div>
                       </div>
                     </div>
 

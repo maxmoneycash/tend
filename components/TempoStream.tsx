@@ -17,6 +17,8 @@ type ReadyEvent = {
   paymentMethod: string;
   recipient: string;
   settlements: number;
+  streamDurationSeconds: number;
+  streamIntervalSeconds: number;
   stripeReceipt: string;
   stripeReceiptUrl?: string;
 };
@@ -58,6 +60,11 @@ function cents(value: number) {
 
 function shortHash(hash: string) {
   return `${hash.slice(0, 8)}…${hash.slice(-6)}`;
+}
+
+function streamTime(seconds?: number) {
+  if (!seconds) return "—";
+  return seconds < 60 ? `${seconds}s` : `${seconds / 60}m`;
 }
 
 export function TempoStream({
@@ -170,8 +177,9 @@ export function TempoStream({
               : "Your contribution is moving."}
           </h1>
           <p>
-            Stripe verified the payment. Tend is now mirroring it as twenty
-            real AlphaUSD transfers on Tempo’s public testnet.
+            Stripe verified the payment. Tend is now mirroring it as{" "}
+            {totalSettlements} real pathUSD transfers on Tempo’s public
+            testnet.
           </p>
         </div>
         <div className="tempo-stream-state" data-state={status}>
@@ -235,6 +243,8 @@ export function TempoStream({
           settlements={totalSettlements}
           recipient={ready?.recipient ?? complete?.recipient}
           lastHash={lastHash}
+          streamDurationSeconds={ready?.streamDurationSeconds}
+          streamIntervalSeconds={ready?.streamIntervalSeconds}
         />
       </div>
 
@@ -249,7 +259,8 @@ export function TempoStream({
           </div>
           <div className="tempo-live-counter">
             <Radio size={14} />
-            {settlements.length} of {totalSettlements}
+            {settlements.length} of {totalSettlements} · every{" "}
+            {streamTime(ready?.streamIntervalSeconds)}
           </div>
         </div>
 
@@ -286,7 +297,7 @@ export function TempoStream({
                 <span>
                   <Check size={12} /> #{settlement.index}
                 </span>
-                <strong>{cents(settlement.amountCents)} AlphaUSD</strong>
+                <strong>{cents(settlement.amountCents)} pathUSD</strong>
                 <code>{shortHash(settlement.hash)}</code>
                 <ExternalLink size={12} />
               </a>

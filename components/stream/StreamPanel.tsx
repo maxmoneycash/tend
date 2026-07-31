@@ -9,6 +9,13 @@ import {
   WalletCards,
 } from "lucide-react";
 import { useState } from "react";
+import { StreamTimingControls } from "@/components/stream/StreamTimingControls";
+import {
+  DEFAULT_STREAM_DURATION_SECONDS,
+  DEFAULT_STREAM_INTERVAL_SECONDS,
+  type StreamDurationSeconds,
+  type StreamIntervalSeconds,
+} from "@/lib/stream-plan";
 
 const AMOUNTS = [10, 20, 25, 50, 100];
 
@@ -29,6 +36,10 @@ export function StreamPanel({
 }) {
   const [amount, setAmount] = useState(20);
   const [custom, setCustom] = useState("");
+  const [streamDurationSeconds, setStreamDurationSeconds] =
+    useState<StreamDurationSeconds>(DEFAULT_STREAM_DURATION_SECONDS);
+  const [streamIntervalSeconds, setStreamIntervalSeconds] =
+    useState<StreamIntervalSeconds>(DEFAULT_STREAM_INTERVAL_SECONDS);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,8 +48,6 @@ export function StreamPanel({
     Number.isFinite(selectedAmount) &&
     selectedAmount >= 1 &&
     selectedAmount <= 10_000;
-  const settlementAmount = amountValid ? selectedAmount / 20 : 0;
-
   async function checkout() {
     if (!amountValid) return;
     setBusy(true);
@@ -52,6 +61,8 @@ export function StreamPanel({
           tribeId,
           amountCents: Math.round(selectedAmount * 100),
           interval: "once",
+          streamDurationSeconds,
+          streamIntervalSeconds,
           returnTo: `/programs/${tribeId}`,
         }),
       });
@@ -130,6 +141,14 @@ export function StreamPanel({
         </div>
       </fieldset>
 
+      <StreamTimingControls
+        amountCents={amountValid ? Math.round(selectedAmount * 100) : 0}
+        durationSeconds={streamDurationSeconds}
+        intervalSeconds={streamIntervalSeconds}
+        onDurationChange={setStreamDurationSeconds}
+        onIntervalChange={setStreamIntervalSeconds}
+      />
+
       <div
         className="pledge-route"
         aria-label="Apple Pay or card through Stripe Checkout, followed by Tempo testnet receipts"
@@ -160,18 +179,6 @@ export function StreamPanel({
           <strong>Tempo</strong>
           <small>On-chain</small>
         </div>
-      </div>
-
-      <div className="pledge-micro-summary">
-        <span>
-          <strong>20</strong> receipts
-        </span>
-        <span>
-          <strong>${settlementAmount.toFixed(2)}</strong> each
-        </span>
-        <span>
-          <strong>Public</strong> explorer
-        </span>
       </div>
 
       <button

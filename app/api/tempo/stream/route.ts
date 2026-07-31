@@ -2,18 +2,26 @@ import { Account, Actions, Secp256k1, createClient } from "viem/tempo";
 import type Stripe from "stripe";
 import { z } from "zod";
 import { getStripe } from "@/lib/stripe";
+import {
+  DEFAULT_STREAM_DURATION_SECONDS,
+  DEFAULT_STREAM_INTERVAL_SECONDS,
+  isStreamDurationSeconds,
+  isStreamIntervalSeconds,
+  streamSettlementCount,
+} from "@/lib/stream-plan";
 import { getTribe } from "@/lib/tribes";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 120;
 
 const Body = z.object({
   sessionId: z.string().startsWith("cs_").max(256),
 });
 
-const ALPHA_USD = "0x20c0000000000000000000000000000000000001";
+const PATH_USD = "0x20c0000000000000000000000000000000000000";
 const EXPLORER_URL = "https://explore.testnet.tempo.xyz/tx/";
-const SETTLEMENT_COUNT = 20;
+const MICRO_USD_PER_CENT = 10_000;
 
 type StreamEvent =
   | {
@@ -27,6 +35,8 @@ type StreamEvent =
       organization: string;
       recipient: string;
       settlements: number;
+      streamDurationSeconds: number;
+      streamIntervalSeconds: number;
       paymentMethod: string;
       stripeReceipt: string;
       stripeReceiptUrl?: string;
@@ -98,10 +108,18 @@ function finish(state: TempoStreamState) {
   state.controllers.clear();
 }
 
-function centsForSettlement(totalCents: number, index: number) {
-  const base = Math.floor(totalCents / SETTLEMENT_COUNT);
-  const remainder = totalCents % SETTLEMENT_COUNT;
+function microsForSettlement(
+  totalMicros: number,
+  index: number,
+  settlementCount: number,
+) {
+  const base = Math.floor(totalMicros / settlementCount);
+  const remainder = totalMicros % settlementCount;
   return base + (index < remainder ? 1 : 0);
+}
+
+function wait(milliseconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 async function runTempoStream(
@@ -112,6 +130,8 @@ async function runTempoStream(
     organization: string;
     paymentMethod: string;
     sessionId: string;
+    streamDurationSeconds: number;
+    streamIntervalSeconds: number;
     stripeReceiptUrl?: string;
   },
 ) {
@@ -120,7 +140,7 @@ async function runTempoStream(
     const recipient = Account.fromSecp256k1(Secp256k1.randomPrivateKey());
     const client = createClient({
       account: sender,
-      feeToken: ALPHA_USD,
+      feeToken: PATH_USD,
       testnet: true,
     });
 
@@ -131,7 +151,12 @@ async function runTempoStream(
       organization: input.organization,
       paymentMethod: input.paymentMethod,
       recipient: recipient.address,
-      settlements: SETTLEMENT_COUNT,
+      settlements: streamSettlementCount(
+        input.streamDurationSeconds,
+        input.streamIntervalSeconds,
+      ),
+      streamDurationSeconds: input.streamDurationSeconds,
+      streamIntervalSeconds: input.streamIntervalSeconds,
       stripeReceipt: input.sessionId,
       stripeReceiptUrl: input.stripeReceiptUrl,
     });
@@ -146,24 +171,39 @@ async function runTempoStream(
       timeout: 20_000,
     });
 
-    let streamedCents = 0;
+    const settlementCount = streamSettlementCount(
+      input.streamDurationSeconds,
+      input.streamIntervalSeconds,
+    );
+    const totalMicros = input.amountCents * MICRO_USD_PER_CENT;
+    const cadenceStartedAt = Date.now();
+    let streamedMicros = 0;
     let lastHash = "";
-    for (let index = 0; index < SETTLEMENT_COUNT; index += 1) {
-      const amountCents = centsForSettlement(input.amountCents, index);
+    for (let index = 0; index < settlementCount; index += 1) {
+      const scheduledAt =
+        cadenceStartedAt + (index + 1) * input.streamIntervalSeconds * 1_000;
+      const waitFor = scheduledAt - Date.now();
+      if (waitFor > 0) await wait(waitFor);
+
+      const amountMicros = microsForSettlement(
+        totalMicros,
+        index,
+        settlementCount,
+      );
       const result = await Actions.token.transferSync(client, {
-        token: ALPHA_USD,
+        token: PATH_USD,
         to: recipient.address,
-        amount: { formatted: (amountCents / 100).toFixed(2) },
+        amount: { formatted: (amountMicros / 1_000_000).toFixed(6) },
       });
 
-      streamedCents += amountCents;
+      streamedMicros += amountMicros;
       lastHash = result.receipt.transactionHash;
       emit(state, {
         type: "settlement",
-        amountCents,
+        amountCents: amountMicros / MICRO_USD_PER_CENT,
         hash: lastHash,
         index: index + 1,
-        streamedCents,
+        streamedCents: streamedMicros / MICRO_USD_PER_CENT,
         totalCents: input.amountCents,
       });
     }
@@ -173,7 +213,7 @@ async function runTempoStream(
       amountCents: input.amountCents,
       lastHash,
       recipient: recipient.address,
-      settlements: SETTLEMENT_COUNT,
+      settlements: settlementCount,
     });
   } catch (error) {
     console.error("Tempo settlement stream failed", error);
@@ -223,6 +263,22 @@ export async function POST(request: Request) {
   const tribe = getTribe(session.metadata.tribe ?? "");
   const organization = tribe?.name ?? "Indigenous-led organization";
   const interval = session.metadata.interval ?? "once";
+  const requestedDurationSeconds = Number(
+    session.metadata.stream_duration_seconds,
+  );
+  const streamDurationSeconds = isStreamDurationSeconds(
+    requestedDurationSeconds,
+  )
+    ? requestedDurationSeconds
+    : DEFAULT_STREAM_DURATION_SECONDS;
+  const requestedIntervalSeconds = Number(
+    session.metadata.stream_interval_seconds,
+  );
+  const streamIntervalSeconds = isStreamIntervalSeconds(
+    requestedIntervalSeconds,
+  )
+    ? requestedIntervalSeconds
+    : DEFAULT_STREAM_INTERVAL_SECONDS;
   const paymentIntent =
     session.payment_intent && typeof session.payment_intent !== "string"
       ? session.payment_intent
@@ -279,6 +335,8 @@ export async function POST(request: Request) {
           organization,
           paymentMethod: paymentMethodLabel,
           sessionId: session.id,
+          streamDurationSeconds,
+          streamIntervalSeconds,
           stripeReceiptUrl: latestCharge?.receipt_url ?? undefined,
         });
       }

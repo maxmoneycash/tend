@@ -24,11 +24,11 @@ sliding-scale amount and Stripe Checkout creates a recurring pledge —
 **on the tribe's own Stripe Connect account**. Their supporters, their data,
 their payout. If Tend vanished tomorrow, every pledge keeps flowing.
 
-**2. Stream (supporters).** Deposit once into a **private donation zone** —
-modeled on [tempoxyz/zones](https://github.com/tempoxyz/zones): a private
-chain anchored to Tempo L1 with confidential balances. The zone streams the
-deposit out in 250ms batches at your chosen rate, and the accumulated stream
-**offramps to the tribe through Stripe**. Watch it drain, batch by batch.
+**2. Stream (supporters).** Pay once through Stripe Checkout, then choose how
+long the public testnet receipt stream should run and how often it should
+settle. Tend mirrors the paid amount as real `pathUSD` transfers on Tempo
+Moderato and links every settlement to Tempo Explorer. The Stripe payment and
+testnet tokens are deliberately separate in this prototype.
 
 **3. Machine payments (AI agents).** Ten trillion dollars of market cap
 operates on Ohlone land, and its agent fleets now pay for compute, APIs, and
@@ -49,9 +49,9 @@ paid like any other API bill.
   published definitions — Tend shows both and lets the contributor choose.
   The East Bay's Shuumi Land Tax (Sogorea Te', Lisjan Ohlone) is named as
   part of the same landscape.
-- **No platform fee.** 100% of every contribution goes to the organization;
-  payment processing fees may apply. The claim is literal: pledges are
-  created on the tribe's account, not Tend's.
+- **No Tend application fee.** When a tribe's test Connect account is
+  configured, Checkout is created directly on that account. Stripe processing
+  fees still apply. Production onboarding requires the tribe's authorization.
 - **Evidence discipline.** The Explorer is a research report drawn from the
   Muwekma Atlas — the team's source-cited research app — and every claim
   carries its evidence tier: `documented`, `reported`, `oral-history`,
@@ -65,12 +65,12 @@ paid like any other API bill.
 |---|---|
 | `/` | Single-fold hero: live pledge notifications on a phone beside a streaming dashboard |
 | `/programs` | The two programs as video-cover cards — Yunakin Land Tax (Ramaytush, Peninsula) and the Muwekma Ohlone contribution (East & South Bay) |
-| `/programs/[id]` | Program detail: about, counties, and the **Stream a Donation** panel (deposit → rate → 250ms batches → Stripe offramp) |
+| `/programs/[id]` | Program detail: about, counties, and the **Stream a Donation** panel (Stripe Checkout → selectable cadence → Tempo receipts) |
 | `/pledge` | The classic recurring flow: address → whose land → sliding scale → Checkout |
 | `/rewards` | Streamed-donations overview: totals, program progress, live feed |
 | `/explorer` | *The Land Beneath the Bay* — 10,000 years in twelve moments, the recognition fight, the Presidio's Yelamu sites, Chochenyo revitalization |
 | `/dashboard/[tribe]` | The tribe's sovereign view: supporters, recurring, machine ledger |
-| `/onboarding/setup` | Create a donation campaign: zone → Tempo anchor → Stripe offramp via projects.dev → publish |
+| `/onboarding/setup` | Prototype campaign-setup walkthrough |
 
 ---
 
@@ -78,12 +78,11 @@ paid like any other API bill.
 
 - **Auth0** — sign-in, Organizations as tenant isolation, per-tribe admin
   lists, production access isolated from the demo bypass.
-- **Stripe** — Checkout + webhooks + **Connect** (direct-on-tribe-account
-  subscriptions), **Machine Payments Protocol** (`mppx`, 402 → credential →
-  receipt), **Stripe Projects / projects.dev** (provisions Auth0, Vercel, and
-  the stack from the terminal), and the **offramp** for zone streams.
-- **Tempo** — the zones model for private, confidential donation
-  environments; MPP's testnet settlement rail.
+- **Stripe** — Checkout + webhooks + **Connect** (direct-on-test-account
+  payments when configured), **Machine Payments Protocol** (`mppx`, 402 →
+  credential → receipt), and **Stripe Projects / projects.dev**.
+- **Tempo** — real `pathUSD` transfers on Moderato, with public transaction
+  receipts, plus MPP's testnet settlement rail.
 
 ## Real vs. demo
 
@@ -91,7 +90,8 @@ paid like any other API bill.
 |---|---|
 | Checkout, webhooks, Connect accounts, MPP endpoint | Real code — works with test keys |
 | Address → county → tribe resolution (US Census geocoder) | Real, live |
-| Zone streaming, zone provisioning, dashboards' sample data | Mock demo (clearly labeled in-UI) |
+| Tempo receipt stream | Real public testnet transactions funded by the Tempo faucet; not a fiat-to-crypto conversion |
+| Zone provisioning and dashboard sample data | Mock demo |
 | Tribal onboarding | Deliberately absent — happens with tribes, on their terms, or not at all |
 
 **Runs with zero keys**: demo mode renders every surface with sample data.

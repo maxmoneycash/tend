@@ -12,6 +12,13 @@ import {
   WalletCards,
 } from "lucide-react";
 import { useState } from "react";
+import { StreamTimingControls } from "@/components/stream/StreamTimingControls";
+import {
+  DEFAULT_STREAM_DURATION_SECONDS,
+  DEFAULT_STREAM_INTERVAL_SECONDS,
+  type StreamDurationSeconds,
+  type StreamIntervalSeconds,
+} from "@/lib/stream-plan";
 
 type TribeCard = {
   id: string;
@@ -66,6 +73,10 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
   const [custom, setCustom] = useState("");
   const [housing, setHousing] = useState("rent");
   const [bracket, setBracket] = useState("mid");
+  const [streamDurationSeconds, setStreamDurationSeconds] =
+    useState<StreamDurationSeconds>(DEFAULT_STREAM_DURATION_SECONDS);
+  const [streamIntervalSeconds, setStreamIntervalSeconds] =
+    useState<StreamIntervalSeconds>(DEFAULT_STREAM_INTERVAL_SECONDS);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -103,6 +114,8 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
           tribeId,
           amountCents: Math.round(selectedAmount * 100),
           interval,
+          streamDurationSeconds,
+          streamIntervalSeconds,
         }),
       });
       const data = (await res.json()) as {
@@ -155,7 +168,6 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
   const selectedAmount = custom ? Number(custom) : amount;
   const amountValid =
     Number.isFinite(selectedAmount) && selectedAmount >= 1 && selectedAmount <= 10000;
-  const microAmount = amountValid ? selectedAmount / 20 : 0;
   const state = error ? "error" : busy ? "loading" : "default";
 
   return (
@@ -382,6 +394,16 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                   </label>
                 </div>
               </fieldset>
+
+              <StreamTimingControls
+                amountCents={
+                  amountValid ? Math.round(selectedAmount * 100) : 0
+                }
+                durationSeconds={streamDurationSeconds}
+                intervalSeconds={streamIntervalSeconds}
+                onDurationChange={setStreamDurationSeconds}
+                onIntervalChange={setStreamIntervalSeconds}
+              />
             </div>
 
             <div className="pledge-payment-panel">
@@ -428,21 +450,9 @@ export function PledgeFlow({ demo = false }: { demo?: boolean }) {
                 </div>
               </div>
 
-              <div className="pledge-micro-summary">
-                <span>
-                  <strong>20</strong> settlements
-                </span>
-                <span>
-                  <strong>${microAmount.toFixed(2)}</strong> each
-                </span>
-                <span>
-                  <strong>~1s</strong> finality
-                </span>
-              </div>
-
               <p className="pledge-payment-note">
                 Stripe verifies the card payment, then Tend mirrors it as
-                AlphaUSD micropayments on Tempo testnet.
+                pathUSD micropayments on Tempo testnet.
               </p>
 
               <button
