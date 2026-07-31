@@ -85,6 +85,7 @@ export function PledgeFlow({
   const [locationError, setLocationError] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [resumeError, setResumeError] = useState<string | null>(null);
+  const addressInputRef = useRef<HTMLInputElement>(null);
   const checkoutButtonRef = useRef<HTMLButtonElement>(null);
   const resumeAttempted = useRef(false);
 
@@ -173,6 +174,11 @@ export function PledgeFlow({
       }
     });
   }, [demo, openCheckout]);
+
+  useEffect(() => {
+    if (!resumeError || busyAction !== null) return;
+    addressInputRef.current?.focus();
+  }, [busyAction, resumeError]);
 
   useEffect(() => {
     if (!checkoutError || busyAction !== null) return;
@@ -264,6 +270,7 @@ export function PledgeFlow({
           <span className="sr-only">Street address</span>
           <MapPin size={17} aria-hidden="true" />
           <input
+            ref={addressInputRef}
             name="address"
             autoComplete="street-address"
             placeholder="Street address in the Bay Area"
@@ -273,6 +280,8 @@ export function PledgeFlow({
             aria-describedby={
               locationError
                 ? "pledge-location-help pledge-location-error"
+                : resumeError
+                  ? "pledge-location-help pledge-resume-error"
                 : "pledge-location-help"
             }
           />
@@ -318,7 +327,7 @@ export function PledgeFlow({
       </div>
 
       {resumeError && (
-        <p className="pledge-error" role="alert">
+        <p id="pledge-resume-error" className="pledge-error" role="alert">
           {resumeError}
         </p>
       )}

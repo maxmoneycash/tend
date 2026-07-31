@@ -226,3 +226,22 @@ test("checkout errors focus the enabled retry linked to the alert", () => {
     /className="pledge-checkout-button"[\s\S]{0,250}checkoutError \? "pledge-checkout-error" : undefined/,
   );
 });
+
+test("a rejected return without a program focuses its recovery field", () => {
+  assert.match(
+    pledgeFlowSource,
+    /const addressInputRef = useRef<HTMLInputElement>\(null\);/,
+  );
+  assert.match(
+    pledgeFlowSource,
+    /if \(!resumeError \|\| busyAction !== null\) return;\s+addressInputRef\.current\?\.focus\(\);/,
+  );
+  assert.match(
+    pledgeFlowSource,
+    /<input\s+ref=\{addressInputRef\}[\s\S]{0,500}resumeError\s+\? "pledge-location-help pledge-resume-error"/,
+  );
+  assert.match(
+    pledgeFlowSource,
+    /<p id="pledge-resume-error" className="pledge-error" role="alert">/,
+  );
+});
