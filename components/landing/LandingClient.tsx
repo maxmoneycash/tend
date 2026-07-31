@@ -1610,7 +1610,7 @@ export function LandingClient() {
   }, []);
 
   return (
-    <div className="landing-page">
+    <div className="landing-page" style={{ height: "100vh", overflow: "hidden" }}>
         {/* ═══════ NAVBAR (shared component) ═══════ */}
           <Navbar />
 
@@ -1633,8 +1633,8 @@ export function LandingClient() {
                   <a href="#" className="btn-white">Explore programs</a>
                 </div>
               </div>
-              <div className="hero-visual" style={{ display: "flex", justifyContent: "center", alignItems: "flex-start" }}>
-                <div className="phone-dash-row" style={{ transform: "scale(0.55)", transformOrigin: "top left" }}>
+              <div className="hero-visual" style={{ position: "relative", minHeight: "540px" }}>
+                <div className="phone-dash-row" style={{ position: "absolute", top: 0, right: "-30px", width: "1180px", transform: "scale(0.48)", transformOrigin: "top right", margin: 0 }}>
                 <div className="phone-frame" id="phoneFrame">
                   <div className="phone-screen">
                     <div className="phone-island"><div className="phone-island-cam"></div></div>
@@ -1851,6 +1851,8 @@ export function LandingClient() {
               </div>
             </div>
           </section>
+
+          <div style={{ display: "none" }} aria-hidden="true">
 
 
 
@@ -2671,6 +2673,7 @@ export function LandingClient() {
             </g>
           </svg>
         </div>
+          </div>
       </div>
     </div>
   );
