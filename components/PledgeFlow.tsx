@@ -22,6 +22,7 @@ import {
   pledgeCheckoutButtonLabel,
   pledgeCheckoutCanceledError,
   pledgeCheckoutError,
+  PLEDGE_AMOUNT_OPTIONS,
   pledgeResumeError,
   pledgeStripeRecordLabel,
   pledgeTempoPlanExplanation,
@@ -55,7 +56,6 @@ type Located = {
   coveredCounties: string[];
 };
 
-const AMOUNT_CHIPS = [25, 50, 100, 250];
 function cleanAmount(value: string) {
   const clean = value.replace(/[^0-9.]/g, "");
   const [whole, ...decimals] = clean.split(".");
@@ -434,7 +434,7 @@ export function PledgeFlow({
                   {demo ? "Sample amount" : "Stripe test amount"}
                 </legend>
                 <div className="pledge-amount-row">
-                  {AMOUNT_CHIPS.map((chip) => (
+                  {PLEDGE_AMOUNT_OPTIONS.map((chip) => (
                     <button
                       key={chip}
                       type="button"

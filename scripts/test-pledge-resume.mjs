@@ -39,7 +39,7 @@ test("a restored pledge keeps its selection, failure, and retry action", () => {
   const restored = restorePledgeSelection(intent);
   assert.deepEqual(restored, {
     amount: 73.5,
-    custom: "",
+    custom: "73.50",
     interval: "month",
     streamDurationSeconds: 60,
     streamIntervalSeconds: 5,
@@ -49,6 +49,7 @@ test("a restored pledge keeps its selection, failure, and retry action", () => {
     resolvePledgeProgram(null, programs, restored.tribeId)?.name,
     "Muwekma Ohlone Tribe",
   );
+  assert.match(pledgeFlowSource, /value=\{custom\}/);
 
   const checkoutError = pledgeCheckoutError(
     new Error("Sign-in did not finish. Sign in again to continue."),
@@ -101,6 +102,7 @@ test("a canceled checkout returns to a visible retry with its intent", () => {
     returnTo: "/pledge",
   };
   const resumePath = buildCheckoutResumePath(intent);
+  assert.equal(restorePledgeSelection(intent).custom, "");
 
   assert.deepEqual(buildCheckoutRequest(intent, true), {
     ...intent,
@@ -138,7 +140,7 @@ test("a rejected checkout return keeps valid details and gives a recovery action
 
   assert.deepEqual(restored, {
     amount: 73.5,
-    custom: "",
+    custom: "73.50",
     streamDurationSeconds: 60,
     streamIntervalSeconds: 5,
     tribeId: "muwekma",

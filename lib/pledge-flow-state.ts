@@ -10,12 +10,23 @@ import type {
 
 export type RestoredPledgeSelection = {
   amount: number;
-  custom: "";
+  custom: string;
   interval: CheckoutInterval;
   streamDurationSeconds: StreamDurationSeconds;
   streamIntervalSeconds: StreamIntervalSeconds;
   tribeId: CheckoutIntent["tribeId"];
 };
+
+export const PLEDGE_AMOUNT_OPTIONS = [25, 50, 100, 250] as const;
+
+function restorePledgeAmount(amountCents: number) {
+  const amount = amountCents / 100;
+  const usesPreset = PLEDGE_AMOUNT_OPTIONS.some((option) => option === amount);
+  return {
+    amount,
+    custom: usesPreset ? "" : amount.toFixed(2),
+  };
+}
 
 export function buildCheckoutResumePath(intent: CheckoutIntent): string {
   const url = new URL(intent.returnTo, "https://tend.local");
@@ -56,8 +67,7 @@ export function restorePledgeSelection(
   intent: CheckoutIntent,
 ): RestoredPledgeSelection {
   return {
-    amount: intent.amountCents / 100,
-    custom: "",
+    ...restorePledgeAmount(intent.amountCents),
     interval: intent.interval,
     streamDurationSeconds: intent.streamDurationSeconds,
     streamIntervalSeconds: intent.streamIntervalSeconds,
@@ -71,8 +81,9 @@ export function restorePledgeDraft(
   const restored: Partial<RestoredPledgeSelection> = {};
 
   if (draft.amountCents !== null) {
-    restored.amount = draft.amountCents / 100;
-    restored.custom = "";
+    const amount = restorePledgeAmount(draft.amountCents);
+    restored.amount = amount.amount;
+    restored.custom = amount.custom;
   }
   if (draft.interval !== null) restored.interval = draft.interval;
   if (draft.streamDurationSeconds !== null) {
