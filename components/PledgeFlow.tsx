@@ -83,6 +83,7 @@ export function PledgeFlow({
   const addressInputRef = useRef<HTMLInputElement>(null);
   const checkoutButtonRef = useRef<HTMLButtonElement>(null);
   const locationRecoveryRef = useRef<HTMLElement | null>(null);
+  const locationResultsRef = useRef<HTMLElement>(null);
 
   async function locate(body: { address?: string; county?: string }) {
     locationRecoveryRef.current = body.address
@@ -156,6 +157,12 @@ export function PledgeFlow({
       locationRecoveryRef.current?.focus();
     }
   }, [busyAction, locationError]);
+
+  useEffect(() => {
+    if (located && !locationError && !checkoutError && busyAction === null) {
+      locationResultsRef.current?.focus();
+    }
+  }, [busyAction, checkoutError, located, locationError]);
 
   useEffect(() => {
     if (checkoutError && busyAction === null) {
@@ -309,7 +316,15 @@ export function PledgeFlow({
       )}
 
       {located && (
-        <div className="pledge-programs">
+        <section
+          ref={locationResultsRef}
+          className="pledge-programs"
+          aria-labelledby="pledge-program-results-title"
+          tabIndex={-1}
+        >
+          <h3 id="pledge-program-results-title" className="sr-only">
+            Program results
+          </h3>
           {located.county && located.tribes.length > 0 && (
             <div className="pledge-result-heading" role="status">
               <span>
@@ -344,7 +359,7 @@ export function PledgeFlow({
               </button>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
       {selectedTribe && (
