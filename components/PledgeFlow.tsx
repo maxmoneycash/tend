@@ -533,51 +533,53 @@ export function PledgeFlow({
                 )}
               </p>
 
-              <button
-                ref={checkoutButtonRef}
-                type="button"
-                onClick={checkout}
-                disabled={busy || !amountValid}
-                className="pledge-checkout-button"
-                data-state={state}
-                aria-describedby={
-                  checkoutError ? "pledge-checkout-error" : undefined
-                }
-              >
-                {busyAction === "checkout" ? (
-                  <>
-                    <LoaderCircle className="pledge-spinner" size={17} />
-                    {demo
-                      ? "Opening demo receipt preview"
-                      : "Opening Stripe test checkout"}
-                  </>
-                ) : (
-                  <>
-                    <span>{checkoutButtonLabel}</span>
-                    <ArrowRight size={17} aria-hidden="true" />
-                  </>
-                )}
-              </button>
-              {!demo && (
-                <p className="pledge-wallet-note">
-                  <ShieldCheck size={13} aria-hidden="true" />
-                  Stripe may offer Apple Pay on a supported iPhone.
-                </p>
-              )}
-              {checkoutError && (
-                <p
-                  id="pledge-checkout-error"
-                  className="pledge-error"
-                  role="alert"
+              <div className="pledge-checkout-action">
+                <button
+                  ref={checkoutButtonRef}
+                  type="button"
+                  onClick={checkout}
+                  disabled={busy || !amountValid}
+                  className="pledge-checkout-button"
+                  data-state={state}
+                  aria-describedby={
+                    checkoutError ? "pledge-checkout-error" : undefined
+                  }
                 >
-                  {checkoutError}
+                  {busyAction === "checkout" ? (
+                    <>
+                      <LoaderCircle className="pledge-spinner" size={17} />
+                      {demo
+                        ? "Opening demo receipt preview"
+                        : "Opening Stripe test checkout"}
+                    </>
+                  ) : (
+                    <>
+                      <span>{checkoutButtonLabel}</span>
+                      <ArrowRight size={17} aria-hidden="true" />
+                    </>
+                  )}
+                </button>
+                {!demo && (
+                  <p className="pledge-wallet-note">
+                    <ShieldCheck size={13} aria-hidden="true" />
+                    Stripe may offer Apple Pay on a supported iPhone.
+                  </p>
+                )}
+                {checkoutError && (
+                  <p
+                    id="pledge-checkout-error"
+                    className="pledge-error"
+                    role="alert"
+                  >
+                    {checkoutError}
+                  </p>
+                )}
+                <p className="pledge-test-disclosure">
+                  {demo
+                    ? "Demo preview only. Stripe Checkout and Tempo stay idle."
+                    : "Stripe test payment with a Tempo Moderato testnet transfer record. No real funds move."}
                 </p>
-              )}
-              <p className="pledge-test-disclosure">
-                {demo
-                  ? "Demo preview only. Stripe Checkout and Tempo stay idle."
-                  : "Stripe test payment with a Tempo Moderato testnet transfer record. No real funds move."}
-              </p>
+              </div>
             </div>
           </div>
         </div>
