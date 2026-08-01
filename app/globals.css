@@ -563,13 +563,16 @@ body::after {
     0 0 0 1px rgba(250, 70, 22, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
-.btn-whop:hover {
-  background: #ff5a2e;
-  box-shadow:
-    0 4px 20px rgba(250, 70, 22, 0.3),
-    0 0 0 1px rgba(250, 70, 22, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
+/* Gate hovers to precise pointers so a tap cannot leave the style stuck. */
+@media (hover: hover) and (pointer: fine) {
+  .btn-whop:hover {
+    background: #ff5a2e;
+    box-shadow:
+      0 4px 20px rgba(250, 70, 22, 0.3),
+      0 0 0 1px rgba(250, 70, 22, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
 }
 .btn-whop:active {
   transform: translateY(0);
@@ -591,10 +594,12 @@ body::after {
     border-color var(--duration-short) var(--ease-out),
     transform var(--duration-micro) var(--ease-out);
 }
-.btn-secondary:hover {
-  background: var(--background-tertiary);
-  border-color: var(--foreground-secondary);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .btn-secondary:hover {
+    background: var(--background-tertiary);
+    border-color: var(--foreground-secondary);
+    transform: translateY(-1px);
+  }
 }
 .btn-secondary:active {
   transform: translateY(0);
@@ -1546,12 +1551,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(250, 70, 22, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
-.tnd-btn-primary:hover {
-  background: #ff5a2e;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(250, 70, 22, 0.3), 0 0 0 1px rgba(250, 70, 22, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
 .tnd-btn-primary:active { transform: translateY(0); }
 .tnd-btn-primary:disabled { opacity: 0.55; }
 .btn-ghost {
@@ -1559,7 +1558,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   color: #333333;
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
-.btn-ghost:hover { background: rgba(0, 0, 0, 0.09); }
 .tnd-chip {
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 9999px;
@@ -1575,11 +1573,20 @@ input[type="range"]::-webkit-slider-thumb:hover {
     border-color var(--duration-short) var(--ease-out),
     color var(--duration-short) var(--ease-out);
 }
-.tnd-chip:hover { color: #111111; background: rgba(0, 0, 0, 0.04); }
 .tnd-chip-active {
   background: rgba(250, 70, 22, 0.15);
   border-color: rgba(250, 70, 22, 0.3);
   color: var(--accent-text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tnd-btn-primary:hover {
+    background: #ff5a2e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(250, 70, 22, 0.3), 0 0 0 1px rgba(250, 70, 22, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  .btn-ghost:hover { background: rgba(0, 0, 0, 0.09); }
+  .tnd-chip:hover { color: #111111; background: rgba(0, 0, 0, 0.04); }
 }
 .field {
   width: 100%;
@@ -3435,9 +3442,6 @@ html:has(.landing-page) body {
 }
 
 @media (hover: none), (pointer: coarse) {
-  .btn-whop:hover,
-  .btn-secondary:hover,
-  .tnd-btn-primary:hover,
   [class~="hover:scale-[1.01]"]:hover {
     transform: none;
   }
