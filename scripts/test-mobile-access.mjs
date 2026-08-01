@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const [pledge, styles, programs, navbarStyles] = await Promise.all([
+const [pledge, styles, programs, programDetail, navbarStyles] = await Promise.all([
   readFile(new URL("../components/PledgeFlow.tsx", import.meta.url), "utf8"),
   readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   readFile(new URL("../app/programs/page.tsx", import.meta.url), "utf8"),
+  readFile(new URL("../app/programs/[id]/page.tsx", import.meta.url), "utf8"),
   readFile(new URL("../styles/navbar.css", import.meta.url), "utf8"),
 ]);
 
@@ -32,6 +33,11 @@ assert.match(
   programs,
   /paddingTop: "calc\(108px \+ env\(safe-area-inset-top, 0px\)\)"/,
   "The Programs route must reserve the fixed navbar's top safe-area inset.",
+);
+assert.match(
+  programDetail,
+  /paddingTop: "calc\(108px \+ env\(safe-area-inset-top, 0px\)\)"/,
+  "The program detail route must reserve the fixed navbar's top safe-area inset.",
 );
 
 console.log("Mobile access source checks passed.");
