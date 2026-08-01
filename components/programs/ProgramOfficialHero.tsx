@@ -103,6 +103,11 @@ export function ProgramOfficialHero({
           </a>
         </div>
 
+        <p className="mt-3 max-w-xl text-[10px] leading-relaxed text-[#777069] sm:text-[11px]">
+          {program.name} has not onboarded to Tend. These links open the
+          organization&apos;s own pages.
+        </p>
+
         <p className="mt-3 flex max-w-xl items-center gap-2 text-[10px] font-semibold leading-relaxed text-[#8f520d] sm:text-[11px]">
           <FlaskConical aria-hidden="true" className="shrink-0" size={13} />
           Tend checkout below uses test funds only.
