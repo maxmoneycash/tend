@@ -32,7 +32,10 @@ export function ProgramOfficialHero({
         <p className="mt-2 text-[15px] font-semibold leading-snug text-[#49433e] sm:text-[17px]">
           {program.name}
         </p>
-        <h1 className="mt-4 max-w-2xl text-balance text-[32px] font-bold leading-[1.04] tracking-[-0.04em] text-[#171411] sm:text-[44px] lg:text-[50px]">
+        <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#7a736c]">
+          Program
+        </p>
+        <h1 className="mt-1 max-w-2xl text-balance text-[32px] font-bold leading-[1.04] tracking-[-0.04em] text-[#171411] sm:text-[44px] lg:text-[50px]">
           {program.taxName}
         </h1>
         <p className="mt-4 max-w-2xl text-pretty text-[13px] leading-relaxed text-[#625c56] sm:text-[14px]">
@@ -66,7 +69,7 @@ export function ProgramOfficialHero({
             rel="noreferrer"
             target="_blank"
           >
-            Read the official program page
+            Read the official {program.taxName} page
             <ExternalLink aria-hidden="true" size={15} />
           </a>
         </div>
