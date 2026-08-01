@@ -65,11 +65,11 @@ export function ProgramOfficialHero({
             size={14}
           />
           <span>
+            Program page published by{" "}
             <span className="font-semibold text-[#3f3934]">
-              Official source from {program.name}.
+              {program.name}
             </span>{" "}
-            Tend uses the {program.taxName} page at{" "}
-            {host(program.officialProgramUrl)} for this listing.
+            at {host(program.officialProgramUrl)}.
           </span>
         </p>
 
