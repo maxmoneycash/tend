@@ -4,6 +4,7 @@ import {
   awaitingPaidTestPaymentCopy,
   awaitingPaymentUpdateCopy,
   preparingFirstTestnetTransferCopy,
+  prolongedAwaitingPaymentUpdateCopy,
   receiptRefreshRecoveryCopy,
   terminalPaymentFailureRecoveryCopy,
   terminalSettlementErrorCopy,
@@ -108,6 +109,19 @@ assert.deepEqual(awaitingPaidTestPaymentCopy(), {
   receiptStatusLabel: "Waiting for paid status",
   stateLabel: "Waiting for paid status (test mode)",
 });
+assert.deepEqual(prolongedAwaitingPaymentUpdateCopy(), {
+  announcement:
+    "Tend still has no Stripe test payment update after two minutes of checks. Copy the session ID on the receipt and send it to the Tend operator running this test.",
+  heading: "Still no Stripe update.",
+  intro:
+    "Two minutes of checks brought no Stripe test payment update for this Checkout session. The Stripe webhook may not be reaching this Tend server. Copy the session ID on the receipt and send it to the Tend operator running this test.",
+  panel:
+    "Still checking. The Stripe webhook may not be reaching this Tend server.",
+  receiptConfirmation: "No Stripe update after two minutes",
+  receiptDetail: "no Stripe update after two minutes of checks",
+  receiptStatusLabel: "No Stripe update",
+  stateLabel: "Still waiting for Stripe",
+});
 assert.deepEqual(preparingFirstTestnetTransferCopy(), {
   announcement:
     "Test payment verified. Tend is setting up the first Tempo testnet transfer. Keep this page open for the next receipt update.",
@@ -164,8 +178,18 @@ assert.match(
 );
 assert.match(
   stream,
-  /case "awaiting-confirmation":\s*return awaitingPaymentUpdateCopy\(\)/,
-  "The missing-record state must use the honest waiting copy.",
+  /case "awaiting-confirmation":\s*return awaitingStalled\s*\?\s*prolongedAwaitingPaymentUpdateCopy\(\)\s*:\s*awaitingPaymentUpdateCopy\(\)/,
+  "The missing-record state must use the honest waiting copy until the wait stalls.",
+);
+assert.match(
+  stream,
+  /const AWAITING_UPDATE_STALLED_MS = 120_000;/,
+  "The prolonged waiting copy must engage after a bounded two-minute wait.",
+);
+assert.match(
+  stream,
+  /data\.status === "awaiting-confirmation"[\s\S]*?awaitingSinceRef\.current = Date\.now\(\)[\s\S]*?AWAITING_UPDATE_STALLED_MS[\s\S]*?setAwaitingStalled\(true\)[\s\S]*?awaitingSinceRef\.current = null;\s*setAwaitingStalled\(false\)/,
+  "The stalled wait must time from the first empty response and clear on any real status.",
 );
 assert.match(
   stream,

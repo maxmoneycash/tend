@@ -29,6 +29,22 @@ export function awaitingPaymentUpdateCopy() {
   } as const;
 }
 
+export function prolongedAwaitingPaymentUpdateCopy() {
+  return {
+    announcement:
+      "Tend still has no Stripe test payment update after two minutes of checks. Copy the session ID on the receipt and send it to the Tend operator running this test.",
+    heading: "Still no Stripe update.",
+    intro:
+      "Two minutes of checks brought no Stripe test payment update for this Checkout session. The Stripe webhook may not be reaching this Tend server. Copy the session ID on the receipt and send it to the Tend operator running this test.",
+    panel:
+      "Still checking. The Stripe webhook may not be reaching this Tend server.",
+    receiptConfirmation: "No Stripe update after two minutes",
+    receiptDetail: "no Stripe update after two minutes of checks",
+    receiptStatusLabel: "No Stripe update",
+    stateLabel: "Still waiting for Stripe",
+  } as const;
+}
+
 export function awaitingPaidTestPaymentCopy() {
   return {
     announcement:

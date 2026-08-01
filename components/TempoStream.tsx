@@ -15,6 +15,7 @@ import {
   awaitingPaidTestPaymentCopy,
   awaitingPaymentUpdateCopy,
   preparingFirstTestnetTransferCopy,
+  prolongedAwaitingPaymentUpdateCopy,
   receiptRefreshRecoveryCopy,
   terminalPaymentFailureRecoveryCopy,
   terminalSettlementErrorCopy,
@@ -93,6 +94,13 @@ function isReceiptStatus(value: unknown): value is ReceiptStatus {
   return receiptStatuses.includes(value as ReceiptStatus);
 }
 
+/**
+ * How long the receipt waits for a first Stripe webhook update before it
+ * stops implying that patience alone will resolve the wait. Matches the
+ * operator-handoff pattern used for stalled settlement runs.
+ */
+const AWAITING_UPDATE_STALLED_MS = 120_000;
+
 function cents(value: number) {
   return `$${(value / 100).toFixed(2)}`;
 }
@@ -111,6 +119,7 @@ function getViewCopy(
   settled: number,
   total: number,
   hasVerifiedPayment: boolean,
+  awaitingStalled: boolean,
 ) {
   switch (status) {
     case "connecting":
@@ -123,7 +132,9 @@ function getViewCopy(
         stateLabel: "Loading receipt",
       };
     case "awaiting-confirmation":
-      return awaitingPaymentUpdateCopy();
+      return awaitingStalled
+        ? prolongedAwaitingPaymentUpdateCopy()
+        : awaitingPaymentUpdateCopy();
     case "awaiting-payment":
       return awaitingPaidTestPaymentCopy();
     case "pending":
@@ -213,6 +224,8 @@ export function TempoStream({
   const [events, setEvents] = useState<TempoEvent[]>([]);
   const [requestError, setRequestError] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
+  const [awaitingStalled, setAwaitingStalled] = useState(false);
+  const awaitingSinceRef = useRef<number | null>(null);
 
   useEffect(() => {
     streamRef.current?.scrollIntoView({
@@ -254,6 +267,20 @@ export function TempoStream({
 
           setStatus(data.status);
           setEvents(data.events);
+
+          if (data.status === "awaiting-confirmation") {
+            if (awaitingSinceRef.current === null) {
+              awaitingSinceRef.current = Date.now();
+            } else if (
+              Date.now() - awaitingSinceRef.current >=
+              AWAITING_UPDATE_STALLED_MS
+            ) {
+              setAwaitingStalled(true);
+            }
+          } else {
+            awaitingSinceRef.current = null;
+            setAwaitingStalled(false);
+          }
 
           if (
             data.status === "complete" ||
@@ -355,10 +382,13 @@ export function TempoStream({
     settlements.length,
     totalSettlements,
     stripeVerified,
+    awaitingStalled,
   );
   const unverifiedReceiptCopy =
     status === "awaiting-confirmation"
-      ? awaitingPaymentUpdateCopy()
+      ? awaitingStalled
+        ? prolongedAwaitingPaymentUpdateCopy()
+        : awaitingPaymentUpdateCopy()
       : status === "awaiting-payment"
         ? awaitingPaidTestPaymentCopy()
         : null;
