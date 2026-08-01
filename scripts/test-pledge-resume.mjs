@@ -6,6 +6,7 @@ import {
   buildCheckoutRequest,
   buildCheckoutResumePath,
   buildPledgeCheckoutIntent,
+  pledgeAmountReviewLabel,
   pledgeCheckoutButtonLabel,
   pledgeCheckoutCanceledError,
   pledgeCheckoutError,
@@ -216,6 +217,53 @@ test("the pledge names the Stripe record and Tempo boundary before checkout", ()
   );
   assert.match(pledgeFlowSource, /"If checkout succeeds"/);
   assert.doesNotMatch(pledgeFlowSource, /Stripe will record/);
+});
+
+test("an invalid amount names the fix instead of promising a $0.00 checkout", () => {
+  assert.equal(
+    pledgeAmountReviewLabel({ amountValid: true, selectedAmount: 25.5 }),
+    "$25.50",
+  );
+  assert.equal(
+    pledgeAmountReviewLabel({ amountValid: false, selectedAmount: 0.5 }),
+    "Not set",
+  );
+  assert.equal(
+    pledgeCheckoutButtonLabel({
+      amountValid: false,
+      checkoutError: null,
+      demo: false,
+      interval: "once",
+      selectedAmount: 0.5,
+    }),
+    "Enter a test amount from $1 to $10,000",
+  );
+  assert.equal(
+    pledgeCheckoutButtonLabel({
+      amountValid: false,
+      checkoutError: null,
+      demo: true,
+      interval: "once",
+      selectedAmount: 0.5,
+    }),
+    "Enter a sample amount from $1 to $10,000",
+  );
+  assert.equal(
+    pledgeCheckoutButtonLabel({
+      amountValid: false,
+      checkoutError: pledgeCheckoutCanceledError(false),
+      demo: false,
+      interval: "once",
+      selectedAmount: 0.5,
+    }),
+    "Try Stripe test checkout again",
+  );
+  assert.match(
+    pledgeFlowSource,
+    /pledgeAmountReviewLabel\(\{ amountValid, selectedAmount \}\)/,
+  );
+  assert.doesNotMatch(pledgeFlowSource, /\$\{selectedAmount\}/);
+  assert.doesNotMatch(pledgeFlowSource, /\$0\.00/);
 });
 
 test("checkout errors focus the enabled retry linked to the alert", () => {

@@ -19,6 +19,7 @@ import {
 } from "@/lib/checkout-client";
 import {
   buildPledgeCheckoutIntent,
+  pledgeAmountReviewLabel,
   pledgeCheckoutButtonLabel,
   pledgeCheckoutCanceledError,
   pledgeCheckoutError,
@@ -422,7 +423,9 @@ export function PledgeFlow({
             </div>
             <div className="pledge-suggestion">
               <span>{demo ? "Sample amount" : "Stripe test amount"}</span>
-              <strong>${selectedAmount}</strong>
+              <strong>
+                {pledgeAmountReviewLabel({ amountValid, selectedAmount })}
+              </strong>
             </div>
           </div>
           <p className="pledge-location-note">
@@ -554,7 +557,7 @@ export function PledgeFlow({
                 <div>
                   <span>{demo ? "Sample amount" : "Stripe test amount"}</span>
                   <strong>
-                    ${amountValid ? selectedAmount.toFixed(2) : "0.00"}
+                    {pledgeAmountReviewLabel({ amountValid, selectedAmount })}
                   </strong>
                 </div>
                 <div>

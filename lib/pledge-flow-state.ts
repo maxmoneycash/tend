@@ -143,6 +143,16 @@ export function pledgeResumeError({
     : "We couldn’t restore every saved checkout detail. Review the amount and timing below, then try Stripe test checkout again.";
 }
 
+export function pledgeAmountReviewLabel({
+  amountValid,
+  selectedAmount,
+}: {
+  amountValid: boolean;
+  selectedAmount: number;
+}): string {
+  return amountValid ? `$${selectedAmount.toFixed(2)}` : "Not set";
+}
+
 export function pledgeCheckoutButtonLabel({
   amountValid,
   checkoutError,
@@ -162,7 +172,13 @@ export function pledgeCheckoutButtonLabel({
       : "Try Stripe test checkout again";
   }
 
-  const amount = amountValid ? selectedAmount.toFixed(2) : "0.00";
+  if (!amountValid) {
+    return demo
+      ? "Enter a sample amount from $1 to $10,000"
+      : "Enter a test amount from $1 to $10,000";
+  }
+
+  const amount = selectedAmount.toFixed(2);
   if (demo) return `Continue to $${amount} demo receipt preview`;
 
   const record = pledgeStripeRecordLabel(interval).toLowerCase();
