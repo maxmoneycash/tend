@@ -20,7 +20,11 @@ export default function PledgePage() {
   return (
     <>
       <Navbar />
-      <div style={{ paddingTop: "108px" }} />
+      <div
+        style={{
+          paddingTop: "calc(108px + env(safe-area-inset-top, 0px))",
+        }}
+      />
 
       <div className="relative overflow-hidden pb-20">
         <div
