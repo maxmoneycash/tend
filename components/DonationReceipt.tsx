@@ -4,6 +4,7 @@ import { Check, Copy, ExternalLink, Radio } from "lucide-react";
 import { useState } from "react";
 import {
   stripeHostedReceiptUrl,
+  tempoTestnetAddressUrl,
   tempoTestnetTransactionUrl,
 } from "@/lib/receipt-proof";
 
@@ -103,6 +104,7 @@ export function DonationReceipt({
     ? "Copy session ID"
     : "Copy transaction ID";
   const stripeReceiptUrl = stripeHostedReceiptUrl(receiptUrl);
+  const recipientUrl = tempoTestnetAddressUrl(recipient);
   const lastTransactionUrl = tempoTestnetTransactionUrl(lastHash);
   const statusLabel = {
     unverified: unverifiedStatusLabel,
@@ -226,7 +228,7 @@ export function DonationReceipt({
                   <dd>Tempo Moderato · testnet</dd>
                 </div>
                 <div>
-                  <dt>Demo treasury</dt>
+                  <dt>Tempo testnet recipient</dt>
                   <dd>{recipient ? short(recipient) : "Preparing"}</dd>
                 </div>
                 <div>
@@ -307,7 +309,7 @@ export function DonationReceipt({
         <ReceiptEdge bottom />
       </div>
 
-      {(lastTransactionUrl || stripeReceiptUrl) && (
+      {(lastTransactionUrl || recipientUrl || stripeReceiptUrl) && (
         <div className="tend-receipt-links">
           {stripeReceiptUrl && (
             <a
@@ -318,6 +320,18 @@ export function DonationReceipt({
               aria-label="View the Stripe test receipt in a new tab"
             >
               View Stripe test receipt{" "}
+              <ExternalLink size={13} aria-hidden="true" />
+            </a>
+          )}
+          {recipientUrl && (
+            <a
+              className="tend-receipt-explorer"
+              href={recipientUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View the recipient address on Tempo testnet in a new tab"
+            >
+              View recipient on Tempo testnet{" "}
               <ExternalLink size={13} aria-hidden="true" />
             </a>
           )}

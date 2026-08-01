@@ -10,6 +10,7 @@ import {
 } from "../lib/receipt-copy.ts";
 import {
   stripeHostedReceiptUrl,
+  tempoTestnetAddressUrl,
   tempoTestnetTransactionUrl,
 } from "../lib/receipt-proof.ts";
 
@@ -31,6 +32,17 @@ assert.equal(
   tempoTestnetTransactionUrl("https://example.com/not-a-tempo-transaction"),
   null,
   "An unexpected transaction value must not become an external receipt link.",
+);
+const tempoRecipient = `0x${"b".repeat(40)}`;
+assert.equal(
+  tempoTestnetAddressUrl(tempoRecipient),
+  `https://explore.testnet.tempo.xyz/address/${tempoRecipient}`,
+  "A valid recipient address must open on the Tempo testnet explorer.",
+);
+assert.equal(
+  tempoTestnetAddressUrl(`0x${"b".repeat(39)}/transactions`),
+  null,
+  "An unexpected recipient value must not become an explorer link.",
 );
 assert.equal(
   stripeHostedReceiptUrl(
@@ -227,8 +239,18 @@ assert.match(
 );
 assert.match(
   receipt,
+  /<dt>Tempo testnet recipient<\/dt>/,
+  "The receipt must identify the shortened recipient as a testnet address.",
+);
+assert.match(
+  receipt,
   /href=\{lastTransactionUrl\}[\s\S]*?rel="noopener noreferrer"[\s\S]*?aria-label="View the last Tempo testnet transaction in a new tab"[\s\S]*?View Tempo transaction on testnet/,
   "The receipt proof link must name its destination and use the validated testnet URL.",
+);
+assert.match(
+  receipt,
+  /href=\{recipientUrl\}[\s\S]*?rel="noopener noreferrer"[\s\S]*?aria-label="View the recipient address on Tempo testnet in a new tab"[\s\S]*?View recipient on Tempo testnet/,
+  "The recipient proof link must name its destination and use the validated testnet URL.",
 );
 assert.match(
   receipt,
