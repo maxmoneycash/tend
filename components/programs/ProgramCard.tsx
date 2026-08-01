@@ -75,9 +75,12 @@ export function ProgramCard({
           {program.blurb}
         </p>
 
+        <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
+          Published territory
+        </p>
         <div
           aria-label="Counties listed for this program"
-          className="mt-3 flex flex-wrap gap-1.5"
+          className="mt-1 flex flex-wrap gap-1.5"
         >
           {counties.map((county) => (
             <span
