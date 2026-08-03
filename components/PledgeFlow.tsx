@@ -89,8 +89,6 @@ export function PledgeFlow({
   const addressInputRef = useRef<HTMLInputElement>(null);
   const checkoutButtonRef = useRef<HTMLButtonElement>(null);
   const resumeAttempted = useRef(false);
-  const addressInputRef = useRef<HTMLInputElement>(null);
-  const checkoutButtonRef = useRef<HTMLButtonElement>(null);
   const locationRecoveryRef = useRef<HTMLElement | null>(null);
   const locationResultsRef = useRef<HTMLElement>(null);
 
@@ -585,49 +583,53 @@ export function PledgeFlow({
               </div>
 
               <div className="pledge-payment-review">
-                <div>
-                  <span>Program listing</span>
-                  <strong>{selectedTribe?.name ?? "Selected program"}</strong>
+                <div className="pledge-payment-review-primary">
+                  <div>
+                    <span>Program listing</span>
+                    <strong>{selectedTribe?.name ?? "Selected program"}</strong>
+                  </div>
+                  <div>
+                    <span>{demo ? "Sample amount" : "Stripe test amount"}</span>
+                    <strong>
+                      {pledgeAmountReviewLabel({ amountValid, selectedAmount })}
+                    </strong>
+                  </div>
+                  <div>
+                    <span>
+                      {demo ? "Preview schedule" : "If checkout succeeds"}
+                    </span>
+                    <strong>
+                      {demo
+                        ? interval === "once"
+                          ? "One time"
+                          : interval === "month"
+                            ? "Monthly"
+                            : "Yearly"
+                        : pledgeStripeRecordLabel(interval)}
+                    </strong>
+                  </div>
                 </div>
-                <div>
-                  <span>{demo ? "Sample amount" : "Stripe test amount"}</span>
-                  <strong>
-                    {pledgeAmountReviewLabel({ amountValid, selectedAmount })}
-                  </strong>
-                </div>
-                <div>
-                  <span>
-                    {demo ? "Preview schedule" : "If checkout succeeds"}
-                  </span>
-                  <strong>
-                    {demo
-                      ? interval === "once"
-                        ? "One time"
-                        : interval === "month"
-                          ? "Monthly"
-                          : "Yearly"
-                      : pledgeStripeRecordLabel(interval)}
-                  </strong>
-                </div>
-                <div>
-                  <span>
-                    {demo ? "Preview transfers" : "Planned testnet transfers"}
-                  </span>
-                  <strong>{settlementCount}</strong>
-                </div>
-                <div>
-                  <span>
-                    {demo ? "Preview window" : "Planned transfer window"}
-                  </span>
-                  <strong>{formatStreamTime(streamDurationSeconds)}</strong>
-                </div>
-                <div>
-                  <span>
-                    {demo ? "Preview interval" : "Planned transfer interval"}
-                  </span>
-                  <strong>
-                    Every {formatStreamTime(streamIntervalSeconds)}
-                  </strong>
+                <div className="pledge-payment-review-timing">
+                  <div>
+                    <span>
+                      {demo ? "Preview transfers" : "Planned testnet transfers"}
+                    </span>
+                    <strong>{settlementCount}</strong>
+                  </div>
+                  <div>
+                    <span>
+                      {demo ? "Preview window" : "Planned transfer window"}
+                    </span>
+                    <strong>{formatStreamTime(streamDurationSeconds)}</strong>
+                  </div>
+                  <div>
+                    <span>
+                      {demo ? "Preview interval" : "Planned transfer interval"}
+                    </span>
+                    <strong>
+                      Every {formatStreamTime(streamIntervalSeconds)}
+                    </strong>
+                  </div>
                 </div>
               </div>
 
@@ -647,51 +649,53 @@ export function PledgeFlow({
                 )}
               </p>
 
-              <button
-                ref={checkoutButtonRef}
-                type="button"
-                onClick={checkout}
-                disabled={busy || !amountValid}
-                className="pledge-checkout-button"
-                data-state={state}
-                aria-describedby={
-                  checkoutError ? "pledge-checkout-error" : undefined
-                }
-              >
-                {busyAction === "checkout" ? (
-                  <>
-                    <LoaderCircle className="pledge-spinner" size={17} />
-                    {demo
-                      ? "Opening demo receipt preview"
-                      : "Opening Stripe test checkout"}
-                  </>
-                ) : (
-                  <>
-                    <span>{checkoutButtonLabel}</span>
-                    <ArrowRight size={17} aria-hidden="true" />
-                  </>
-                )}
-              </button>
-              {!demo && (
-                <p className="pledge-wallet-note">
-                  <ShieldCheck size={13} aria-hidden="true" />
-                  Stripe may offer Apple Pay on a supported iPhone.
-                </p>
-              )}
-              {checkoutError && (
-                <p
-                  id="pledge-checkout-error"
-                  className="pledge-error"
-                  role="alert"
+              <div className="pledge-checkout-action">
+                <button
+                  ref={checkoutButtonRef}
+                  type="button"
+                  onClick={checkout}
+                  disabled={busy || !amountValid}
+                  className="pledge-checkout-button"
+                  data-state={state}
+                  aria-describedby={
+                    checkoutError ? "pledge-checkout-error" : undefined
+                  }
                 >
-                  {checkoutError}
+                  {busyAction === "checkout" ? (
+                    <>
+                      <LoaderCircle className="pledge-spinner" size={17} />
+                      {demo
+                        ? "Opening demo receipt preview"
+                        : "Opening Stripe test checkout"}
+                    </>
+                  ) : (
+                    <>
+                      <span>{checkoutButtonLabel}</span>
+                      <ArrowRight size={17} aria-hidden="true" />
+                    </>
+                  )}
+                </button>
+                {!demo && (
+                  <p className="pledge-wallet-note">
+                    <ShieldCheck size={13} aria-hidden="true" />
+                    Stripe may offer Apple Pay on a supported iPhone.
+                  </p>
+                )}
+                {checkoutError && (
+                  <p
+                    id="pledge-checkout-error"
+                    className="pledge-error"
+                    role="alert"
+                  >
+                    {checkoutError}
+                  </p>
+                )}
+                <p className="pledge-test-disclosure">
+                  {demo
+                    ? "Demo preview only. Stripe Checkout and Tempo stay idle."
+                    : "Test only. Stripe may record a checkout attempt; the receipt shows only confirmed Tempo testnet transfers. No real funds move."}
                 </p>
-              )}
-              <p className="pledge-test-disclosure">
-                {demo
-                  ? "Demo preview only. Stripe Checkout and Tempo stay idle."
-                  : "Test only. Stripe may record a checkout attempt; the receipt shows only confirmed Tempo testnet transfers. No real funds move."}
-              </p>
+              </div>
             </div>
           </div>
         </div>

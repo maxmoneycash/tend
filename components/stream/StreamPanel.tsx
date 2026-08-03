@@ -208,54 +208,56 @@ export function StreamPanel({
         />
       </details>
 
-      <button
-        ref={checkoutButtonRef}
-        type="button"
-        className="pledge-checkout-button"
-        data-state={error ? "error" : busy ? "loading" : "default"}
-        disabled={busy || !amountValid}
-        onClick={checkout}
-        aria-describedby={error ? "stream-checkout-error" : undefined}
-      >
-        {busy ? (
-          <>
-            <LoaderCircle className="pledge-spinner" size={17} />
-            {demo
-              ? "Opening demo receipt preview"
-              : "Opening Stripe test checkout"}
-          </>
-        ) : (
-          <>
-            {error
-              ? demo
-                ? "Try demo receipt preview again"
-                : "Try Stripe test checkout again"
-              : demo
-                ? `Preview a $${amountValid ? selectedAmount.toFixed(2) : "0.00"} demo receipt`
-                : `Open a $${amountValid ? selectedAmount.toFixed(2) : "0.00"} Stripe test checkout`}
-            <ArrowRight size={17} aria-hidden="true" />
-          </>
+      <div className="pledge-checkout-action">
+        <button
+          ref={checkoutButtonRef}
+          type="button"
+          className="pledge-checkout-button"
+          data-state={error ? "error" : busy ? "loading" : "default"}
+          disabled={busy || !amountValid}
+          onClick={checkout}
+          aria-describedby={error ? "stream-checkout-error" : undefined}
+        >
+          {busy ? (
+            <>
+              <LoaderCircle className="pledge-spinner" size={17} />
+              {demo
+                ? "Opening demo receipt preview"
+                : "Opening Stripe test checkout"}
+            </>
+          ) : (
+            <>
+              {error
+                ? demo
+                  ? "Try demo receipt preview again"
+                  : "Try Stripe test checkout again"
+                : demo
+                  ? `Preview a $${amountValid ? selectedAmount.toFixed(2) : "0.00"} demo receipt`
+                  : `Open a $${amountValid ? selectedAmount.toFixed(2) : "0.00"} Stripe test checkout`}
+              <ArrowRight size={17} aria-hidden="true" />
+            </>
+          )}
+        </button>
+
+        {!demo && (
+          <p className="pledge-wallet-note">
+            <ShieldCheck size={13} aria-hidden="true" />
+            Stripe may offer Apple Pay on a supported iPhone.
+          </p>
         )}
-      </button>
 
-      {!demo && (
-        <p className="pledge-wallet-note">
-          <ShieldCheck size={13} aria-hidden="true" />
-          Stripe may offer Apple Pay on a supported iPhone.
+        {error && (
+          <p id="stream-checkout-error" className="pledge-error" role="alert">
+            {error}
+          </p>
+        )}
+
+        <p className="pledge-test-disclosure">
+          {demo
+            ? "Demo receipt only. Stripe Checkout and Tempo stay idle. Use the official donation link above to contribute."
+            : "Test only. Stripe Checkout can start faucet-funded pathUSD transfers on the Tempo Moderato testnet. Use the official donation link above to contribute real funds."}
         </p>
-      )}
-
-      {error && (
-        <p id="stream-checkout-error" className="pledge-error" role="alert">
-          {error}
-        </p>
-      )}
-
-      <p className="pledge-test-disclosure">
-        {demo
-          ? "Demo receipt only. Stripe Checkout and Tempo stay idle. Use the official donation link above to contribute."
-          : "Test only. Stripe Checkout can start faucet-funded pathUSD transfers on the Tempo Moderato testnet. Use the official donation link above to contribute real funds."}
-      </p>
+      </div>
     </section>
   );
 }

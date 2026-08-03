@@ -1,5 +1,6 @@
 import { ArrowRight, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { ProgramVideo } from "@/components/programs/ProgramVideo";
 import type { Tribe, TribeId } from "@/lib/tribes";
 
 const TONE: Record<TribeId, { cover: string; badge: string; accent: string }> = {
@@ -38,20 +39,14 @@ export function ProgramCard({
   return (
     <article className="group relative overflow-hidden rounded-[20px] border border-black/[0.1] bg-white shadow-[0_18px_48px_rgba(28,20,14,0.06)] transition duration-300 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-[0_22px_58px_rgba(28,20,14,0.1)]">
       <div className={`relative h-24 overflow-hidden sm:h-32 ${tone.cover}`}>
-        <video
-          aria-hidden="true"
-          autoPlay
-          className="absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
-          loop
-          muted
-          playsInline
+        <ProgramVideo
+          className="absolute inset-0 h-full w-full object-cover"
           poster={`/videos/${program.id}-poster.jpg`}
-          preload="metadata"
           src={`/videos/${program.id}.mp4`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
         <span
-          className={`absolute left-4 top-4 inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold ${tone.badge}`}
+          className={`absolute left-4 top-4 inline-flex rounded-full border px-2.5 py-1 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold ${tone.badge}`}
         >
           {program.region}
         </span>
@@ -59,7 +54,7 @@ export function ProgramCard({
 
       <div className="p-4 sm:p-5">
         <div className={`mb-4 h-1 w-10 rounded-full ${tone.accent}`} />
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
+        <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
           Organization
         </p>
         <h2 className="mt-1 text-balance text-[17px] font-bold leading-tight tracking-[-0.02em] text-[#171411]">
@@ -115,7 +110,7 @@ export function ProgramCard({
           </Link>
         </div>
 
-        <p className="mt-3 border-t border-black/[0.07] pt-3 text-[10px] leading-relaxed text-[#7c756e]">
+        <p className="mt-3 border-t border-black/[0.07] pt-3 text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#7c756e]">
           Tend checkout is a test. No real money moves on Tend.
         </p>
       </div>

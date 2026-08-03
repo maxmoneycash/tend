@@ -30,7 +30,7 @@ export default function ProgramsPage() {
         <div className="relative z-10 mx-auto max-w-6xl px-5 py-7 sm:px-10 sm:py-10">
           <section className="animate-enter mb-7 grid gap-4 border-b border-black/[0.09] pb-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)] lg:items-end lg:gap-10">
             <div>
-              <span className="inline-flex items-center rounded-full border border-[#fa4616]/20 bg-[#fff1eb] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#b72e00]">
+              <span className="inline-flex items-center rounded-full border border-[#fa4616]/20 bg-[#fff1eb] px-3 py-1 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold uppercase tracking-[0.14em] text-[#b72e00]">
                 Official donation links
               </span>
               <h1 className="mt-4 max-w-3xl text-balance text-[32px] font-bold leading-[1.06] tracking-[-0.04em] text-[#171411] sm:text-[42px] lg:text-[48px]">
@@ -54,13 +54,13 @@ export default function ProgramsPage() {
                   size={18}
                 />
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8f520d]">
+                  <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold uppercase tracking-[0.14em] text-[#8f520d]">
                     Tend status
                   </p>
                   <p className="mt-1 text-[15px] font-bold text-[#30271f]">
                     Demonstration only
                   </p>
-                  <p className="mt-2 text-[11px] leading-relaxed text-[#6f5a43]">
+                  <p className="mt-2 text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#6f5a43]">
                     These organizations have not onboarded. Tend checkout moves
                     test funds only. Real contributions go through each
                     organization&apos;s official link.
@@ -81,7 +81,7 @@ export default function ProgramsPage() {
           </div>
 
           <section className="mt-10 border-t border-black/[0.08] pt-8">
-            <p className="flex items-center gap-2 text-[11px] font-semibold uppercase text-[#6b6b6b]">
+            <p className="flex items-center gap-2 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold uppercase text-[#6b6b6b]">
               <Info aria-hidden="true" size={14} />
               More Ohlone-led giving
             </p>

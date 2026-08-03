@@ -563,13 +563,16 @@ body::after {
     0 0 0 1px rgba(250, 70, 22, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
-.btn-whop:hover {
-  background: #ff5a2e;
-  box-shadow:
-    0 4px 20px rgba(250, 70, 22, 0.3),
-    0 0 0 1px rgba(250, 70, 22, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
+/* Gate hovers to precise pointers so a tap cannot leave the style stuck. */
+@media (hover: hover) and (pointer: fine) {
+  .btn-whop:hover {
+    background: #ff5a2e;
+    box-shadow:
+      0 4px 20px rgba(250, 70, 22, 0.3),
+      0 0 0 1px rgba(250, 70, 22, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
 }
 .btn-whop:active {
   transform: translateY(0);
@@ -591,10 +594,12 @@ body::after {
     border-color var(--duration-short) var(--ease-out),
     transform var(--duration-micro) var(--ease-out);
 }
-.btn-secondary:hover {
-  background: var(--background-tertiary);
-  border-color: var(--foreground-secondary);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .btn-secondary:hover {
+    background: var(--background-tertiary);
+    border-color: var(--foreground-secondary);
+    transform: translateY(-1px);
+  }
 }
 .btn-secondary:active {
   transform: translateY(0);
@@ -1517,20 +1522,27 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 .btn {
   display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   font-weight: 600;
   min-height: var(--space-control);
   font-size: 0.875rem;
+  line-height: 1.25;
   padding: 0.8rem 1.35rem;
   border-radius: 12px;
+  overflow-wrap: anywhere;
+  text-align: center;
+  white-space: normal;
   transition:
     background-color var(--duration-short) var(--ease-out),
     border-color var(--duration-short) var(--ease-out),
     box-shadow var(--duration-short) var(--ease-out),
     color var(--duration-short) var(--ease-out),
     transform var(--duration-micro) var(--ease-out);
+  touch-action: manipulation;
 }
 .tnd-btn-primary {
   background: #fa4616;
@@ -1539,12 +1551,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(250, 70, 22, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
-.tnd-btn-primary:hover {
-  background: #ff5a2e;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(250, 70, 22, 0.3), 0 0 0 1px rgba(250, 70, 22, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
 .tnd-btn-primary:active { transform: translateY(0); }
 .tnd-btn-primary:disabled { opacity: 0.55; }
 .btn-ghost {
@@ -1552,7 +1558,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   color: #333333;
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
-.btn-ghost:hover { background: rgba(0, 0, 0, 0.09); }
 .tnd-chip {
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 9999px;
@@ -1568,11 +1573,20 @@ input[type="range"]::-webkit-slider-thumb:hover {
     border-color var(--duration-short) var(--ease-out),
     color var(--duration-short) var(--ease-out);
 }
-.tnd-chip:hover { color: #111111; background: rgba(0, 0, 0, 0.04); }
 .tnd-chip-active {
   background: rgba(250, 70, 22, 0.15);
   border-color: rgba(250, 70, 22, 0.3);
   color: var(--accent-text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tnd-btn-primary:hover {
+    background: #ff5a2e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(250, 70, 22, 0.3), 0 0 0 1px rgba(250, 70, 22, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  .btn-ghost:hover { background: rgba(0, 0, 0, 0.09); }
+  .tnd-chip:hover { color: #111111; background: rgba(0, 0, 0, 0.04); }
 }
 .field {
   width: 100%;
@@ -1809,6 +1823,11 @@ body {
 .tempo-stream-error button:focus-visible {
   outline: 3px solid var(--pledge-focus);
   outline-offset: 3px;
+}
+
+.pledge-primary-button:focus-visible,
+.pledge-checkout-button:focus-visible {
+  box-shadow: 0 0 0 2px var(--pledge-paper);
 }
 
 .pledge-primary-button:active,
@@ -2343,7 +2362,7 @@ body {
   border-block: 1px solid var(--pledge-rule);
 }
 
-.pledge-payment-review > div {
+.pledge-payment-review-primary > div {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -2352,8 +2371,25 @@ body {
   padding-block: 0.65rem;
 }
 
-.pledge-payment-review > div + div {
+.pledge-payment-review-primary > div + div {
   border-top: 1px solid var(--pledge-rule);
+}
+
+.pledge-payment-review-timing {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  border-top: 1px solid var(--pledge-rule);
+  background: var(--pledge-rule);
+}
+
+.pledge-payment-review-timing > div {
+  display: grid;
+  align-content: start;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.65rem 0.5rem;
+  background: var(--pledge-paper-soft);
 }
 
 .pledge-payment-review span {
@@ -2370,6 +2406,13 @@ body {
   text-align: end;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.pledge-payment-review-timing strong {
+  overflow: visible;
+  text-align: start;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .pledge-test-disclosure {
@@ -2506,9 +2549,21 @@ body {
   line-height: 1.5;
 }
 
+.pledge-checkout-action {
+  margin-block-start: 1.25rem;
+  padding-block-start: 1rem;
+  border-top: 1px solid var(--pledge-rule);
+}
+
 .pledge-checkout-button {
   width: 100%;
   margin-block-start: 1rem;
+}
+
+.pledge-checkout-action .pledge-checkout-button {
+  min-height: 3.25rem;
+  margin-block-start: 0;
+  font-size: 0.9rem;
 }
 
 .pledge-wallet-note {
@@ -2904,11 +2959,14 @@ body {
 
 .tend-receipt-explorer {
   display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
   min-height: 2.75rem;
   margin-block-start: 0.35rem;
+  padding-block: 0.55rem;
   padding-inline: 0.9rem;
   color: var(--pledge-paper);
   background: var(--pledge-ink);
@@ -2916,7 +2974,11 @@ body {
   border-radius: 0.5rem;
   font-size: 0.68rem;
   font-weight: 600;
+  overflow-wrap: anywhere;
+  text-align: center;
   text-decoration: none;
+  white-space: normal;
+  touch-action: manipulation;
 }
 
 .tend-receipt-links {
@@ -3114,11 +3176,22 @@ body {
 }
 
 .tempo-thanks-actions {
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 0.6rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
   margin-block-start: 1.2rem;
+  padding: 0.75rem;
+  background: var(--pledge-paper);
+  border: 1px solid var(--pledge-rule);
+  border-radius: 1rem;
+}
+
+.tempo-thanks-actions .btn {
+  width: 100%;
+}
+
+.tempo-thanks-actions .tnd-btn-primary {
+  order: -1;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -3174,6 +3247,15 @@ body {
 
   .tempo-transaction code {
     display: block;
+  }
+
+  .tempo-thanks-actions {
+    grid-template-columns: repeat(2, auto);
+    justify-content: end;
+  }
+
+  .tempo-thanks-actions .tnd-btn-primary {
+    order: initial;
   }
 }
 
@@ -3360,9 +3442,6 @@ html:has(.landing-page) body {
 }
 
 @media (hover: none), (pointer: coarse) {
-  .btn-whop:hover,
-  .btn-secondary:hover,
-  .tnd-btn-primary:hover,
   [class~="hover:scale-[1.01]"]:hover {
     transform: none;
   }
