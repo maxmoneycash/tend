@@ -25,10 +25,10 @@ export function ProgramOfficialHero({
   const isYunakinKindfulCampaign = program.id === "ramaytush";
   const donationButtonLabel = isYunakinKindfulCampaign
     ? "Continue to Yunakin on Kindful"
-    : "Open official donation page";
+    : "Donate on the Foundation’s site";
   const donationHandoff = isYunakinKindfulCampaign
     ? `Opens the ${program.name}’s ${program.taxName} campaign at ${host(program.officialDonationUrl)} in a new tab.`
-    : `The donation button opens ${host(program.officialDonationUrl)}, the official link listed for this program, in a new tab.`;
+    : `Opens ${program.name}’s general donation form at ${host(program.officialDonationUrl)} in a new tab.`;
 
   return (
     <section className="overflow-hidden rounded-[24px] border border-black/[0.1] bg-white shadow-[0_24px_70px_rgba(28,20,14,0.08)] lg:grid lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
@@ -61,7 +61,31 @@ export function ProgramOfficialHero({
           ))}
         </div>
 
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <p className="mt-5 flex max-w-xl items-start gap-2 text-[12px] leading-relaxed text-[#5d5650]">
+          <ShieldCheck
+            aria-hidden="true"
+            className="mt-0.5 shrink-0"
+            size={14}
+          />
+          <span>
+            Program page published by{" "}
+            <span className="font-semibold text-[#3f3934]">
+              {program.name}
+            </span>{" "}
+            at {host(program.officialProgramUrl)}.
+          </span>
+        </p>
+
+        <p className="mt-3 flex max-w-xl items-start gap-2 text-[10px] leading-relaxed text-[#777069] sm:text-[11px]">
+          <ExternalLink
+            aria-hidden="true"
+            className="mt-0.5 shrink-0"
+            size={13}
+          />
+          {donationHandoff}
+        </p>
+
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <a
             className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[12px] bg-[#171411] px-5 text-[13px] font-semibold text-white transition hover:bg-[#38322d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
             href={program.officialDonationUrl}
@@ -90,6 +114,10 @@ export function ProgramOfficialHero({
               size={15}
             />
             {donationHandoff}
+          </p>
+          <p className="border-t border-border pt-2">
+            {program.name} has not onboarded to Tend. These links open the
+            organization&apos;s own pages.
           </p>
           <p className="flex items-start gap-2 border-t border-border pt-2 font-semibold text-warning">
             <FlaskConical

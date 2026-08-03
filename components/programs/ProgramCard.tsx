@@ -27,6 +27,13 @@ export function ProgramCard({
   program: Tribe;
 }) {
   const tone = TONE[program.id];
+  const isYunakinKindfulCampaign = program.id === "ramaytush";
+  const donationButtonLabel = isYunakinKindfulCampaign
+    ? "Continue to Yunakin on Kindful"
+    : "Open the Foundation donation form";
+  const donationHandoff = isYunakinKindfulCampaign
+    ? `Opens the ${program.name}’s ${program.taxName} campaign at ${host(program.officialDonationUrl)} in a new tab.`
+    : `Opens the donation form published by ${program.name} at ${host(program.officialDonationUrl)} in a new tab.`;
 
   return (
     <article className="group relative overflow-hidden rounded-[20px] border border-black/[0.1] bg-white shadow-[0_18px_48px_rgba(28,20,14,0.06)] transition duration-300 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-[0_22px_58px_rgba(28,20,14,0.1)]">
@@ -58,26 +65,45 @@ export function ProgramCard({
         <h2 className="mt-1 text-balance text-[17px] font-bold leading-tight tracking-[-0.02em] text-[#171411]">
           {program.name}
         </h2>
-        <p className="mt-2 text-[13px] font-semibold text-[#4e4944]">
+        <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
+          Program
+        </p>
+        <p className="mt-1 text-[13px] font-semibold text-[#4e4944]">
           {program.taxName}
         </p>
+        <p className="mt-2 line-clamp-3 text-[12px] leading-relaxed text-[#68625c]">
+          {program.blurb}
+        </p>
+
+        <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
+          Published territory
+        </p>
+        <div
+          aria-label="Counties listed for this program"
+          className="mt-1 flex flex-wrap gap-1.5"
+        >
+          {counties.map((county) => (
+            <span
+              className="rounded-full border border-black/[0.08] bg-[#f7f5f2] px-2 py-0.5 text-[10px] text-[#625c56]"
+              key={county}
+            >
+              {county}
+            </span>
+          ))}
+        </div>
 
         <p className="mt-4 text-[12px] leading-relaxed text-[#625c56]">
-          Opens {host(program.officialDonationUrl)} for {program.name}.
+          {donationHandoff}
         </p>
 
-        <p className="mt-2 text-[11px] font-semibold text-[#9b5a0a]">
-          Tend checkout is a test. No real money moves on Tend.
-        </p>
-
-        <div className="mt-2 grid gap-2 sm:grid-cols-[1fr_auto]">
+        <div className="mt-2 grid gap-2 lg:grid-cols-[1fr_auto]">
           <a
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[11px] bg-[#171411] px-4 text-center text-[12px] font-semibold text-white transition hover:bg-[#38322d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
             href={program.officialDonationUrl}
             rel="noreferrer"
             target="_blank"
           >
-            Donate at {host(program.officialDonationUrl)}
+            {donationButtonLabel}
             <ExternalLink aria-hidden="true" size={14} />
           </a>
           <Link
@@ -89,23 +115,9 @@ export function ProgramCard({
           </Link>
         </div>
 
-        <p className="mt-2 line-clamp-2 text-[12px] leading-relaxed text-[#68625c]">
-          {program.blurb}
+        <p className="mt-3 border-t border-black/[0.07] pt-3 text-[10px] leading-relaxed text-[#7c756e]">
+          Tend checkout is a test. No real money moves on Tend.
         </p>
-
-        <div
-          aria-label="Counties listed for this program"
-          className="mt-3 flex flex-wrap gap-1.5"
-        >
-          {counties.map((county) => (
-            <span
-              className="rounded-full border border-black/[0.08] bg-[#f7f5f2] px-2 py-0.5 text-[10px] text-[#625c56]"
-              key={county}
-            >
-              {county}
-            </span>
-          ))}
-        </div>
       </div>
     </article>
   );
