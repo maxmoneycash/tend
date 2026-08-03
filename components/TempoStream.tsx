@@ -8,9 +8,18 @@ import {
   Radio,
   RotateCw,
 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DonationReceipt } from "@/components/DonationReceipt";
-import { terminalSettlementErrorCopy } from "@/lib/receipt-copy";
+import {
+  awaitingPaidTestPaymentCopy,
+  awaitingPaymentUpdateCopy,
+  preparingFirstTestnetTransferCopy,
+  prolongedAwaitingPaymentUpdateCopy,
+  receiptRefreshRecoveryCopy,
+  terminalPaymentFailureRecoveryCopy,
+  terminalSettlementErrorCopy,
+} from "@/lib/receipt-copy";
 
 type PreparingEvent = {
   type: "preparing";
@@ -85,6 +94,13 @@ function isReceiptStatus(value: unknown): value is ReceiptStatus {
   return receiptStatuses.includes(value as ReceiptStatus);
 }
 
+/**
+ * How long the receipt waits for a first Stripe webhook update before it
+ * stops implying that patience alone will resolve the wait. Matches the
+ * operator-handoff pattern used for stalled settlement runs.
+ */
+const AWAITING_UPDATE_STALLED_MS = 120_000;
+
 function cents(value: number) {
   return `$${(value / 100).toFixed(2)}`;
 }
@@ -103,6 +119,7 @@ function getViewCopy(
   settled: number,
   total: number,
   hasVerifiedPayment: boolean,
+  awaitingStalled: boolean,
 ) {
   switch (status) {
     case "connecting":
@@ -115,23 +132,11 @@ function getViewCopy(
         stateLabel: "Loading receipt",
       };
     case "awaiting-confirmation":
-      return {
-        announcement: "Stripe is confirming the test payment.",
-        heading: "Confirming your contribution.",
-        intro:
-          "Stripe is confirming this test payment. Tempo testnet transfers will start after Stripe confirms it.",
-        panel: "Stripe is confirming the test payment.",
-        stateLabel: "Waiting for Stripe",
-      };
+      return awaitingStalled
+        ? prolongedAwaitingPaymentUpdateCopy()
+        : awaitingPaymentUpdateCopy();
     case "awaiting-payment":
-      return {
-        announcement: "The test payment is pending in Stripe.",
-        heading: "Your test payment is pending.",
-        intro:
-          "Stripe still lists this test payment as pending. Tempo testnet transfers will start after payment confirmation.",
-        panel: "Waiting for Stripe to confirm the test payment.",
-        stateLabel: "Payment pending (test mode)",
-      };
+      return awaitingPaidTestPaymentCopy();
     case "pending":
       return {
         announcement: "Test payment verified. Preparing the testnet receipt.",
@@ -143,15 +148,7 @@ function getViewCopy(
       };
     case "running":
       if (settled === 0) {
-        return {
-          announcement:
-            "Test payment verified. Preparing the first testnet transfer.",
-          heading: "Preparing the first testnet transfer.",
-          intro:
-            "Stripe verified the test payment. Tend is preparing the first pathUSD transfer on Tempo’s public testnet.",
-          panel: "Funding the Tempo testnet stream.",
-          stateLabel: "Preparing first transfer",
-        };
+        return preparingFirstTestnetTransferCopy();
       }
       return {
         announcement: `${settled} of ${total} testnet transfers settled.`,
@@ -194,24 +191,24 @@ function getViewCopy(
           "Stripe marked the test payment as failed. No Tempo testnet transfers started.",
         heading: "Test payment failed.",
         intro:
-          "Stripe marked this test payment as failed. Tend did not start Tempo testnet transfers.",
+          "Stripe marked this test payment as failed. No Tempo testnet transfers started.",
         panel: "No Tempo testnet transfers started.",
         stateLabel: "Test payment failed",
       };
-    case "unavailable":
+    case "unavailable": {
+      const recovery = receiptRefreshRecoveryCopy(hasVerifiedPayment);
       return {
-        announcement: hasVerifiedPayment
-          ? "Receipt refresh failed. Showing the last confirmed test receipt details."
-          : "The latest test receipt status is unavailable.",
+        announcement: recovery,
         heading: "Receipt status unavailable.",
         intro: hasVerifiedPayment
           ? "Tend could not refresh this test receipt. The last confirmed details remain below."
-          : "Tend could not load the latest status for this test receipt. Check it again.",
+          : "Tend could not load the latest saved status for this test receipt.",
         panel: hasVerifiedPayment
           ? "Showing the last confirmed testnet settlement status."
           : "The latest test receipt status is unavailable.",
         stateLabel: "Receipt unavailable",
       };
+    }
   }
 }
 
@@ -227,6 +224,8 @@ export function TempoStream({
   const [events, setEvents] = useState<TempoEvent[]>([]);
   const [requestError, setRequestError] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
+  const [awaitingStalled, setAwaitingStalled] = useState(false);
+  const awaitingSinceRef = useRef<number | null>(null);
 
   useEffect(() => {
     streamRef.current?.scrollIntoView({
@@ -249,7 +248,7 @@ export function TempoStream({
         while (!stopped) {
           const response = await fetch(
             `/api/tempo/stream?sessionId=${encodeURIComponent(sessionId)}`,
-            { signal: abort.signal },
+            { method: "GET", signal: abort.signal },
           );
           const data = (await response.json().catch(() => ({}))) as {
             status?: unknown;
@@ -268,6 +267,20 @@ export function TempoStream({
 
           setStatus(data.status);
           setEvents(data.events);
+
+          if (data.status === "awaiting-confirmation") {
+            if (awaitingSinceRef.current === null) {
+              awaitingSinceRef.current = Date.now();
+            } else if (
+              Date.now() - awaitingSinceRef.current >=
+              AWAITING_UPDATE_STALLED_MS
+            ) {
+              setAwaitingStalled(true);
+            }
+          } else {
+            awaitingSinceRef.current = null;
+            setAwaitingStalled(false);
+          }
 
           if (
             data.status === "complete" ||
@@ -343,7 +356,15 @@ export function TempoStream({
           totalSettlements,
         )
       : null;
+  const paymentFailureRecovery = paymentFailed
+    ? terminalPaymentFailureRecoveryCopy()
+    : null;
+  const unavailableRecovery =
+    status === "unavailable"
+      ? receiptRefreshRecoveryCopy(stripeVerified)
+      : null;
   const error =
+    unavailableRecovery ??
     (requestError
       ? `Tend could not refresh this test receipt. ${requestError}`
       : null) ??
@@ -352,6 +373,10 @@ export function TempoStream({
     (paymentFailed
       ? "Stripe marked this test payment as failed. No Tempo testnet transfers started."
       : null);
+  const errorAnnouncement =
+    error && paymentFailureRecovery
+      ? `${error} ${paymentFailureRecovery}`
+      : error;
   const canRetry = Boolean(requestError) || status === "unavailable";
   const displayState =
     status === "unavailable" || paymentFailed ? "error" : status;
@@ -360,7 +385,16 @@ export function TempoStream({
     settlements.length,
     totalSettlements,
     stripeVerified,
+    awaitingStalled,
   );
+  const unverifiedReceiptCopy =
+    status === "awaiting-confirmation"
+      ? awaitingStalled
+        ? prolongedAwaitingPaymentUpdateCopy()
+        : awaitingPaymentUpdateCopy()
+      : status === "awaiting-payment"
+        ? awaitingPaidTestPaymentCopy()
+        : null;
   const stripeDetail = stripeVerified
     ? "Test payment verified"
     : paymentFailed
@@ -369,7 +403,9 @@ export function TempoStream({
         ? "Test payment pending"
         : status === "unavailable"
           ? "Status unavailable"
-          : "Awaiting confirmation";
+          : status === "awaiting-confirmation"
+            ? "Waiting for Stripe update"
+            : "Checking status";
   const tempoDetail = paymentFailed
     ? "Skipped"
     : status === "unavailable"
@@ -428,9 +464,9 @@ export function TempoStream({
       >
         {error ? "" : viewCopy.announcement}
       </p>
-      {error && (
+      {errorAnnouncement && (
         <p className="sr-only" role="alert" aria-atomic="true">
-          {error}
+          {errorAnnouncement}
         </p>
       )}
       <header className="tempo-stream-hero">
@@ -518,6 +554,9 @@ export function TempoStream({
             lastHash={lastHash}
             streamDurationSeconds={ready?.streamDurationSeconds}
             streamIntervalSeconds={ready?.streamIntervalSeconds}
+            unverifiedConfirmation={unverifiedReceiptCopy?.receiptConfirmation}
+            unverifiedDetail={unverifiedReceiptCopy?.receiptDetail}
+            unverifiedStatusLabel={unverifiedReceiptCopy?.receiptStatusLabel}
           />
         </div>
       )}
@@ -631,8 +670,12 @@ export function TempoStream({
 
         {error && (
           <div className="tempo-stream-error">
-            <p>{error}</p>
-            {canRetry && (
+            <p>{paymentFailureRecovery ?? error}</p>
+            {paymentFailed ? (
+              <Link href="/pledge" className="btn tnd-btn-primary">
+                Start a new test pledge
+              </Link>
+            ) : canRetry ? (
               <button
                 type="button"
                 onClick={() => {
@@ -642,7 +685,7 @@ export function TempoStream({
               >
                 Check receipt again
               </button>
-            )}
+            ) : null}
           </div>
         )}
       </div>

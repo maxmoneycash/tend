@@ -2,6 +2,11 @@
 
 import { Check, Copy, ExternalLink, Radio } from "lucide-react";
 import { useState } from "react";
+import {
+  stripeHostedReceiptUrl,
+  tempoTestnetAddressUrl,
+  tempoTestnetTransactionUrl,
+} from "@/lib/receipt-proof";
 
 type ReceiptStatus =
   | "unverified"
@@ -28,6 +33,9 @@ type Props = {
   streamDurationSeconds?: number;
   streamIntervalSeconds?: number;
   streamedCents?: number;
+  unverifiedConfirmation?: string;
+  unverifiedDetail?: string;
+  unverifiedStatusLabel?: string;
 };
 
 function short(value?: string, start = 8, end = 6) {
@@ -72,6 +80,9 @@ export function DonationReceipt({
   streamDurationSeconds,
   streamIntervalSeconds,
   streamedCents = 0,
+  unverifiedConfirmation = "Waiting for Stripe test confirmation",
+  unverifiedDetail = "waiting for Stripe test confirmation",
+  unverifiedStatusLabel = "Awaiting Stripe",
 }: Props) {
   const [copyStatus, setCopyStatus] = useState<
     "idle" | "copied" | "failed"
@@ -92,8 +103,11 @@ export function DonationReceipt({
   const copyButtonLabel = reference
     ? "Copy session ID"
     : "Copy transaction ID";
+  const stripeReceiptUrl = stripeHostedReceiptUrl(receiptUrl);
+  const recipientUrl = tempoTestnetAddressUrl(recipient);
+  const lastTransactionUrl = tempoTestnetTransactionUrl(lastHash);
   const statusLabel = {
-    unverified: "Awaiting Stripe",
+    unverified: unverifiedStatusLabel,
     processing: "Preparing",
     verified: "Test payment verified",
     streaming: "Settling",
@@ -102,7 +116,7 @@ export function DonationReceipt({
     unavailable: "Unavailable",
   }[status];
   const confirmationLabel = {
-    unverified: "Waiting for Stripe test confirmation",
+    unverified: unverifiedConfirmation,
     processing: "Preparing testnet transfers",
     verified: "Test payment verified",
     streaming: `${completedSettlements} of ${settlements} test settlements confirmed`,
@@ -156,7 +170,7 @@ export function DonationReceipt({
                     ? "Unavailable"
                     : `$${(displayAmount / 100).toFixed(2)}`}
             </strong>
-            {isUnverified && <span>waiting for Stripe test confirmation</span>}
+            {isUnverified && <span>{unverifiedDetail}</span>}
             {isPreparingAmount && (
               <span>test payment verified; preparing transfers</span>
             )}
@@ -214,11 +228,11 @@ export function DonationReceipt({
                   <dd>Tempo Moderato · testnet</dd>
                 </div>
                 <div>
-                  <dt>Demo treasury</dt>
+                  <dt>Tempo testnet recipient</dt>
                   <dd>{recipient ? short(recipient) : "Preparing"}</dd>
                 </div>
                 <div>
-                  <dt>Last transaction</dt>
+                  <dt>Last Tempo transaction ID</dt>
                   <dd>{lastHash ? short(lastHash) : "None yet"}</dd>
                 </div>
               </>
@@ -295,28 +309,42 @@ export function DonationReceipt({
         <ReceiptEdge bottom />
       </div>
 
-      {(lastHash || receiptUrl) && (
+      {(lastTransactionUrl || recipientUrl || stripeReceiptUrl) && (
         <div className="tend-receipt-links">
-          {receiptUrl && (
+          {stripeReceiptUrl && (
             <a
               className="tend-receipt-explorer"
-              href={receiptUrl}
+              href={stripeReceiptUrl}
               target="_blank"
-              rel="noreferrer"
-              aria-label="Open Stripe test receipt in a new tab"
+              rel="noopener noreferrer"
+              aria-label="View the Stripe test receipt in a new tab"
             >
-              Stripe test receipt <ExternalLink size={13} aria-hidden="true" />
+              View Stripe test receipt{" "}
+              <ExternalLink size={13} aria-hidden="true" />
             </a>
           )}
-          {lastHash && (
+          {recipientUrl && (
             <a
               className="tend-receipt-explorer"
-              href={`https://explore.testnet.tempo.xyz/tx/${lastHash}`}
+              href={recipientUrl}
               target="_blank"
-              rel="noreferrer"
-              aria-label="Open Tempo testnet transaction in a new tab"
+              rel="noopener noreferrer"
+              aria-label="View the recipient address on Tempo testnet in a new tab"
             >
-              Tempo transaction <ExternalLink size={13} aria-hidden="true" />
+              View recipient on Tempo testnet{" "}
+              <ExternalLink size={13} aria-hidden="true" />
+            </a>
+          )}
+          {lastTransactionUrl && (
+            <a
+              className="tend-receipt-explorer"
+              href={lastTransactionUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View the last Tempo testnet transaction in a new tab"
+            >
+              View Tempo transaction on testnet{" "}
+              <ExternalLink size={13} aria-hidden="true" />
             </a>
           )}
         </div>

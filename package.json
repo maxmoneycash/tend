@@ -9,6 +9,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test:keyboard-recovery": "node scripts/test-keyboard-recovery.mjs",
+    "test:links": "node --experimental-strip-types scripts/test-links.mjs",
     "test:mobile-access": "node scripts/test-mobile-access.mjs",
     "test:media-budget": "node scripts/test-media-budget.mjs",
     "test:pledge-resume": "node --test scripts/test-pledge-resume.mjs",
