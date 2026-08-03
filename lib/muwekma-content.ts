@@ -3,6 +3,8 @@ export type Evidence = "documented" | "reported" | "oral-history" | "analysis";
 type SourcedEntry = {
   sourceName: string;
   sourceUrl: string;
+  sourceAction?: string;
+  evidenceNote?: string;
 };
 
 export interface TimelineEntry extends SourcedEntry {
@@ -20,6 +22,8 @@ export const timeline: TimelineEntry[] = [
     evidence: "documented",
     sourceName: "National Park Service",
     sourceUrl: "https://www.nps.gov/places/000/8-home-of-the-yelamu.htm",
+    evidenceNote:
+      "Evidence limit: The NPS page reports no known Yelamu descendants living today and recognizes a broader contemporary Ohlone community. This entry uses the page only for mapped place names and makes no lineage claim.",
   },
   {
     date: "1914 to 1927",
@@ -44,6 +48,8 @@ export const timeline: TimelineEntry[] = [
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",
+    evidenceNote:
+      "Evidence limit: Tend links to the Tribe’s summary. The BIA final determination and cited legal records are outside this guide.",
   },
   {
     date: "2002 and 2004",
@@ -61,6 +67,8 @@ export const timeline: TimelineEntry[] = [
     sourceName: "Stanford Report",
     sourceUrl:
       "https://news.stanford.edu/stories/2022/03/genomic-analysis-supports-ancient-muwekma-ohlone-connection",
+    evidenceNote:
+      "Evidence limit: Tend links to Stanford’s summary. The PNAS paper and study data are outside this guide.",
   },
 ];
 
@@ -110,14 +118,16 @@ export const signals: Signal[] = [
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/history.html",
+    sourceAction: "Read the Tribe’s Bay Area history page",
   },
   {
     date: "Recognition",
     title: "The Tribe documents the federal process",
-    detail: "The Tribe describes its recognition petition on this page. It quotes agency findings and court decisions.",
+    detail: "The page quotes agency findings and court decisions. Tend links to this page; the underlying records are outside this guide.",
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",
+    sourceAction: "Read the Tribe’s federal recognition page",
   },
   {
     date: "Research",
@@ -127,6 +137,7 @@ export const signals: Signal[] = [
     sourceName: "Stanford Report",
     sourceUrl:
       "https://news.stanford.edu/stories/2022/03/genomic-analysis-supports-ancient-muwekma-ohlone-connection",
+    sourceAction: "Read Stanford’s study summary",
   },
 ];
 
@@ -176,4 +187,5 @@ export const languageFacts = {
   evidence: "documented" as Evidence,
   sourceName: "Muwekma Ohlone Tribe",
   sourceUrl: "https://www.muwekma.org/language-revitalization.html",
+  sourceAction: "Read the Tribe’s Chochenyo language page",
 };

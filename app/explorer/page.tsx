@@ -125,6 +125,11 @@ export default function ExplorerPage() {
                 <div>
                   <p className="text-[13px] font-semibold text-[#111111]">{t.title}</p>
                   <p className="text-[12px] text-[#555555] leading-relaxed mt-1">{t.body}</p>
+                  {t.evidenceNote && (
+                    <p className="mt-3 text-[12px] leading-[1.45] text-[#6b6b6b]">
+                      {t.evidenceNote}
+                    </p>
+                  )}
                   <SourceLink name={t.sourceName} url={t.sourceUrl} />
                 </div>
                 <span className="hidden sm:block">
@@ -148,7 +153,11 @@ export default function ExplorerPage() {
                 </div>
                 <p className="text-[13px] font-semibold text-[#111111]">{s.title}</p>
                 <p className="text-[12px] text-[#555555] leading-relaxed mt-1.5">{s.detail}</p>
-                <SourceLink name={s.sourceName} url={s.sourceUrl} />
+                <SourceLink
+                  action={s.sourceAction}
+                  name={s.sourceName}
+                  url={s.sourceUrl}
+                />
               </div>
             ))}
           </div>
@@ -180,25 +189,31 @@ export default function ExplorerPage() {
               </p>
               <EvidenceBadge tier={languageFacts.evidence} />
             </div>
-            <SourceLink name={languageFacts.sourceName} url={languageFacts.sourceUrl} />
+            <SourceLink
+              action={languageFacts.sourceAction}
+              name={languageFacts.sourceName}
+              url={languageFacts.sourceUrl}
+            />
           </div>
 
           {/* CTA */}
           <div className="mt-12 surface-1 rounded-[16px] p-6 flex flex-wrap items-center justify-between gap-4">
             <div>
               <p className="text-[15px] font-semibold text-[#111111]">
-                Continue with the official program sources.
+                Continue to the giving program directory.
               </p>
               <p className="text-[12px] text-[#6b6b6b] mt-1">
-                Tend explains the programs. Each official organization page
-                handles real donations.
+                The history guide cites Muwekma Ohlone Tribe pages alongside
+                other official sources. The program directory separately links
+                to giving pages from the Muwekma Ohlone Preservation Foundation
+                and Association of Ramaytush Ohlone.
               </p>
             </div>
             <Link
               href="/programs"
               className="btn-whop px-5 py-3 rounded-[12px] text-[13px] font-semibold"
             >
-              See the programs
+              See giving programs
             </Link>
           </div>
         </div>
