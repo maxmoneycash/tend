@@ -7,6 +7,7 @@ import {
 } from "@/lib/app-origin";
 import { auth0 } from "@/lib/auth0";
 import { destinationChargesEnabled, stripeTestMode } from "@/lib/connect";
+import { demoAuthBypass } from "@/lib/demo";
 import { getStripe } from "@/lib/stripe";
 import { getTribe, getTribeAccount, tribes, type TribeId } from "@/lib/tribes";
 
@@ -30,7 +31,8 @@ export async function GET() {
  * Gated three ways:
  *  - TEND_CONNECT_DESTINATION_CHARGES=1 (default off)
  *  - test-mode Stripe key only
- *  - signed-in tribe admin (canAccessTribe), unless TEND_DEMO_AUTH_BYPASS=1
+ *  - signed-in tribe admin (canAccessTribe), unless demoAuthBypass() allows a
+ *    local recording to skip sign-in; that bypass is refused on a deployment
  *
  * Creates an Accounts v2 recipient with an Express dashboard (the platform
  * pays fees and owns losses for destination charges) and returns a
@@ -57,7 +59,7 @@ export async function POST(req: Request) {
   }
   const tribeId = parsed.data.tribeId as TribeId;
 
-  if (process.env.TEND_DEMO_AUTH_BYPASS !== "1") {
+  if (!demoAuthBypass()) {
     const session = await auth0.getSession();
     if (!session || !canAccessTribe(session.user, tribeId)) {
       return NextResponse.json({ error: "Not authorized" }, { status: 403 });

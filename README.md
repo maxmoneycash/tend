@@ -9,6 +9,31 @@ Foundation, and Sogorea Te’ Land Trust are separate organizations with their
 own programs and territorial descriptions. Tend keeps those identities clear.
 None of these organizations has approved, endorsed, or joined this prototype.
 
+**To give to any of these programs, use the official links below.** Money
+never reaches an organization through Tend. If you are here to donate, you can
+close the code and follow one of those links.
+
+## What this repository guarantees
+
+These are enforced in the code, not just described here:
+
+- **Test payments only.** The Stripe client refuses to start with anything but
+  a test-mode key (`lib/stripe.ts`), and the webhook rejects any live event
+  (`app/api/stripe/webhook/route.ts`). A live key stops the app rather than
+  taking a payment.
+- **Testnet settlement only.** Receipts settle faucet-funded `pathUSD` on the
+  public Tempo Moderato testnet. Those transfers demonstrate a product idea and
+  carry no value to anyone.
+- **No sign-in bypass on a deployment.** `TEND_DEMO_AUTH_BYPASS=1` skips Auth0
+  for local recording and is refused whenever `VERCEL` is set, so a fork cannot
+  publish the tenant dashboard or Connect onboarding by copying an env file.
+- **No credentials in the repository.** Only `.env.example` is tracked, and it
+  holds placeholders. Provide your own keys locally.
+
+If you fork this and point it at real money, that is your decision and none of
+the above protects the organizations named here from being misrepresented.
+Please do not use their names to collect funds.
+
 ## Official programs
 
 - [Yunakin Land Tax](https://www.ramaytush.org/donate.html) is a financial

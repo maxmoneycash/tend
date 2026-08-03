@@ -13,7 +13,7 @@ import {
   destinationChargeAccount,
   destinationChargeData,
 } from "@/lib/connect";
-import { demoMode } from "@/lib/demo";
+import { demoAuthBypass, demoMode } from "@/lib/demo";
 import { getStripe } from "@/lib/stripe";
 import { buildCheckoutCancelUrl } from "@/lib/pledge-flow-state";
 import {
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     returnTo = "/pledge",
     loginReturnTo = returnTo,
   } = parsed.data;
-  if (process.env.TEND_DEMO_AUTH_BYPASS !== "1") {
+  if (!demoAuthBypass()) {
     const session = await auth0.getSession();
     if (!session) {
       return NextResponse.json(

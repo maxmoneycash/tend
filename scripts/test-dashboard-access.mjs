@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { readAuthorizedDashboardData } from "../lib/dashboard-access.ts";
+import { demoAuthBypass } from "../lib/demo.ts";
 
 const [dashboardIndex, tribeDashboard] = await Promise.all([
   readFile(new URL("../app/dashboard/page.tsx", import.meta.url), "utf8"),
@@ -98,6 +99,56 @@ try {
   }
 }
 
+// The sign-in bypass exists so the flow can be walked while recording
+// locally. This repository is public, so a fork that copied an env file — or a
+// variable pasted into a project's settings — must not be able to open
+// checkout and Stripe Connect onboarding to anyone with the URL.
+{
+  const previousVercel = process.env.VERCEL;
+  const previousBypassFlag = process.env.TEND_DEMO_AUTH_BYPASS;
+  process.env.TEND_DEMO_AUTH_BYPASS = "1";
+  try {
+    process.env.VERCEL = "1";
+    assert.equal(
+      demoAuthBypass(),
+      false,
+      "The sign-in bypass must be refused on a deployment even when the flag is set.",
+    );
+    delete process.env.VERCEL;
+    assert.equal(
+      demoAuthBypass(),
+      true,
+      "The bypass still works locally, which is the only place it is meant to.",
+    );
+  } finally {
+    if (previousVercel === undefined) delete process.env.VERCEL;
+    else process.env.VERCEL = previousVercel;
+    if (previousBypassFlag === undefined) delete process.env.TEND_DEMO_AUTH_BYPASS;
+    else process.env.TEND_DEMO_AUTH_BYPASS = previousBypassFlag;
+  }
+}
+
+// Every guarded surface must go through the helper, so hardening it once
+// covers all of them.
+const guardedRoutes = await Promise.all(
+  [
+    "../app/api/checkout/route.ts",
+    "../app/api/stripe/connect/onboard/route.ts",
+  ].map((path) => readFile(new URL(path, import.meta.url), "utf8")),
+);
+for (const source of guardedRoutes) {
+  assert.match(
+    source,
+    /!demoAuthBypass\(\)/,
+    "Guarded routes must ask demoAuthBypass(), not read the raw variable.",
+  );
+  assert.doesNotMatch(
+    source,
+    /process\.env\.TEND_DEMO_AUTH_BYPASS/,
+    "A route reading the raw variable would skip the deployment refusal.",
+  );
+}
+
 const authorized = await readAuthorizedDashboardData(
   { email: "admin@example.com" },
   () => true,
@@ -111,5 +162,5 @@ assert.deepEqual(authorized, {
 assert.equal(stripeReads, 1, "Authorized requests may read Stripe once.");
 
 console.log(
-  "Dashboard access checks passed: logged-out, wrong-tenant, and retired-bypass cases made zero Stripe reads.",
+  "Dashboard access checks passed: logged-out, wrong-tenant, and retired-bypass cases made zero Stripe reads, and the sign-in bypass is refused on a deployment.",
 );
