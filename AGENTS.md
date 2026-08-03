@@ -16,7 +16,16 @@ This repository is initialized for the Stripe project "tend".
 
 ## Writing
 
-Before creating or revising prose, read and follow the Plainspoken Copy skill at
-`/Users/maxmohammadi/.codex/skills/plainspoken-copy/SKILL.md`. This applies to
-UI labels, donor copy, errors, status text, documentation, agent assignments,
+This applies to UI labels, donor copy, errors, status text, documentation,
 reports, and commit messages.
+
+Write plainly. Say what happened and what is true. Prefer a short concrete
+sentence to a long careful one, and name the thing rather than gesturing at it.
+Cut adjectives that add confidence but no information.
+
+The subject matter makes this a correctness rule, not a style preference. Tend
+describes real organizations and moves no real money, so copy that overstates
+what the prototype does — or blurs who published a fact — is a defect. Every
+claim about an organization carries its source. Where sources disagree, say so
+rather than resolving it for the reader. Never imply endorsement, affiliation,
+or that a payment reached anyone.
