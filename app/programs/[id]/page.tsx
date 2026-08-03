@@ -28,7 +28,11 @@ export default async function ProgramDetail({
   return (
     <div className="min-h-screen pb-24 md:pb-0">
       <Navbar />
-      <div style={{ paddingTop: "108px" }} />
+      <div
+        style={{
+          paddingTop: "calc(108px + env(safe-area-inset-top, 0px))",
+        }}
+      />
       <div className="relative" style={{ overflow: "clip" }}>
         <AmbientBlobs variant="earn" />
         <div className="relative z-10 mx-auto max-w-6xl px-5 py-7 sm:px-10 sm:py-10">
@@ -143,7 +147,7 @@ export default async function ProgramDetail({
                   className="underline underline-offset-4 text-[#555555] hover:text-[#111111]"
                   href="/pledge"
                 >
-                  Open the test flow
+                  Find a program by address or county
                 </Link>
               </p>
 

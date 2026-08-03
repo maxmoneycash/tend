@@ -85,10 +85,9 @@ async function startServer() {
       throw new Error(`Next.js exited during startup:\n${serverOutput}`);
     }
     try {
-      const response = await fetch(
-        `${baseUrl}/api/tempo/stream?sessionId=cs_health_check`,
-        { signal: AbortSignal.timeout(requestTimeoutMs) },
-      );
+      const response = await fetch(`${baseUrl}/api/stripe/connect/onboard`, {
+        signal: AbortSignal.timeout(requestTimeoutMs),
+      });
       if (response.ok) return;
     } catch {
       // Server is still starting.

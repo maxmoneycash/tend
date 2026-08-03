@@ -43,6 +43,19 @@ assert.match(
 );
 assert.match(
   pledge,
+<<<<<<< HEAD
+=======
+  /if \(located && !locationError && !checkoutError && busyAction === null\)[\s\S]*?locationResultsRef\.current\?\.focus\(\)/,
+  "A successful location lookup must move focus to its new results.",
+);
+assert.match(
+  pledge,
+  /<section[\s\S]*?ref=\{locationResultsRef\}[\s\S]*?aria-labelledby="pledge-program-results-title"[\s\S]*?tabIndex=\{-1\}[\s\S]*?<h3 id="pledge-program-results-title" className="sr-only">\s*Program results\s*<\/h3>/,
+  "Program results must be a labelled, programmatically focusable landmark.",
+);
+assert.match(
+  pledge,
+>>>>>>> round2/willow
   /if \(checkoutError && busyAction === null\)[\s\S]*?checkoutButtonRef\.current\?\.focus\(\)/,
   "A checkout failure must move focus to its retry action.",
 );

@@ -71,7 +71,7 @@ export default async function Thanks({
           : "Stripe created a test-mode receipt; no real funds were sent to the organization."}
       </p>
       <Link href="/programs" className="btn tnd-btn-primary mt-10">
-        Back to Tend
+        View programs
       </Link>
     </div>
   </>

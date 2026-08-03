@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test:dashboard-access": "node scripts/test-dashboard-access.mjs",
     "test:keyboard-recovery": "node scripts/test-keyboard-recovery.mjs",
     "test:links": "node --experimental-strip-types scripts/test-links.mjs",
     "test:mobile-access": "node scripts/test-mobile-access.mjs",

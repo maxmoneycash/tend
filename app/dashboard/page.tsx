@@ -4,7 +4,6 @@ import { Navbar } from "@/components/layout/Navbar";
 import { AmbientBlobs } from "@/components/layout/AmbientBlobs";
 import { auth0 } from "@/lib/auth0";
 import { accessibleTribes } from "@/lib/access";
-import { demoMode } from "@/lib/demo";
 import { tribes, type TribeId } from "@/lib/tribes";
 
 function TenantGrid({ ids, note }: { ids: TribeId[]; note: string }) {
@@ -53,21 +52,6 @@ function TenantGrid({ ids, note }: { ids: TribeId[]; note: string }) {
 }
 
 export default async function DashboardIndex() {
-  const authBypass = process.env.TEND_DEMO_AUTH_BYPASS === "1";
-
-  if (demoMode() || authBypass) {
-    return (
-      <TenantGrid
-        ids={Object.keys(tribes) as TribeId[]}
-        note={
-          authBypass
-            ? "Stripe test mode. Sign-in is bypassed for this recording."
-            : "Demo mode. Both tenant previews are open."
-        }
-      />
-    );
-  }
-
   const session = await auth0.getSession();
   if (!session) redirect("/auth/login?returnTo=/dashboard");
 
