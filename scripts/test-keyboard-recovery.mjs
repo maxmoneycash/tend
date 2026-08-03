@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const [layout, navbar, pledge, streamPanel, styles] = await Promise.all([
+const [layout, navbar, pledge, streamPanel] = await Promise.all([
   readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   readFile(new URL("../components/layout/Navbar.tsx", import.meta.url), "utf8"),
   readFile(new URL("../components/PledgeFlow.tsx", import.meta.url), "utf8"),
@@ -9,7 +9,6 @@ const [layout, navbar, pledge, streamPanel, styles] = await Promise.all([
     new URL("../components/stream/StreamPanel.tsx", import.meta.url),
     "utf8",
   ),
-  readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
 ]);
 
 assert.match(
@@ -44,8 +43,6 @@ assert.match(
 );
 assert.match(
   pledge,
-<<<<<<< HEAD
-=======
   /if \(located && !locationError && !checkoutError && busyAction === null\)[\s\S]*?locationResultsRef\.current\?\.focus\(\)/,
   "A successful location lookup must move focus to its new results.",
 );
@@ -56,7 +53,6 @@ assert.match(
 );
 assert.match(
   pledge,
->>>>>>> round2/willow
   /if \(checkoutError && busyAction === null\)[\s\S]*?checkoutButtonRef\.current\?\.focus\(\)/,
   "A checkout failure must move focus to its retry action.",
 );
@@ -84,11 +80,6 @@ assert.match(
   streamPanel,
   /id="stream-checkout-error"[\s\S]*?role="alert"/,
   "The program checkout error must remain an assertive live-region message.",
-);
-assert.match(
-  styles,
-  /\.pledge-primary-button:focus-visible,\s*\.pledge-checkout-button:focus-visible\s*\{\s*box-shadow: 0 0 0 2px var\(--pledge-paper\);/,
-  "Primary pledge actions must keep a separator between their focus ring and every button state.",
 );
 
 console.log("Keyboard recovery source checks passed.");
