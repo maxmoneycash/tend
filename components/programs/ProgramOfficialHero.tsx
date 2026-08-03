@@ -28,7 +28,7 @@ export function ProgramOfficialHero({
     : "Open official donation page";
   const donationHandoff = isYunakinKindfulCampaign
     ? `Opens the ${program.name}’s ${program.taxName} campaign at ${host(program.officialDonationUrl)} in a new tab.`
-    : `The donation button opens ${host(program.officialDonationUrl)}, the official link listed for this program.`;
+    : `The donation button opens ${host(program.officialDonationUrl)}, the official link listed for this program, in a new tab.`;
 
   return (
     <section className="overflow-hidden rounded-[24px] border border-black/[0.1] bg-white shadow-[0_24px_70px_rgba(28,20,14,0.08)] lg:grid lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
