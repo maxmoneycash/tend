@@ -15,6 +15,7 @@ import {
 } from "@/lib/connect";
 import { demoMode } from "@/lib/demo";
 import { getStripe } from "@/lib/stripe";
+import { buildCheckoutCancelUrl } from "@/lib/pledge-flow-state";
 import {
   DEFAULT_STREAM_DURATION_SECONDS,
   DEFAULT_STREAM_INTERVAL_SECONDS,
@@ -175,7 +176,7 @@ export async function POST(req: Request) {
           },
         }),
     success_url: `${origin}/thanks?tribe=${tribeId}&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origin}${returnTo}?canceled=1`,
+    cancel_url: buildCheckoutCancelUrl(origin, returnTo),
   };
 
   // Direct charges use the configured connected account. Destination charges

@@ -12,16 +12,23 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { StreamTimingControls } from "@/components/stream/StreamTimingControls";
 import {
-  consumeCheckoutIntent,
+  consumeCheckoutReturn,
   startCheckout,
   type CheckoutIntent,
   type CheckoutInterval,
 } from "@/lib/checkout-client";
 import {
   buildPledgeCheckoutIntent,
+  pledgeAmountReviewLabel,
   pledgeCheckoutButtonLabel,
+  pledgeCheckoutCanceledError,
   pledgeCheckoutError,
+  PLEDGE_AMOUNT_OPTIONS,
+  pledgeResumeError,
+  pledgeStripeRecordLabel,
+  pledgeTempoPlanExplanation,
   resolvePledgeProgram,
+  restorePledgeDraft,
   restorePledgeSelection,
 } from "@/lib/pledge-flow-state";
 import {
@@ -48,13 +55,6 @@ type Located = {
   tribes: TribeCard[];
   note: string | null;
   coveredCounties: string[];
-};
-
-const AMOUNT_CHIPS = [25, 50, 100, 250];
-const INTERVAL_LABELS: Record<CheckoutInterval, string> = {
-  once: "One time",
-  month: "Monthly",
-  year: "Yearly",
 };
 
 function cleanAmount(value: string) {
@@ -85,20 +85,16 @@ export function PledgeFlow({
   >(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const resumeAttempted = useRef(false);
+  const [resumeError, setResumeError] = useState<string | null>(null);
   const addressInputRef = useRef<HTMLInputElement>(null);
   const checkoutButtonRef = useRef<HTMLButtonElement>(null);
-  const locationRecoveryRef = useRef<HTMLElement | null>(null);
+  const resumeAttempted = useRef(false);
 
   async function locate(body: { address?: string; county?: string }) {
-    locationRecoveryRef.current = body.address
-      ? addressInputRef.current
-      : document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
     setBusyAction("locate");
     setLocationError(null);
     setCheckoutError(null);
+    setResumeError(null);
     try {
       const res = await fetch("/api/geocode", {
         method: "POST",
@@ -125,7 +121,7 @@ export function PledgeFlow({
     setBusyAction("checkout");
     setCheckoutError(null);
     try {
-      await startCheckout(intent, { resuming });
+      await startCheckout(intent, { preserveCancelIntent: true, resuming });
     } catch (caught) {
       setCheckoutError(pledgeCheckoutError(caught, demo));
       setBusyAction(null);
@@ -135,10 +131,36 @@ export function PledgeFlow({
   useEffect(() => {
     if (resumeAttempted.current) return;
     resumeAttempted.current = true;
-    const intent = consumeCheckoutIntent("/pledge");
-    if (!intent) return;
+    const checkoutReturn = consumeCheckoutReturn("/pledge");
+    if (!checkoutReturn) return;
 
     queueMicrotask(() => {
+      if (checkoutReturn.status === "invalid") {
+        const restored = restorePledgeDraft(checkoutReturn.draft);
+        if (restored.tribeId !== undefined) setTribeId(restored.tribeId);
+        if (restored.interval !== undefined) setInterval(restored.interval);
+        if (restored.amount !== undefined) setAmount(restored.amount);
+        if (restored.custom !== undefined) setCustom(restored.custom);
+        if (restored.streamDurationSeconds !== undefined) {
+          setStreamDurationSeconds(restored.streamDurationSeconds);
+        }
+        if (restored.streamIntervalSeconds !== undefined) {
+          setStreamIntervalSeconds(restored.streamIntervalSeconds);
+        }
+
+        const error = pledgeResumeError({
+          demo,
+          hasProgram: restored.tribeId !== undefined,
+        });
+        if (restored.tribeId !== undefined) {
+          setCheckoutError(error);
+        } else {
+          setResumeError(error);
+        }
+        return;
+      }
+
+      const { canceled, intent } = checkoutReturn;
       const restored = restorePledgeSelection(intent);
       setTribeId(restored.tribeId);
       setInterval(restored.interval);
@@ -146,20 +168,22 @@ export function PledgeFlow({
       setCustom(restored.custom);
       setStreamDurationSeconds(restored.streamDurationSeconds);
       setStreamIntervalSeconds(restored.streamIntervalSeconds);
-      void openCheckout(intent, true);
+      if (canceled) {
+        setCheckoutError(pledgeCheckoutCanceledError(demo));
+      } else {
+        void openCheckout(intent, true);
+      }
     });
-  }, [openCheckout]);
+  }, [demo, openCheckout]);
 
   useEffect(() => {
-    if (locationError && busyAction === null) {
-      locationRecoveryRef.current?.focus();
-    }
-  }, [busyAction, locationError]);
+    if (!resumeError || busyAction !== null) return;
+    addressInputRef.current?.focus();
+  }, [busyAction, resumeError]);
 
   useEffect(() => {
-    if (checkoutError && busyAction === null) {
-      checkoutButtonRef.current?.focus();
-    }
+    if (!checkoutError || busyAction !== null) return;
+    checkoutButtonRef.current?.focus();
   }, [busyAction, checkoutError]);
 
   function checkout() {
@@ -182,8 +206,35 @@ export function PledgeFlow({
     );
   }
 
+  function chooseProgram(next: string) {
+    setCheckoutError(null);
+    setTribeId(next);
+  }
+
   function chooseInterval(next: CheckoutInterval) {
+    setCheckoutError(null);
     setInterval(next);
+  }
+
+  function chooseAmount(next: number) {
+    setCheckoutError(null);
+    setAmount(next);
+    setCustom("");
+  }
+
+  function changeCustomAmount(next: string) {
+    setCheckoutError(null);
+    setCustom(cleanAmount(next));
+  }
+
+  function chooseStreamDuration(next: StreamDurationSeconds) {
+    setCheckoutError(null);
+    setStreamDurationSeconds(next);
+  }
+
+  function chooseStreamInterval(next: StreamIntervalSeconds) {
+    setCheckoutError(null);
+    setStreamIntervalSeconds(next);
   }
 
   const selectedTribe = resolvePledgeProgram(
@@ -200,7 +251,7 @@ export function PledgeFlow({
   );
   const busy = busyAction !== null;
   const state =
-    locationError || checkoutError
+    locationError || checkoutError || resumeError
       ? "error"
       : busy
         ? "loading"
@@ -209,6 +260,7 @@ export function PledgeFlow({
     amountValid,
     checkoutError,
     demo,
+    interval,
     selectedAmount,
   });
 
@@ -256,6 +308,8 @@ export function PledgeFlow({
             aria-describedby={
               locationError
                 ? "pledge-location-help pledge-location-error"
+                : resumeError
+                  ? "pledge-location-help pledge-resume-error"
                 : "pledge-location-help"
             }
           />
@@ -300,6 +354,12 @@ export function PledgeFlow({
         ))}
       </div>
 
+      {resumeError && (
+        <p id="pledge-resume-error" className="pledge-error" role="alert">
+          {resumeError}
+        </p>
+      )}
+
       {locationError && (
         <p
           id="pledge-location-error"
@@ -331,7 +391,7 @@ export function PledgeFlow({
               <button
                 type="button"
                 key={tribe.id}
-                onClick={() => setTribeId(tribe.id)}
+                onClick={() => chooseProgram(tribe.id)}
                 className="pledge-program"
                 aria-pressed={tribeId === tribe.id}
               >
@@ -356,11 +416,16 @@ export function PledgeFlow({
               <p className="pledge-kicker">
                 {demo ? "Tend demo preview" : "Tend test checkout"}
               </p>
-              <h3>Choose a test amount for {selectedTribe.taxName}</h3>
+              <h3>
+                Choose a {demo ? "sample" : "Stripe test"} amount for{" "}
+                {selectedTribe.taxName}
+              </h3>
             </div>
             <div className="pledge-suggestion">
-              <span>Test amount</span>
-              <strong>${selectedAmount}</strong>
+              <span>{demo ? "Sample amount" : "Stripe test amount"}</span>
+              <strong>
+                {pledgeAmountReviewLabel({ amountValid, selectedAmount })}
+              </strong>
             </div>
           </div>
           <p className="pledge-location-note">
@@ -374,7 +439,7 @@ export function PledgeFlow({
             .{" "}
             {demo
               ? "The demo below shows a sample receipt. Stripe and Tempo stay idle."
-              : "Tend’s checkout below uses test funds."}
+              : "Review the Stripe test payment or subscription and timing below before continuing. No real funds move."}
           </p>
 
           <div className="pledge-amount-grid">
@@ -404,16 +469,15 @@ export function PledgeFlow({
               </fieldset>
 
               <fieldset className="pledge-control">
-                <legend>Test amount</legend>
+                <legend>
+                  {demo ? "Sample amount" : "Stripe test amount"}
+                </legend>
                 <div className="pledge-amount-row">
-                  {AMOUNT_CHIPS.map((chip) => (
+                  {PLEDGE_AMOUNT_OPTIONS.map((chip) => (
                     <button
                       key={chip}
                       type="button"
-                      onClick={() => {
-                        setAmount(chip);
-                        setCustom("");
-                      }}
+                      onClick={() => chooseAmount(chip)}
                       className="pledge-amount-chip"
                       aria-pressed={amount === chip && !custom}
                     >
@@ -427,16 +491,21 @@ export function PledgeFlow({
                       inputMode="decimal"
                       value={custom}
                       onChange={(event) =>
-                        setCustom(cleanAmount(event.target.value))
+                        changeCustomAmount(event.target.value)
                       }
-                      aria-label="Custom test amount in dollars"
+                      aria-label={
+                        demo
+                          ? "Custom sample amount in dollars"
+                          : "Custom Stripe test amount in dollars"
+                      }
                       aria-invalid={Boolean(custom) && !amountValid}
                       aria-describedby="pledge-amount-help"
                     />
                   </label>
                 </div>
                 <p id="pledge-amount-help" className="pledge-location-note">
-                  Enter an amount from $1 to $10,000.
+                  Enter {demo ? "a sample" : "a Stripe test"} amount from $1
+                  to $10,000. No real funds move.
                 </p>
               </fieldset>
 
@@ -446,11 +515,11 @@ export function PledgeFlow({
                     <SlidersHorizontal size={15} aria-hidden="true" />
                     {demo
                       ? "Set demo receipt timing"
-                      : "Set Tempo testnet transfer timing"}
+                      : "Plan Tempo testnet timing"}
                   </span>
                   <small>
                     {settlementCount}{" "}
-                    {demo ? "preview transfers" : "testnet transfers"}, every{" "}
+                    {demo ? "preview transfers" : "planned test transfers"}, every{" "}
                     {formatStreamTime(streamIntervalSeconds)}
                   </small>
                 </summary>
@@ -460,8 +529,8 @@ export function PledgeFlow({
                   }
                   durationSeconds={streamDurationSeconds}
                   intervalSeconds={streamIntervalSeconds}
-                  onDurationChange={setStreamDurationSeconds}
-                  onIntervalChange={setStreamIntervalSeconds}
+                  onDurationChange={chooseStreamDuration}
+                  onIntervalChange={chooseStreamInterval}
                   preview={demo}
                 />
               </details>
@@ -486,27 +555,41 @@ export function PledgeFlow({
                   <strong>{selectedTribe?.name ?? "Selected program"}</strong>
                 </div>
                 <div>
-                  <span>Test amount</span>
+                  <span>{demo ? "Sample amount" : "Stripe test amount"}</span>
                   <strong>
-                    ${amountValid ? selectedAmount.toFixed(2) : "0.00"}
+                    {pledgeAmountReviewLabel({ amountValid, selectedAmount })}
                   </strong>
                 </div>
                 <div>
-                  <span>Frequency</span>
-                  <strong>{INTERVAL_LABELS[interval]}</strong>
+                  <span>
+                    {demo ? "Preview schedule" : "If checkout succeeds"}
+                  </span>
+                  <strong>
+                    {demo
+                      ? interval === "once"
+                        ? "One time"
+                        : interval === "month"
+                          ? "Monthly"
+                          : "Yearly"
+                      : pledgeStripeRecordLabel(interval)}
+                  </strong>
                 </div>
                 <div>
                   <span>
-                    {demo ? "Preview transfers" : "Tempo testnet transfers"}
+                    {demo ? "Preview transfers" : "Planned testnet transfers"}
                   </span>
                   <strong>{settlementCount}</strong>
                 </div>
                 <div>
-                  <span>Transfer window</span>
+                  <span>
+                    {demo ? "Preview window" : "Planned transfer window"}
+                  </span>
                   <strong>{formatStreamTime(streamDurationSeconds)}</strong>
                 </div>
                 <div>
-                  <span>Transfer interval</span>
+                  <span>
+                    {demo ? "Preview interval" : "Planned transfer interval"}
+                  </span>
                   <strong>
                     Every {formatStreamTime(streamIntervalSeconds)}
                   </strong>
@@ -522,9 +605,9 @@ export function PledgeFlow({
                   </>
                 ) : (
                   <>
-                    Stripe processes a test payment. This prototype can then
-                    create test pathUSD transfers on the Tempo Moderato
-                    testnet. No real money reaches {selectedTribe.name}.
+                    {pledgeTempoPlanExplanation(interval)} The receipt lists
+                    only testnet transfers that settle. No real money reaches{" "}
+                    {selectedTribe.name}.
                   </>
                 )}
               </p>
@@ -572,7 +655,7 @@ export function PledgeFlow({
               <p className="pledge-test-disclosure">
                 {demo
                   ? "Demo preview only. Stripe Checkout and Tempo stay idle."
-                  : "Stripe test payment with a Tempo Moderato testnet transfer record. No real funds move."}
+                  : "Test only. Stripe may record a checkout attempt; the receipt shows only confirmed Tempo testnet transfers. No real funds move."}
               </p>
             </div>
           </div>

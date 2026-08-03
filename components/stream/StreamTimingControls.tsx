@@ -37,7 +37,7 @@ export function StreamTimingControls({
     <div className="pledge-stream-timing">
       <fieldset className="pledge-control">
         <legend>
-          {preview ? "Demo receipt window" : "Tempo testnet transfer window"}
+          {preview ? "Demo receipt window" : "Tempo testnet plan window"}
         </legend>
         <div className="pledge-segmented pledge-duration">
           {STREAM_DURATIONS_SECONDS.map((seconds) => (
@@ -55,11 +55,11 @@ export function StreamTimingControls({
 
       <fieldset className="pledge-control pledge-cadence">
         <legend className="sr-only">
-          {preview ? "Demo receipt interval" : "Tempo testnet transfer interval"}
+          {preview ? "Demo receipt interval" : "Tempo testnet plan interval"}
         </legend>
         <div className="pledge-cadence-heading">
           <span aria-hidden="true">
-            {preview ? "Demo receipt interval" : "Tempo testnet transfer interval"}
+            {preview ? "Demo receipt interval" : "Tempo testnet plan interval"}
           </span>
           <output aria-live="polite">
             Every {formatStreamTime(intervalSeconds)}
@@ -67,7 +67,7 @@ export function StreamTimingControls({
         </div>
         <Slider
           aria-label={
-            preview ? "Demo receipt interval" : "Tempo testnet transfer interval"
+            preview ? "Demo receipt interval" : "Tempo testnet plan interval"
           }
           className="pledge-timing-slider"
           min={0}
@@ -90,7 +90,7 @@ export function StreamTimingControls({
       <div className="pledge-stream-preview" aria-live="polite">
         <span>
           <strong>{settlements}</strong>{" "}
-          {preview ? "receipt steps" : "Tempo testnet transfers"}
+          {preview ? "receipt steps" : "planned testnet transfers"}
         </span>
         <span>
           <strong>
@@ -100,10 +100,11 @@ export function StreamTimingControls({
               maximumFractionDigits: 6,
             })}
           </strong>{" "}
-          per {preview ? "receipt step" : "testnet transfer"}
+          per {preview ? "receipt step" : "planned transfer"}
         </span>
         <span>
-          <strong>{formatStreamTime(durationSeconds)}</strong> total window
+          <strong>{formatStreamTime(durationSeconds)}</strong>{" "}
+          {preview ? "total window" : "planned window"}
         </span>
       </div>
     </div>
