@@ -66,6 +66,10 @@ export function ProgramCard({
           Opens {host(program.officialDonationUrl)} for {program.name}.
         </p>
 
+        <p className="mt-2 text-[11px] font-semibold text-[#9b5a0a]">
+          Tend checkout is a test. No real money moves on Tend.
+        </p>
+
         <div className="mt-2 grid gap-2 sm:grid-cols-[1fr_auto]">
           <a
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[11px] bg-[#171411] px-4 text-center text-[12px] font-semibold text-white transition hover:bg-[#38322d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
@@ -73,7 +77,7 @@ export function ProgramCard({
             rel="noreferrer"
             target="_blank"
           >
-            Donate on the official site
+            Donate at {host(program.officialDonationUrl)}
             <ExternalLink aria-hidden="true" size={14} />
           </a>
           <Link
@@ -102,10 +106,6 @@ export function ProgramCard({
             </span>
           ))}
         </div>
-
-        <p className="mt-3 border-t border-black/[0.07] pt-3 text-[10px] leading-relaxed text-[#7c756e]">
-          Tend listing: public information and test checkout only.
-        </p>
       </div>
     </article>
   );

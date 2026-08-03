@@ -154,10 +154,12 @@ export default async function ProgramDetail({
                 <pre className="mt-3 rounded-[10px] bg-[#0f0f0f] border border-black/[0.08] p-3 font-mono text-[10.5px] leading-relaxed text-[#555555] overflow-x-auto">
                   {`POST /api/mpp/land-tax
      ?tribe=${tribe.id}
-→ 402 · pay $25.00 · receipt`}
+→ 402 · pay $25.00 (Tend test amount) · receipt`}
                 </pre>
                 <p className="mt-2 text-[10px] font-mono text-[#8a8a8a]">
-                  Demonstration only. pathUSD on Tempo Moderato testnet.
+                  {tribe.id === "muwekma"
+                    ? "Demonstration only. The Foundation publishes no Shuumi rate."
+                    : "Demonstration only. pathUSD on Tempo Moderato testnet."}
                 </p>
               </div>
             </div>
