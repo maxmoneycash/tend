@@ -9,6 +9,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import "@/styles/navbar.css";
 
 const NAV_LINKS = [
+  { href: "/organizations", label: "For Organizations" },
   { href: "/programs", label: "Programs" },
   { href: "/explorer", label: "Explorer" },
   { href: "/dashboard", label: "Dashboards" },
@@ -180,8 +181,11 @@ export function Navbar() {
             )}
           </div>
 
-          <Link href="/programs" className="btn-nav-cta">
-            Explore programs <span aria-hidden="true">→</span>
+          <Link href="/pledge" className="btn-nav-cta">
+            Start a donation
+            <span aria-hidden="true" className="arrow">
+              →
+            </span>
           </Link>
 
           <button
@@ -387,11 +391,11 @@ export function Navbar() {
                       }
                     >
                       <Link
-                        href="/programs"
+                        href="/pledge"
                         onClick={() => setMobileOpen(false)}
                         className="mobile-menu-cta"
                       >
-                        Explore programs
+                        Start a donation
                       </Link>
                     </motion.div>
                   </motion.nav>

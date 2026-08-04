@@ -72,25 +72,25 @@ assert.equal(
 
 assert.equal(
   terminalSettlementErrorCopy(2, 5),
-  "The Tempo testnet transfers stopped after 2 of 5 test transfers settled. Use Copy session ID on the receipt and send that ID to the Tend operator running this test. Do not retry this transfer.",
+  "The Tempo testnet transfers stopped after 2 of 5 test transfers settled. Copy the session ID and send it to the test operator. Do not retry this transfer.",
   "A partial terminal failure must name the settled count and the safe operator handoff.",
 );
 assert.equal(
   terminalSettlementErrorCopy(0, 5),
-  "The Tempo testnet transfers stopped before a test transfer settled. Use Copy session ID on the receipt and send that ID to the Tend operator running this test. Do not retry this transfer.",
+  "The Tempo testnet transfers stopped before a test transfer settled. Copy the session ID and send it to the test operator. Do not retry this transfer.",
   "A terminal failure before settlement must still name the safe operator handoff.",
 );
 assert.equal(
   terminalPaymentFailureRecoveryCopy(),
-  "Tend will not retry this Checkout session. Start a new test pledge to try another test payment.",
+  "This Checkout session will not be retried. Start a new test pledge to try another payment.",
   "A terminal payment failure must direct the donor to a new test pledge.",
 );
 assert.deepEqual(awaitingPaymentUpdateCopy(), {
   announcement:
-    "Tend has not received a Stripe test payment update yet. Keep this page open while Tend checks again.",
+    "No Stripe test payment update yet. Keep this page open while it checks again.",
   heading: "Waiting for a Stripe update.",
   intro:
-    "Tend has not received a test payment update for this Checkout session. Keep this page open while Tend checks again.",
+    "No payment update for this Checkout session yet. Keep this page open.",
   panel: "Checking again for a Stripe test payment update.",
   receiptConfirmation: "Waiting for a Stripe test payment update",
   receiptDetail: "waiting for a Stripe test payment update",
@@ -99,10 +99,10 @@ assert.deepEqual(awaitingPaymentUpdateCopy(), {
 });
 assert.deepEqual(awaitingPaidTestPaymentCopy(), {
   announcement:
-    "Stripe has not marked this test payment as paid. Keep this page open while Tend checks again.",
+    "Stripe has not marked this test payment as paid. Keep this page open.",
   heading: "Stripe has not marked the test payment as paid.",
   intro:
-    "Tend received a Checkout update without a paid status. Keep this page open while Tend checks Stripe again.",
+    "Checkout updated without a paid status. Keep this page open while Stripe is checked again.",
   panel: "Checking again for a paid Stripe test payment.",
   receiptConfirmation: "Waiting for a paid Stripe status",
   receiptDetail: "not marked paid by Stripe",
@@ -111,12 +111,12 @@ assert.deepEqual(awaitingPaidTestPaymentCopy(), {
 });
 assert.deepEqual(prolongedAwaitingPaymentUpdateCopy(), {
   announcement:
-    "Tend still has no Stripe test payment update after two minutes of checks. Copy the session ID on the receipt and send it to the Tend operator running this test.",
+    "No Stripe update after two minutes. Copy the session ID and send it to the test operator.",
   heading: "Still no Stripe update.",
   intro:
-    "Two minutes of checks brought no Stripe test payment update for this Checkout session. The Stripe webhook may not be reaching this Tend server. Copy the session ID on the receipt and send it to the Tend operator running this test.",
+    "No Stripe update arrived after two minutes. Copy the session ID and send it to the test operator.",
   panel:
-    "Still checking. The Stripe webhook may not be reaching this Tend server.",
+    "Still checking. The Stripe webhook may not be reaching the server.",
   receiptConfirmation: "No Stripe update after two minutes",
   receiptDetail: "no Stripe update after two minutes of checks",
   receiptStatusLabel: "No Stripe update",
@@ -124,21 +124,21 @@ assert.deepEqual(prolongedAwaitingPaymentUpdateCopy(), {
 });
 assert.deepEqual(preparingFirstTestnetTransferCopy(), {
   announcement:
-    "Test payment verified. Tend is setting up the first Tempo testnet transfer. Keep this page open for the next receipt update.",
+    "Test payment verified. The first testnet transfer is being prepared.",
   heading: "Setting up the first testnet transfer.",
   intro:
-    "Stripe verified the test payment. Tend is setting up the first pathUSD transfer on Tempo’s public testnet. Keep this page open for the next receipt update.",
+    "Stripe verified the test payment. The first pathUSD transfer is being prepared on Tempo testnet.",
   panel: "Setting up the first Tempo testnet transfer. Keep this page open.",
   stateLabel: "Setting up first transfer",
 });
 assert.equal(
   receiptRefreshRecoveryCopy(true),
-  "Tend could not refresh this test receipt. The last confirmed details remain below. Use Check receipt again to request the latest saved status. Payment and Tempo transfer retries stay disabled.",
+  "The receipt could not refresh. The last confirmed details remain below. Use Check receipt again to request the latest saved status. Payment and Tempo transfer retries stay disabled.",
   "A failed refresh must preserve confirmed details and name the read-only recovery action.",
 );
 assert.equal(
   receiptRefreshRecoveryCopy(false),
-  "Tend could not load this test receipt. Use Check receipt again to request the latest saved status. Payment and Tempo transfer retries stay disabled.",
+  "The test receipt could not load. Use Check receipt again to request the latest saved status. Payment and Tempo transfer retries stay disabled.",
   "An unavailable first load must name the read-only recovery action without claiming saved details.",
 );
 assert.match(
@@ -258,12 +258,12 @@ assert.match(
 );
 assert.match(
   receipt,
-  /<dt>Last Tempo transaction ID<\/dt>/,
+  /<dt>Last transaction<\/dt>/,
   "The receipt must identify the shortened Tempo proof value.",
 );
 assert.match(
   receipt,
-  /<dt>Tempo testnet recipient<\/dt>/,
+  /<dt>Recipient<\/dt>/,
   "The receipt must identify the shortened recipient as a testnet address.",
 );
 assert.match(

@@ -1,12 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FlaskConical, Info } from "lucide-react";
+import {
+  ArrowUpRight,
+  Check,
+  FileText,
+  MapPinned,
+} from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
-import { AmbientBlobs } from "@/components/layout/AmbientBlobs";
 import { countyNotes, countyTribes, getTribe } from "@/lib/tribes";
 import { StreamPanel } from "@/components/stream/StreamPanel";
-import { ProgramOfficialHero } from "@/components/programs/ProgramOfficialHero";
+import { ProgramCampaignHeader } from "@/components/content-rewards/ProgramCampaignHeader";
 import { demoMode } from "@/lib/demo";
+import "@/styles/content-rewards-product.css";
 
 export default async function ProgramDetail({
   params,
@@ -24,152 +29,52 @@ export default async function ProgramDetail({
   const notes = tribeCounties
     .map((c) => countyNotes[c])
     .filter((n, i, arr) => n && arr.indexOf(n) === i);
-
   return (
-    <div className="min-h-screen pb-24 md:pb-0">
+    <div className="cr-product-page min-h-screen pb-24 md:pb-0">
       <Navbar />
-      <div
-        style={{
-          paddingTop: "calc(108px + env(safe-area-inset-top, 0px))",
-        }}
-      />
-      <div className="relative" style={{ overflow: "clip" }}>
-        <AmbientBlobs variant="earn" />
-        <div className="relative z-10 mx-auto max-w-6xl px-5 py-7 sm:px-10 sm:py-10">
-          <div className="animate-enter">
-            <Link
-              href="/programs"
-              className="inline-flex min-h-11 items-center text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold text-[#6b6b6b] hover:text-[#3a3a3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
-            >
-              ← All programs
-            </Link>
-            <ProgramOfficialHero counties={tribeCounties} program={tribe} />
-          </div>
+      <div className="cr-product-nav-spacer" />
+      <main className="cr-product-shell cr-product-campaign-detail">
+        <Link href="/programs" className="cr-product-back-link">← All programs</Link>
+        <ProgramCampaignHeader counties={tribeCounties} program={tribe} />
 
-          <section
-            className="animate-enter animate-enter-delay-1 mt-5 grid scroll-mt-28 gap-4 lg:grid-cols-[minmax(260px,0.68fr)_minmax(0,1.32fr)]"
-            id="tend-test-checkout"
-          >
-            <aside className="h-fit rounded-[20px] border-2 border-[#d99445]/35 bg-[#fff8ed] p-5 sm:p-6">
-              <div className="flex items-center gap-2 text-[#9b5a0a]">
-                <FlaskConical aria-hidden="true" size={17} />
-                <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold uppercase tracking-[0.14em]">
-                  Tend preview
-                </p>
-              </div>
-              <h2 className="mt-3 text-balance text-[22px] font-bold leading-tight tracking-[-0.025em] text-[#30271f]">
-                This checkout is a test.
-              </h2>
-              <p className="mt-3 text-[12px] leading-relaxed text-[#6f5a43]">
-                This checkout moves test funds only. Stripe stays in test mode,
-                and the receipt settles with faucet-funded pathUSD on Tempo
-                Moderato testnet.
-              </p>
-              <p className="mt-4 border-t border-[#d99445]/25 pt-4 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold text-[#4c3d2d]">
-                Use the official donation button above for real giving. Use
-                this panel only to preview the flow.
-              </p>
-            </aside>
-
-            <StreamPanel
-              demo={demo}
-              tribeId={tribe.id}
-              tribeName={tribe.name}
-            />
+        <div className="cr-product-campaign-workspace">
+          <section className="cr-product-donation-panel scroll-mt-28" id="donate">
+            <StreamPanel demo={demo} tribeId={tribe.id} tribeName={tribe.name} />
           </section>
 
-          <div className="mt-5 grid gap-4 lg:grid-cols-[1.5fr_1fr]">
-            <section
-              aria-labelledby="about-program"
-              className="surface-1 rounded-[16px] p-5 sm:p-6"
-            >
-              <p className="flex items-center gap-2 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
-                <Info aria-hidden="true" size={14} />
-                About this program
-              </p>
-              <h2 className="sr-only" id="about-program">
-                About {tribe.taxName}
-              </h2>
-              <p className="mt-2.5 text-[13px] leading-relaxed text-[#3a3a3a]">
-                {tribe.blurb}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {tribeCounties.map((c) => (
-                  <span
-                    key={c}
-                    className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] px-1.5 py-0.5 rounded bg-black/[0.03] text-[#6b6b6b] border border-black/[0.08]"
-                  >
-                    {c}
-                  </span>
-                ))}
-              </div>
-              {notes.map((n) => (
-                <p
-                  className="mt-4 text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#8a8a8a]"
-                  key={n}
-                >
-                  {n}
-                </p>
-              ))}
-
-              <div className="mt-5 grid gap-2 border-t border-black/[0.06] pt-4 sm:grid-cols-3 sm:gap-3">
-                <div className="surface-2 flex min-h-11 items-center justify-between gap-3 rounded-[10px] p-3 sm:block sm:min-h-0 sm:p-2.5 sm:text-center">
-                  <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-muted-foreground uppercase tracking-wider">
-                    Real funds sent
-                  </p>
-                  <p className="shrink-0 text-[15px] font-bold text-foreground font-display">
-                    $0
-                  </p>
-                </div>
-                <div className="surface-2 flex min-h-11 items-center justify-between gap-3 rounded-[10px] p-3 sm:block sm:min-h-0 sm:p-2.5 sm:text-center">
-                  <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-muted-foreground uppercase tracking-wider">
-                    Checkout
-                  </p>
-                  <p className="shrink-0 text-[15px] font-bold text-foreground font-display">
-                    test only
-                  </p>
-                </div>
-                <div className="surface-2 flex min-h-11 items-center justify-between gap-3 rounded-[10px] p-3 sm:block sm:min-h-0 sm:p-2.5 sm:text-center">
-                  <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-muted-foreground uppercase tracking-wider">
-                    Machine path
-                  </p>
-                  <p className="shrink-0 text-[15px] font-bold text-foreground font-display">
-                    MPP
-                  </p>
-                </div>
-              </div>
+          <aside className="cr-product-campaign-sidebar">
+            <section className="cr-product-section-card">
+              <h2>Why use this checkout</h2>
+              <ul className="cr-product-requirements">
+                <li><MapPinned aria-hidden="true" size={17} /><span><strong>Choose the right program</strong>Published coverage stays visible before payment.</span></li>
+                <li><Check aria-hidden="true" size={17} /><span><strong>Keep the proof</strong>The payment and settlement links share one receipt.</span></li>
+                <li><FileText aria-hidden="true" size={17} /><span><strong>Reduce reconciliation</strong>The program reference remains attached after checkout.</span></li>
+              </ul>
             </section>
 
-            <div className="space-y-4">
-              <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#8a8a8a] text-center">
-                Want to try address matching?{" "}
-                <Link
-                  className="underline underline-offset-4 text-[#555555] hover:text-[#111111]"
-                  href="/pledge"
-                >
-                  Find a program by address or county
-                </Link>
-              </p>
-
-              <div className="surface-1 rounded-[16px] p-5">
-                <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-display font-semibold text-[#6b6b6b] uppercase tracking-wider">
-                  Machine payments
-                </p>
-                <pre className="mt-3 rounded-[10px] bg-[#0f0f0f] border border-black/[0.08] p-3 font-mono text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#555555] overflow-x-auto">
-                  {`POST /api/mpp/land-tax
-     ?tribe=${tribe.id}
-→ 402 · pay $25.00 (Tend test amount) · receipt`}
-                </pre>
-                <p className="mt-2 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-mono text-[#8a8a8a]">
-                  {tribe.id === "muwekma"
-                    ? "Demonstration only. The Foundation publishes no Shuumi rate."
-                    : "Demonstration only. pathUSD on Tempo Moderato testnet."}
-                </p>
+            <section className="cr-product-section-card">
+              <h2>Program sources</h2>
+              <div className="cr-product-resources">
+                <a href={tribe.officialProgramUrl} rel="noreferrer" target="_blank">Official program page <ArrowUpRight aria-hidden="true" size={14} /></a>
+                <a href={tribe.officialDonationUrl} rel="noreferrer" target="_blank">Organization donation page <ArrowUpRight aria-hidden="true" size={14} /></a>
               </div>
-            </div>
-          </div>
+            </section>
+          </aside>
         </div>
-      </div>
+
+        <section className="cr-product-program-record">
+          <header><p>Published program record</p><h2>About {tribe.taxName}</h2></header>
+          <div>
+            <p>{tribe.blurb}</p>
+            {notes.map((note) => <p className="cr-product-record-note" key={note}>{note}</p>)}
+          </div>
+        </section>
+
+        <details className="cr-product-technical">
+          <summary>Machine payment endpoint</summary>
+          <pre>{`POST /api/mpp/land-tax?tribe=${tribe.id}`}</pre>
+        </details>
+      </main>
     </div>
   );
 }

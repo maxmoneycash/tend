@@ -151,8 +151,8 @@ export async function POST(req: Request) {
             name: `${tribe.taxName} for ${tribe.name}`,
             description:
               interval === "once"
-                ? "One-time voluntary contribution. Tend takes no platform fee; processing fees may apply."
-                : `Voluntary ${interval}ly contribution. Tend takes no platform fee; processing fees may apply.`,
+                ? "One-time voluntary contribution. No platform fee; processing fees may apply."
+                : `Voluntary ${interval}ly contribution. No platform fee; processing fees may apply.`,
           },
         },
       },

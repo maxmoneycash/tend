@@ -63,7 +63,7 @@ export const relatedGivingPrograms = [
 
 /**
  * County → tribes whose published territorial definitions include it.
- * Tend never arbitrates boundaries: where definitions overlap, every
+ * The product never arbitrates boundaries: where definitions overlap, every
  * matching tribe is shown and the contributor chooses.
  */
 export const countyTribes: Record<string, TribeId[]> = {
@@ -76,11 +76,11 @@ export const countyTribes: Record<string, TribeId[]> = {
 
 export const countyNotes: Record<string, string> = {
   "Santa Clara":
-    "A county result is not precise enough to resolve Santa Clara's territorial boundaries. Tend shows both possible matches and does not decide between them.",
+    "A county result is not precise enough to resolve Santa Clara's territorial boundaries. Both possible matches are shown for you to choose.",
   Alameda:
-    "Sogorea Te' Land Trust's Shuumi Land Tax also serves the East Bay (Lisjan Ohlone). Tend shows the tribes it hosts; Shuumi lives at sogoreate-landtrust.org.",
+    "Sogorea Te' Land Trust's Shuumi Land Tax also serves the East Bay (Lisjan Ohlone). Its program is at sogoreate-landtrust.org.",
   "Contra Costa":
-    "Sogorea Te' Land Trust's Shuumi Land Tax also serves the East Bay (Lisjan Ohlone). Tend shows the tribes it hosts; Shuumi lives at sogoreate-landtrust.org.",
+    "Sogorea Te' Land Trust's Shuumi Land Tax also serves the East Bay (Lisjan Ohlone). Its program is at sogoreate-landtrust.org.",
 };
 
 export const coveredCounties = Object.keys(countyTribes);

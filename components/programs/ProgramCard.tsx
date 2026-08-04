@@ -1,24 +1,18 @@
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight, Check, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { ProgramVideo } from "@/components/programs/ProgramVideo";
 import type { Tribe, TribeId } from "@/lib/tribes";
 
-const TONE: Record<TribeId, { cover: string; badge: string; accent: string }> = {
+const TONE: Record<TribeId, { cover: string; badge: string }> = {
   ramaytush: {
     cover: "cover-orange",
-    badge: "border-[#fa4616]/25 bg-[#fff4ef] text-[#b72e00]",
-    accent: "bg-[#fa4616]",
+    badge: "cr-campaign-tag--orange",
   },
   muwekma: {
     cover: "cover-purple",
-    badge: "border-[#8b5cf6]/25 bg-[#f6f1ff] text-[#6d3bc2]",
-    accent: "bg-[#8b5cf6]",
+    badge: "cr-campaign-tag--purple",
   },
 };
-
-function host(url: string) {
-  return new URL(url).hostname.replace(/^www\./, "");
-}
 
 export function ProgramCard({
   counties,
@@ -28,91 +22,60 @@ export function ProgramCard({
   program: Tribe;
 }) {
   const tone = TONE[program.id];
-  const isYunakinKindfulCampaign = program.id === "ramaytush";
-  const donationButtonLabel = isYunakinKindfulCampaign
-    ? "Continue to Yunakin on Kindful"
-    : "Open the Foundation donation form";
-  const donationHandoff = isYunakinKindfulCampaign
-    ? `Opens the ${program.name}’s ${program.taxName} campaign at ${host(program.officialDonationUrl)} in a new tab.`
-    : `Opens the donation form published by ${program.name} at ${host(program.officialDonationUrl)} in a new tab.`;
-
+  const shortDescription =
+    program.id === "ramaytush"
+      ? "A voluntary contribution for people living on the San Francisco Peninsula."
+      : "A voluntary annual contribution supporting culture, education, and land access.";
   return (
-    <article className="group relative overflow-hidden rounded-[20px] border border-black/[0.1] bg-white shadow-[0_18px_48px_rgba(28,20,14,0.06)] transition duration-300 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-[0_22px_58px_rgba(28,20,14,0.1)]">
-      <div className={`relative h-24 overflow-hidden sm:h-32 ${tone.cover}`}>
+    <article className="cr-product-campaign-card">
+      <Link className={`cr-product-campaign-thumb ${tone.cover}`} href={`/programs/${program.id}`}>
         <ProgramVideo
-          className="absolute inset-0 h-full w-full object-cover"
+          className="cr-product-campaign-card-media"
           poster={`/videos/${program.id}-poster.jpg`}
           src={`/videos/${program.id}.mp4`}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-        <span
-          className={`absolute left-4 top-4 inline-flex rounded-full border px-2.5 py-1 text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold ${tone.badge}`}
-        >
+        <span className={`cr-product-campaign-tag ${tone.badge}`}>
           {program.region}
         </span>
-      </div>
+      </Link>
 
-      <div className="p-4 sm:p-5">
-        <div className={`mb-4 h-1 w-10 rounded-full ${tone.accent}`} />
-        <p className="text-[length:var(--text-caption)] leading-[var(--leading-caption)] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
-          Organization
-        </p>
-        <h2 className="mt-1 text-balance text-[17px] font-bold leading-tight tracking-[-0.02em] text-[#171411]">
-          {program.name}
-        </h2>
-        <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
-          Program
-        </p>
-        <p className="mt-1 text-[13px] font-semibold text-[#4e4944]">
-          {program.taxName}
-        </p>
-        <p className="mt-2 line-clamp-3 text-[12px] leading-relaxed text-[#68625c]">
-          {program.blurb}
-        </p>
+      <div className="cr-product-campaign-card-body">
+        <div className="cr-product-card-brand">
+          <span aria-hidden="true">{program.name.slice(0, 1)}</span>
+          <p>{program.name}</p>
+          <Check aria-label="Published organization" size={12} />
+        </div>
+        <h2>{program.taxName}</h2>
+        <p className="cr-product-campaign-description">{shortDescription}</p>
 
-        <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#77736f]">
-          Published territory
-        </p>
-        <div
-          aria-label="Counties listed for this program"
-          className="mt-1 flex flex-wrap gap-1.5"
-        >
-          {counties.map((county) => (
-            <span
-              className="rounded-full border border-black/[0.08] bg-[#f7f5f2] px-2 py-0.5 text-[10px] text-[#625c56]"
-              key={county}
-            >
-              {county}
-            </span>
-          ))}
+        <dl className="cr-product-campaign-card-stats">
+          <div><dt>Counties</dt><dd>{counties.length}</dd></div>
+          <div><dt>Cadence</dt><dd>1× · recurring</dd></div>
+          <div><dt>Receipt</dt><dd>Payment + proof</dd></div>
+        </dl>
+
+        <div className="cr-product-county-row" aria-label="Published counties">
+          {counties.map((county) => <span key={county}>{county}</span>)}
         </div>
 
-        <p className="mt-4 text-[12px] leading-relaxed text-[#625c56]">
-          {donationHandoff}
-        </p>
-
-        <div className="mt-2 grid gap-2 lg:grid-cols-[1fr_auto]">
+        <div className="cr-product-campaign-card-actions">
+          <Link
+            className="cr-product-primary"
+            href={`/programs/${program.id}#donate`}
+          >
+            View program
+            <ArrowRight aria-hidden="true" size={14} />
+          </Link>
           <a
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[11px] bg-[#171411] px-4 text-center text-[12px] font-semibold text-white transition hover:bg-[#38322d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
+            className="cr-product-text-link"
             href={program.officialDonationUrl}
             rel="noreferrer"
             target="_blank"
           >
-            {donationButtonLabel}
-            <ExternalLink aria-hidden="true" size={14} />
+            Official site
+            <ExternalLink aria-hidden="true" size={13} />
           </a>
-          <Link
-            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-[11px] border border-black/[0.12] bg-white px-4 text-[12px] font-semibold text-[#3f3934] transition hover:border-black/25 hover:bg-[#faf8f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#171411] focus-visible:ring-offset-2"
-            href={`/programs/${program.id}`}
-          >
-            View Tend details
-            <ArrowRight aria-hidden="true" size={14} />
-          </Link>
         </div>
-
-        <p className="mt-3 border-t border-black/[0.07] pt-3 text-[length:var(--text-caption)] leading-[var(--leading-caption)] text-[#7c756e]">
-          Tend checkout is a test. No real money moves on Tend.
-        </p>
       </div>
     </article>
   );

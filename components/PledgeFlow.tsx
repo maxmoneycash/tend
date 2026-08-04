@@ -6,7 +6,6 @@ import {
   LoaderCircle,
   MapPin,
   ShieldCheck,
-  SlidersHorizontal,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -32,11 +31,9 @@ import {
   restorePledgeSelection,
 } from "@/lib/pledge-flow-state";
 import {
-  DEFAULT_STREAM_DURATION_SECONDS,
   DEFAULT_STREAM_INTERVAL_SECONDS,
   formatStreamTime,
-  streamSettlementCount,
-  type StreamDurationSeconds,
+  streamDurationForInterval,
   type StreamIntervalSeconds,
 } from "@/lib/stream-plan";
 
@@ -76,8 +73,6 @@ export function PledgeFlow({
   const [interval, setInterval] = useState<CheckoutInterval>("once");
   const [amount, setAmount] = useState<number>(25);
   const [custom, setCustom] = useState("");
-  const [streamDurationSeconds, setStreamDurationSeconds] =
-    useState<StreamDurationSeconds>(DEFAULT_STREAM_DURATION_SECONDS);
   const [streamIntervalSeconds, setStreamIntervalSeconds] =
     useState<StreamIntervalSeconds>(DEFAULT_STREAM_INTERVAL_SECONDS);
   const [busyAction, setBusyAction] = useState<
@@ -148,9 +143,6 @@ export function PledgeFlow({
         if (restored.interval !== undefined) setInterval(restored.interval);
         if (restored.amount !== undefined) setAmount(restored.amount);
         if (restored.custom !== undefined) setCustom(restored.custom);
-        if (restored.streamDurationSeconds !== undefined) {
-          setStreamDurationSeconds(restored.streamDurationSeconds);
-        }
         if (restored.streamIntervalSeconds !== undefined) {
           setStreamIntervalSeconds(restored.streamIntervalSeconds);
         }
@@ -173,12 +165,19 @@ export function PledgeFlow({
       setInterval(restored.interval);
       setAmount(restored.amount);
       setCustom(restored.custom);
-      setStreamDurationSeconds(restored.streamDurationSeconds);
       setStreamIntervalSeconds(restored.streamIntervalSeconds);
       if (canceled) {
         setCheckoutError(pledgeCheckoutCanceledError(demo));
       } else {
-        void openCheckout(intent, true);
+        void openCheckout(
+          {
+            ...intent,
+            streamDurationSeconds: streamDurationForInterval(
+              intent.streamIntervalSeconds,
+            ),
+          },
+          true,
+        );
       }
     });
   }, [demo, openCheckout]);
@@ -252,11 +251,6 @@ export function PledgeFlow({
     setCustom(cleanAmount(next));
   }
 
-  function chooseStreamDuration(next: StreamDurationSeconds) {
-    setCheckoutError(null);
-    setStreamDurationSeconds(next);
-  }
-
   function chooseStreamInterval(next: StreamIntervalSeconds) {
     setCheckoutError(null);
     setStreamIntervalSeconds(next);
@@ -270,10 +264,7 @@ export function PledgeFlow({
   const selectedAmount = custom ? Number(custom) : amount;
   const amountValid =
     Number.isFinite(selectedAmount) && selectedAmount >= 1 && selectedAmount <= 10000;
-  const settlementCount = streamSettlementCount(
-    streamDurationSeconds,
-    streamIntervalSeconds,
-  );
+  const streamDurationSeconds = streamDurationForInterval(streamIntervalSeconds);
   const busy = busyAction !== null;
   const state =
     locationError || checkoutError || resumeError
@@ -308,7 +299,7 @@ export function PledgeFlow({
         <span>{demo ? "Demo mode" : "Stripe test mode"}</span>
       </div>
       <p id="pledge-location-help" className="pledge-location-note">
-        Tend uses public program information and may show more than one
+        Results use public program information and may include more than one
         listing.
       </p>
 
@@ -447,7 +438,7 @@ export function PledgeFlow({
           <div className="pledge-amount-header">
             <div>
               <p className="pledge-kicker">
-                {demo ? "Tend demo preview" : "Tend test checkout"}
+                {demo ? "Demo preview" : "Test checkout"}
               </p>
               <h3>
                 Choose a {demo ? "sample" : "Stripe test"} amount for{" "}
@@ -472,7 +463,7 @@ export function PledgeFlow({
             .{" "}
             {demo
               ? "The demo below shows a sample receipt. Stripe and Tempo stay idle."
-              : "Review the Stripe test payment or subscription and timing below before continuing. No real funds move."}
+              : "Review the test amount and drip rate below. No real funds move."}
           </p>
 
           <div className="pledge-amount-grid">
@@ -542,31 +533,13 @@ export function PledgeFlow({
                 </p>
               </fieldset>
 
-              <details className="pledge-stream-customizer pledge-stream-customizer-wide">
-                <summary>
-                  <span>
-                    <SlidersHorizontal size={15} aria-hidden="true" />
-                    {demo
-                      ? "Set demo receipt timing"
-                      : "Plan Tempo testnet timing"}
-                  </span>
-                  <small>
-                    {settlementCount}{" "}
-                    {demo ? "preview transfers" : "planned test transfers"}, every{" "}
-                    {formatStreamTime(streamIntervalSeconds)}
-                  </small>
-                </summary>
+              <div className="pledge-stream-customizer-wide">
                 <StreamTimingControls
-                  amountCents={
-                    amountValid ? Math.round(selectedAmount * 100) : 0
-                  }
-                  durationSeconds={streamDurationSeconds}
+                  disabled={busy}
                   intervalSeconds={streamIntervalSeconds}
-                  onDurationChange={chooseStreamDuration}
                   onIntervalChange={chooseStreamInterval}
-                  preview={demo}
                 />
-              </details>
+              </div>
             </div>
 
             <div className="pledge-payment-panel">
@@ -609,25 +582,11 @@ export function PledgeFlow({
                     </strong>
                   </div>
                 </div>
-                <div className="pledge-payment-review-timing">
+                <div className="pledge-payment-review-timing pledge-payment-review-rate">
                   <div>
-                    <span>
-                      {demo ? "Preview transfers" : "Planned testnet transfers"}
-                    </span>
-                    <strong>{settlementCount}</strong>
-                  </div>
-                  <div>
-                    <span>
-                      {demo ? "Preview window" : "Planned transfer window"}
-                    </span>
-                    <strong>{formatStreamTime(streamDurationSeconds)}</strong>
-                  </div>
-                  <div>
-                    <span>
-                      {demo ? "Preview interval" : "Planned transfer interval"}
-                    </span>
+                    <span>Drip rate</span>
                     <strong>
-                      Every {formatStreamTime(streamIntervalSeconds)}
+                      Every {formatStreamTime(streamIntervalSeconds)} until finished
                     </strong>
                   </div>
                 </div>

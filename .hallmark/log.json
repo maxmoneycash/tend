@@ -1,0 +1,46 @@
+[
+  {
+    "date": "2026-08-03",
+    "scope": "product routes",
+    "macrostructure": "Product campaign + operations register",
+    "theme": "studied-DNA",
+    "enrichment": "Content Rewards campaign and dashboard components",
+    "brief": "Replace landing-page composition with the actual Content Rewards product route system"
+  },
+  {
+    "date": "2026-08-03",
+    "scope": "program donation workbench",
+    "macrostructure": "Workbench donation composer",
+    "theme": "custom",
+    "theme_axes": "warm paper / geometric sans / Tend orange",
+    "enrichment": "inline payment proof",
+    "brief": "Replace the split form and fake paper receipt with one compact donation composer"
+  },
+  {
+    "date": "2026-08-03",
+    "scope": "program journey",
+    "macrostructure": "Tend-first program journey with evidence bridge",
+    "theme": "custom",
+    "theme_axes": "warm paper / geometric sans / Tend orange",
+    "enrichment": "program media",
+    "brief": "Make Tend the primary giving journey, remove border-heavy focus states, and state the discovery plus proof problem"
+  },
+  {
+    "date": "2026-08-03",
+    "scope": "app",
+    "macrostructure": "Focused giving workbench with progressive disclosure",
+    "theme": "custom",
+    "theme_axes": "warm paper / geometric sans / Tend orange",
+    "enrichment": "none",
+    "brief": "Apply donor-page hierarchy critique without removing payment proof or program context"
+  },
+  {
+    "date": "2026-08-03",
+    "scope": "app",
+    "macrostructure": "Giving workbench + Atlas workbench",
+    "theme": "custom",
+    "theme_axes": "warm paper / geometric sans / Tend orange",
+    "enrichment": "none",
+    "brief": "Restore dense donation UX and rebuild Explorer from the Presidio Atlas interaction model"
+  }
+]

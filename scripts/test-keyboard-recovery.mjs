@@ -73,7 +73,7 @@ assert.match(
 );
 assert.match(
   streamPanel,
-  /aria-describedby=\{error \? "stream-checkout-error" : undefined\}/,
+  /ariaDescribedBy=\{error \? "stream-checkout-error" : undefined\}/,
   "The program checkout retry action must describe its error.",
 );
 assert.match(

@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tend | Ohlone giving program guide",
+  title: "Ohlone giving program guide",
   description:
     "Explore demonstration listings for Indigenous-led contribution programs and preview the test-mode donation flow.",
 };

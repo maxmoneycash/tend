@@ -1,0 +1,41 @@
+{
+  "source": {
+    "url": "https://givebutter.com/monthly-donors",
+    "extractedAt": "2026-08-03T22:01:37.662Z",
+    "extractor": "dembrandt"
+  },
+  "colors": {
+    "primary": "rgb(18, 183, 106)",
+    "palette": [
+      "rgb(18, 183, 106)"
+    ],
+    "cssVariables": {}
+  },
+  "typography": {
+    "headingFont": "Matter",
+    "bodyFont": "Matter"
+  },
+  "spacing": {
+    "scale": [
+      "2px",
+      "4px",
+      "6px",
+      "8px",
+      "10px",
+      "12px",
+      "16px",
+      "20px",
+      "24px",
+      "30px",
+      "32px",
+      "40px",
+      "59px"
+    ]
+  },
+  "radius": {
+    "scale": []
+  },
+  "shadows": {
+    "scale": []
+  }
+}

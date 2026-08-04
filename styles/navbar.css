@@ -1,3 +1,4 @@
+/* Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V4 */
 /* Hallmark · component: navigation · genre: playful · theme: existing Tend system
  * behavior: Content Rewards glass scroll · clip reveal · staggered menu
  * states: default · hover · focus · active · current · reduced motion
@@ -130,6 +131,10 @@
   transition: opacity 180ms cubic-bezier(0.16, 1, 0.3, 1);
   touch-action: manipulation;
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-nav-cta .arrow {
+  font-size: 18px;
 }
 
 .nav-hamburger {

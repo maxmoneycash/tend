@@ -11,6 +11,8 @@ import {
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DonationReceipt } from "@/components/DonationReceipt";
+import { TaskSteps } from "@/components/interior/TaskSteps";
+import { ValueFlash } from "@/components/interior/ValueFlash";
 import {
   awaitingPaidTestPaymentCopy,
   awaitingPaymentUpdateCopy,
@@ -127,7 +129,7 @@ function getViewCopy(
         announcement: "Loading your test receipt.",
         heading: "Loading your test receipt.",
         intro:
-          "Tend is checking this Checkout session for its latest test payment status.",
+          "Checking this Checkout session for its latest payment status.",
         panel: "Checking the latest test payment status.",
         stateLabel: "Loading receipt",
       };
@@ -142,7 +144,7 @@ function getViewCopy(
         announcement: "Test payment verified. Preparing the testnet receipt.",
         heading: "Preparing the testnet receipt.",
         intro:
-          "Stripe verified the test payment. Tend is preparing the pathUSD transfers on Tempo’s public testnet.",
+          "Stripe verified the test payment. Preparing pathUSD transfers on Tempo testnet.",
         panel: "Preparing the Tempo testnet stream.",
         stateLabel: "Preparing test transfers",
       };
@@ -201,8 +203,8 @@ function getViewCopy(
         announcement: recovery,
         heading: "Receipt status unavailable.",
         intro: hasVerifiedPayment
-          ? "Tend could not refresh this test receipt. The last confirmed details remain below."
-          : "Tend could not load the latest saved status for this test receipt.",
+          ? "The receipt could not refresh. The last confirmed details remain below."
+          : "The latest saved receipt status could not load.",
         panel: hasVerifiedPayment
           ? "Showing the last confirmed testnet settlement status."
           : "The latest test receipt status is unavailable.",
@@ -366,7 +368,7 @@ export function TempoStream({
   const error =
     unavailableRecovery ??
     (requestError
-      ? `Tend could not refresh this test receipt. ${requestError}`
+      ? `The test receipt could not refresh. ${requestError}`
       : null) ??
     terminalSettlementError ??
     eventError?.message ??
@@ -395,64 +397,30 @@ export function TempoStream({
       : status === "awaiting-payment"
         ? awaitingPaidTestPaymentCopy()
         : null;
-  const stripeDetail = stripeVerified
-    ? "Test payment verified"
-    : paymentFailed
-      ? "Test payment failed"
-      : status === "awaiting-payment"
-        ? "Test payment pending"
-        : status === "unavailable"
-          ? "Status unavailable"
-          : status === "awaiting-confirmation"
-            ? "Waiting for Stripe update"
-            : "Checking status";
-  const tempoDetail = paymentFailed
-    ? "Skipped"
-    : status === "unavailable"
-      ? hasStreamPlan
-        ? `${settlements.length}/${totalSettlements} last confirmed`
-        : "Status unavailable"
-      : !stripeVerified
-        ? "Waiting for test payment"
-        : hasStreamPlan
-          ? `${settlements.length}/${totalSettlements} settled`
-          : "Preparing transfers";
-  const receiptDetail = paymentFailed
-    ? "Not created"
-    : status === "unavailable"
-      ? "Refresh failed"
-      : status === "complete"
-        ? "Complete"
-        : status === "error"
-          ? "Stopped"
-          : stripeVerified
-            ? "Building"
-            : "Pending";
   const routeSteps = [
     {
-      active: stripeVerified,
-      current:
-        !stripeVerified && !paymentFailed && status !== "unavailable",
-      detail: stripeDetail,
-      label: "Stripe",
+      id: "stripe",
+      label: "Stripe payment",
+      meta: "Verified",
     },
     {
-      active: stripeVerified && settlements.length > 0,
-      current:
-        stripeVerified &&
-        status !== "complete" &&
-        status !== "error" &&
-        status !== "unavailable",
-      detail: tempoDetail,
-      label: "Tempo",
+      id: "stream",
+      label: "Donation stream",
+      meta:
+        totalSettlements > 0
+          ? `${settlements.length}/${totalSettlements}`
+          : "Complete",
     },
     {
-      active: status === "complete",
-      current: status === "complete",
-      detail: receiptDetail,
-      label: "Receipt",
+      id: "receipt",
+      label: "Receipt ready",
+      meta: "Saved",
     },
   ];
+  const routeCurrent =
+    status === "complete" ? routeSteps.length : stripeVerified ? 1 : 0;
+  const routeFailed =
+    paymentFailed || status === "error" || status === "unavailable";
 
   return (
     <section className="tempo-stream" ref={streamRef}>
@@ -500,30 +468,13 @@ export function TempoStream({
         </div>
       </header>
 
-      <div
-        className="tempo-route-steps"
-        aria-label="Payment settlement route"
-        role="list"
-      >
-        {routeSteps.map(({ active, current, detail, label }, index) => (
-          <div
-            key={label}
-            className="tempo-route-step"
-            data-active={active}
-            role="listitem"
-            aria-current={current ? "step" : undefined}
-            aria-label={`${label}: ${detail}`}
-          >
-            <span aria-hidden="true">
-              {active ? <Check size={13} /> : index + 1}
-            </span>
-            <div>
-              <strong>{label}</strong>
-              <small>{detail}</small>
-            </div>
-          </div>
-        ))}
-      </div>
+      <TaskSteps
+        className="tempo-route-steps-interior"
+        current={routeCurrent}
+        failed={routeFailed}
+        label="Donation progress"
+        steps={routeSteps}
+      />
 
       {!paymentFailed && (
         <div className="tempo-receipt-grid">
@@ -568,7 +519,12 @@ export function TempoStream({
               <div>
                 <span>Settled on testnet</span>
                 <strong>
-                  {cents(streamedCents)}
+                  <ValueFlash
+                    className="tempo-streamed-value"
+                    format={cents}
+                    label="Settled on testnet"
+                    value={streamedCents}
+                  />
                   <small> / {cents(amountCents)}</small>
                 </strong>
               </div>

@@ -43,7 +43,7 @@ async function createPayToAddress(
   const paymentIntent = await getStripePreview().paymentIntents.create({
     amount: Math.round(Number(amountUsd) * 100),
     currency: "usd",
-    description: `Tend machine payment test for ${tribes[tribeId].name}`,
+    description: `Machine payment test for ${tribes[tribeId].name}`,
     metadata: { tribe: tribeId, source: "tend-mpp" },
     payment_method_data: { type: "crypto" } as never,
     payment_method_options: {
@@ -138,7 +138,7 @@ export async function POST(request: Request) {
         amount: tribe.annualMachineTaxCents,
         currency: "usd",
         destination: account,
-        description: `Tend MPP test routing for ${tribe.name}`,
+        description: `MPP test routing for ${tribe.name}`,
       });
       routed = true;
     } catch (err) {
@@ -152,7 +152,7 @@ export async function POST(request: Request) {
     Response.json({
       ok: true,
       tribe: tribe.id,
-      receipt: `Tend recorded a test machine payment for the ${tribe.name} program reference.`,
+      receipt: `A test machine payment was recorded for the ${tribe.name} program reference.`,
       amountUsd,
       routedToTribeAccount: routed,
       note: routed

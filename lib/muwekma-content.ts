@@ -49,7 +49,7 @@ export const timeline: TimelineEntry[] = [
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",
     evidenceNote:
-      "Evidence limit: Tend links to the Tribe’s summary. The BIA final determination and cited legal records are outside this guide.",
+      "Evidence limit: the Tribe’s summary is linked here. The BIA final determination and cited legal records are outside this guide.",
   },
   {
     date: "2002 and 2004",
@@ -68,7 +68,7 @@ export const timeline: TimelineEntry[] = [
     sourceUrl:
       "https://news.stanford.edu/stories/2022/03/genomic-analysis-supports-ancient-muwekma-ohlone-connection",
     evidenceNote:
-      "Evidence limit: Tend links to Stanford’s summary. The PNAS paper and study data are outside this guide.",
+      "Evidence limit: Stanford’s summary is linked here. The PNAS paper and study data are outside this guide.",
   },
 ];
 
@@ -76,6 +76,9 @@ export interface OhloneSite extends SourcedEntry {
   name: string;
   subtitle: string;
   evidence: Evidence;
+  coordinates: readonly [number, number];
+  precision: "exact" | "approximate";
+  record: string;
 }
 
 export const presidioSites: OhloneSite[] = [
@@ -83,6 +86,10 @@ export const presidioSites: OhloneSite[] = [
     name: "Petlenuc",
     subtitle: "A Yelamu village in the area now known as the Presidio",
     evidence: "documented",
+    coordinates: [-122.472, 37.806],
+    precision: "approximate",
+    record:
+      "Mission records place Petlenuc in the northern Presidio vicinity. The atlas uses an approximate point because the historical record does not fix a precise footprint.",
     sourceName: "National Park Service",
     sourceUrl: "https://www.nps.gov/places/000/8-home-of-the-yelamu.htm",
   },
@@ -90,6 +97,10 @@ export const presidioSites: OhloneSite[] = [
     name: "El Polín Spring",
     subtitle: "A spring where Yelamu Ohlone people and their ancestors lived for thousands of years",
     evidence: "documented",
+    coordinates: [-122.4527, 37.7971],
+    precision: "exact",
+    record:
+      "Archaeological work at the spring documents long habitation. The mapped point identifies the public site, not the extent of the archaeological record.",
     sourceName: "National Park Service",
     sourceUrl: "https://www.nps.gov/places/000/el-pol-n-spring.htm",
   },
@@ -97,6 +108,10 @@ export const presidioSites: OhloneSite[] = [
     name: "Fort Mason",
     subtitle: "Cooking-hearth remains near the fort predate the Spanish arrival in 1776",
     evidence: "documented",
+    coordinates: [-122.43, 37.805],
+    precision: "approximate",
+    record:
+      "The National Park Service describes cooking-hearth remains that predate Spanish arrival. The marker shows the Fort Mason vicinity and does not infer a village boundary.",
     sourceName: "National Park Service",
     sourceUrl:
       "https://www.nps.gov/places/000/3-fort-mason-historic-district.htm",
@@ -123,7 +138,7 @@ export const signals: Signal[] = [
   {
     date: "Recognition",
     title: "The Tribe documents the federal process",
-    detail: "The page quotes agency findings and court decisions. Tend links to this page; the underlying records are outside this guide.",
+    detail: "The page quotes agency findings and court decisions. The underlying records are outside this guide.",
     evidence: "documented",
     sourceName: "Muwekma Ohlone Tribe",
     sourceUrl: "https://www.muwekma.org/recognition-process.html",

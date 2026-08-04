@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     note:
       countyNotes[county] ??
       (matched.length === 0
-        ? `${county} County is outside the territories Tend currently hosts. The Native Land map at native-land.ca shows whose land you're on.`
+        ? `${county} County is outside the listed program territories. The Native Land map at native-land.ca shows whose land you're on.`
         : null),
     coveredCounties,
   });

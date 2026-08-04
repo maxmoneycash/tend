@@ -139,8 +139,8 @@ export function pledgeResumeError({
   }
 
   return demo
-    ? "We couldn’t restore every saved preview detail. Review the amount and timing below, then try the demo preview again."
-    : "We couldn’t restore every saved checkout detail. Review the amount and timing below, then try Stripe test checkout again.";
+    ? "We couldn’t restore every saved preview detail. Review the amount and drip rate, then try again."
+    : "We couldn’t restore every saved checkout detail. Review the amount and drip rate, then try Stripe again.";
 }
 
 export function pledgeAmountReviewLabel({
@@ -198,11 +198,11 @@ export function pledgeTempoPlanExplanation(
   interval: CheckoutInterval,
 ): string {
   if (interval === "once") {
-    return "If checkout succeeds, Stripe records a one-time test payment. Tend attempts this Tempo testnet plan after Stripe confirms the payment.";
+    return "After Stripe confirms the test payment, the amount drips at your selected rate until it is complete.";
   }
 
   const schedule = interval === "month" ? "monthly" : "yearly";
-  return `If checkout succeeds, Stripe creates a ${schedule} test subscription. Tend attempts this Tempo testnet plan after Stripe confirms the first payment. Later subscription invoices do not trigger another attempt.`;
+  return `Stripe creates a ${schedule} test subscription. The first test payment drips at your selected rate; later invoices do not start another drip.`;
 }
 
 export function buildPledgeCheckoutIntent({

@@ -1,34 +1,37 @@
+/* Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V4 */
+/* Hallmark · component: donor amount + delivery controls · genre: playful editorial · theme: Tend locked system
+ * states: default · hover · focus · active · disabled · loading · error · success · contrast: pass
+ */
 "use client";
 
-import {
-  ArrowRight,
-  LoaderCircle,
-  ShieldCheck,
-  SlidersHorizontal,
-} from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { LoadingButton } from "@/components/interior/LoadingButton";
 import { StreamTimingControls } from "@/components/stream/StreamTimingControls";
 import {
   consumeCheckoutIntent,
   startCheckout,
+  type CheckoutInterval,
   type CheckoutIntent,
 } from "@/lib/checkout-client";
 import {
-  DEFAULT_STREAM_DURATION_SECONDS,
   DEFAULT_STREAM_INTERVAL_SECONDS,
-  formatStreamTime,
-  streamSettlementCount,
-  type StreamDurationSeconds,
+  STREAM_DRIP_COUNT,
+  streamDurationForInterval,
   type StreamIntervalSeconds,
 } from "@/lib/stream-plan";
-
-const AMOUNTS = [10, 20, 25, 50, 100];
 
 function cleanAmount(value: string) {
   const clean = value.replace(/[^0-9.]/g, "");
   const [whole, ...decimals] = clean.split(".");
   return decimals.length ? `${whole}.${decimals.join("").slice(0, 2)}` : whole;
 }
+
+const PAYMENT_FREQUENCIES = [
+  { value: "once", label: "One time" },
+  { value: "month", label: "Monthly" },
+  { value: "year", label: "Yearly" },
+] satisfies Array<{ value: CheckoutInterval; label: string }>;
 
 export function StreamPanel({
   demo = false,
@@ -39,10 +42,9 @@ export function StreamPanel({
   tribeId: "ramaytush" | "muwekma";
   tribeName: string;
 }) {
-  const [amount, setAmount] = useState(20);
-  const [custom, setCustom] = useState("");
-  const [streamDurationSeconds, setStreamDurationSeconds] =
-    useState<StreamDurationSeconds>(DEFAULT_STREAM_DURATION_SECONDS);
+  const [amountInput, setAmountInput] = useState("20");
+  const [amountTouched, setAmountTouched] = useState(false);
+  const [interval, setInterval] = useState<CheckoutInterval>("once");
   const [streamIntervalSeconds, setStreamIntervalSeconds] =
     useState<StreamIntervalSeconds>(DEFAULT_STREAM_INTERVAL_SECONDS);
   const [busy, setBusy] = useState(false);
@@ -50,58 +52,68 @@ export function StreamPanel({
   const resumeAttempted = useRef(false);
   const checkoutButtonRef = useRef<HTMLButtonElement>(null);
 
-  const selectedAmount = custom ? Number(custom) : amount;
+  const selectedAmount = Number(amountInput);
   const amountValid =
+    amountInput.trim().length > 0 &&
     Number.isFinite(selectedAmount) &&
     selectedAmount >= 1 &&
     selectedAmount <= 10_000;
-  const settlementCount = streamSettlementCount(
-    streamDurationSeconds,
-    streamIntervalSeconds,
-  );
+  const amountHasError = amountTouched && !amountValid;
+  const streamDurationSeconds = streamDurationForInterval(streamIntervalSeconds);
+  const formattedAmount = amountValid ? selectedAmount.toFixed(2) : "—";
+  const checkoutLabel =
+    interval === "once"
+      ? `Pay $${formattedAmount} with Stripe`
+      : `Start $${formattedAmount} ${interval === "month" ? "monthly" : "yearly"} pledge`;
 
-  const openCheckout = useCallback(async (
-    intent: CheckoutIntent,
-    resuming = false,
-  ) => {
-    setBusy(true);
-    setError(null);
-    try {
-      await startCheckout(intent, { resuming });
-    } catch (caught) {
-      const message =
-        caught instanceof Error
-          ? caught.message
-          : "The checkout preview didn’t open. Check your connection.";
-      setError(
-        message === "Stripe Checkout didn’t open. Check your connection."
-          ? "The checkout preview didn’t open. Check your connection."
-          : message,
-      );
-      setBusy(false);
-    }
-  }, []);
+  const openCheckout = useCallback(
+    async (intent: CheckoutIntent, resuming = false) => {
+      setBusy(true);
+      setError(null);
+      try {
+        await startCheckout(intent, { resuming });
+      } catch (caught) {
+        const message =
+          caught instanceof Error
+            ? caught.message
+            : "The checkout preview didn’t open. Check your connection.";
+        setError(
+          message === "Stripe Checkout didn’t open. Check your connection."
+            ? "The checkout preview didn’t open. Check your connection."
+            : message,
+        );
+        setBusy(false);
+        return false;
+      }
+      return true;
+    },
+    [],
+  );
 
   useEffect(() => {
     if (resumeAttempted.current) return;
     resumeAttempted.current = true;
     const expectedPath = `/programs/${tribeId}`;
     const intent = consumeCheckoutIntent(expectedPath);
-    if (!intent || intent.tribeId !== tribeId || intent.interval !== "once") {
+    if (!intent || intent.tribeId !== tribeId) {
       return;
     }
 
     queueMicrotask(() => {
       const dollars = intent.amountCents / 100;
-      if (AMOUNTS.includes(dollars)) {
-        setAmount(dollars);
-        setCustom("");
-      } else {
-        setCustom(String(dollars));
-      }
-      setStreamDurationSeconds(intent.streamDurationSeconds);
+      setAmountInput(String(dollars));
+      setAmountTouched(false);
+      setInterval(intent.interval);
       setStreamIntervalSeconds(intent.streamIntervalSeconds);
-      void openCheckout(intent, true);
+      void openCheckout(
+        {
+          ...intent,
+          streamDurationSeconds: streamDurationForInterval(
+            intent.streamIntervalSeconds,
+          ),
+        },
+        true,
+      );
     });
   }, [openCheckout, tribeId]);
 
@@ -111,152 +123,120 @@ export function StreamPanel({
     }
   }, [busy, error]);
 
-  function checkout() {
-    if (!amountValid) return;
-    void openCheckout({
+  async function checkout() {
+    if (!amountValid) throw new Error("Enter a donation amount first.");
+    const opened = await openCheckout({
       tribeId,
       amountCents: Math.round(selectedAmount * 100),
-      interval: "once",
+      interval,
       streamDurationSeconds,
       streamIntervalSeconds,
       returnTo: `/programs/${tribeId}`,
     });
+    if (!opened) throw new Error("Stripe Checkout did not open.");
   }
 
   return (
     <section
-      className="pledge-payment-panel pledge-payment-panel-primary"
+      className="donation-checkout"
       aria-labelledby="stream-title"
+      aria-label={`Donation for ${tribeName}`}
       aria-busy={busy}
       data-state={error ? "error" : busy ? "loading" : "default"}
     >
-      <div className="pledge-payment-heading">
-        <div>
-          <p className="pledge-kicker">Tend checkout preview</p>
-          <h4 id="stream-title">
-            {demo
-              ? "Preview a sample contribution"
-              : "Preview Tend’s Stripe test checkout"}
-          </h4>
-        </div>
-        <span className="pledge-test-badge">
-          {demo ? "Demo mode" : "Stripe test mode"}
+      <header className="donation-checkout__header">
+        <h2 id="stream-title">Make a donation</h2>
+        <span className="donation-checkout__mode" role="note">
+          {demo ? "Demo" : "Test mode"}
+          <small>No real money</small>
         </span>
-      </div>
+      </header>
 
-      <p className="pledge-payment-intro">
-        {demo
-          ? `Choose a sample amount to preview a receipt while Stripe and Tempo stay idle. ${tribeName} receives no money.`
-          : `Choose a test amount, then open Stripe Checkout in test mode. No real money reaches ${tribeName}.`}
-      </p>
-
-      <fieldset className="pledge-control">
-        <legend>Test amount</legend>
-        <div className="pledge-amount-row">
-          {AMOUNTS.map((value) => (
+      <div className="donation-checkout__body">
+        <div
+          className="donation-checkout__frequency"
+          role="radiogroup"
+          aria-label="Donation frequency"
+        >
+          {PAYMENT_FREQUENCIES.map((option) => (
             <button
-              key={value}
+              key={option.value}
               type="button"
-              className="pledge-amount-chip"
-              aria-pressed={amount === value && !custom}
-              onClick={() => {
-                setAmount(value);
-                setCustom("");
-              }}
+              role="radio"
+              aria-checked={interval === option.value}
+              disabled={busy}
+              onClick={() => setInterval(option.value)}
             >
-              ${value}
+              {option.label}
             </button>
           ))}
-          <label className="pledge-custom-amount">
-            <span>$</span>
-            <input
-              aria-label="Custom test amount in dollars"
-              aria-invalid={Boolean(custom) && !amountValid}
-              inputMode="decimal"
-              onChange={(event) => setCustom(cleanAmount(event.target.value))}
-              placeholder="Other"
-              value={custom}
-              aria-describedby="stream-amount-help"
-            />
-          </label>
         </div>
-        <p id="stream-amount-help" className="pledge-location-note">
-          Enter an amount from $1 to $10,000.
-        </p>
-      </fieldset>
 
-      <details className="pledge-stream-customizer">
-        <summary>
-          <span>
-            <SlidersHorizontal size={15} aria-hidden="true" />
-            {demo
-              ? "Set demo receipt timing"
-              : "Set Tempo testnet transfer timing"}
+        <label className="donation-checkout__amount">
+          <span>{demo ? "Sample amount" : "Donation amount"}</span>
+          <span
+            className="donation-checkout__amount-field"
+            data-invalid={amountHasError || undefined}
+          >
+            <span aria-hidden="true">$</span>
+            <input
+              aria-invalid={amountHasError || undefined}
+              aria-describedby={amountHasError ? "donation-amount-error" : undefined}
+              disabled={busy}
+              inputMode="decimal"
+              onBlur={() => setAmountTouched(true)}
+              onChange={(event) => setAmountInput(cleanAmount(event.target.value))}
+              value={amountInput}
+            />
+            <small>USD</small>
           </span>
-          <small>
-            {settlementCount} {demo ? "receipt steps" : "testnet transfers"}, every{" "}
-            {formatStreamTime(streamIntervalSeconds)}
+          <small
+            id="donation-amount-error"
+            className="donation-checkout__amount-error"
+            aria-live="polite"
+          >
+            {amountHasError ? "Enter $1 to $10,000." : ""}
           </small>
-        </summary>
+        </label>
+
         <StreamTimingControls
-          amountCents={amountValid ? Math.round(selectedAmount * 100) : 0}
-          durationSeconds={streamDurationSeconds}
+          disabled={busy}
           intervalSeconds={streamIntervalSeconds}
-          onDurationChange={setStreamDurationSeconds}
           onIntervalChange={setStreamIntervalSeconds}
-          preview={demo}
         />
-      </details>
 
-      <div className="pledge-checkout-action">
-        <button
-          ref={checkoutButtonRef}
-          type="button"
-          className="pledge-checkout-button"
-          data-state={error ? "error" : busy ? "loading" : "default"}
-          disabled={busy || !amountValid}
-          onClick={checkout}
-          aria-describedby={error ? "stream-checkout-error" : undefined}
-        >
-          {busy ? (
-            <>
-              <LoaderCircle className="pledge-spinner" size={17} />
-              {demo
-                ? "Opening demo receipt preview"
-                : "Opening Stripe test checkout"}
-            </>
-          ) : (
-            <>
-              {error
-                ? demo
-                  ? "Try demo receipt preview again"
-                  : "Try Stripe test checkout again"
-                : demo
-                  ? `Preview a $${amountValid ? selectedAmount.toFixed(2) : "0.00"} demo receipt`
-                  : `Open a $${amountValid ? selectedAmount.toFixed(2) : "0.00"} Stripe test checkout`}
-              <ArrowRight size={17} aria-hidden="true" />
-            </>
-          )}
-        </button>
-
-        {!demo && (
-          <p className="pledge-wallet-note">
-            <ShieldCheck size={13} aria-hidden="true" />
-            Stripe may offer Apple Pay on a supported iPhone.
-          </p>
-        )}
-
-        {error && (
-          <p id="stream-checkout-error" className="pledge-error" role="alert">
-            {error}
-          </p>
-        )}
-
-        <p className="pledge-test-disclosure">
-          {demo
-            ? "Demo receipt only. Stripe Checkout and Tempo stay idle. Use the official donation link above to contribute."
-            : "Test only. Stripe Checkout can start faucet-funded pathUSD transfers on the Tempo Moderato testnet. Use the official donation link above to contribute real funds."}
+        <p className="donation-checkout__explanation">
+          <strong>One card payment becomes {STREAM_DRIP_COUNT} small payments.</strong>
+          <span>The stream stops when the full amount is sent.</span>
         </p>
+
+        <div className="donation-checkout__action">
+          <LoadingButton
+            ariaDescribedBy={error ? "stream-checkout-error" : undefined}
+            buttonRef={checkoutButtonRef}
+            className="donation-checkout__button"
+            disabled={busy || !amountValid}
+            errorLabel="Try checkout again"
+            onAction={checkout}
+            pendingLabel={demo ? "Opening preview" : "Opening Stripe"}
+            successLabel={demo ? "Preview opened" : "Stripe opened"}
+          >
+            {demo ? "Open receipt preview" : checkoutLabel}
+          </LoadingButton>
+
+          {!demo && (
+            <p className="donation-checkout__wallet-note">
+              <ShieldCheck size={14} aria-hidden="true" />
+              Apple Pay when available · $0 platform fee
+            </p>
+          )}
+
+          {error && (
+            <p id="stream-checkout-error" className="pledge-error" role="alert">
+              {error}
+            </p>
+          )}
+        </div>
       </div>
     </section>
   );

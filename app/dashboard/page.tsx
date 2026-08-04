@@ -1,52 +1,39 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
-import { AmbientBlobs } from "@/components/layout/AmbientBlobs";
 import { auth0 } from "@/lib/auth0";
 import { accessibleTribes } from "@/lib/access";
 import { tribes, type TribeId } from "@/lib/tribes";
+import "@/styles/content-rewards-product.css";
 
 function TenantGrid({ ids, note }: { ids: TribeId[]; note: string }) {
   return (
-    <div className="min-h-screen pb-24 md:pb-0">
+    <div className="cr-product-page min-h-screen pb-24 md:pb-0">
       <Navbar />
-      <div style={{ paddingTop: "108px" }} />
-      <div className="relative" style={{ overflow: "clip" }}>
-        <AmbientBlobs variant="earn" />
-        <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
-          <div className="mb-6 sm:mb-8 animate-enter">
-            <span className="inline-block text-[11px] font-display font-medium px-2.5 py-1 rounded-[10px] bg-[#FA4616]/10 text-[#FA4616] border border-[#FA4616]/20 uppercase tracking-wider mb-3">
-              Dashboards
-            </span>
-            <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111111] mb-2 tracking-[-0.02em]">
-              Tribal tenants
-            </h1>
-            <p className="text-[13px] sm:text-[14px] text-[#7d7d7d] max-w-xl leading-relaxed">
-              {note}
-            </p>
+      <div className="cr-product-nav-spacer" />
+        <main className="cr-product-shell cr-dashboard-index">
+          <div className="cr-product-page-head">
+            <div>
+            <p>Dashboards</p>
+            <h1>Organization workspaces</h1>
+            <span>{note}</span>
+            </div>
           </div>
 
-          <div className="animate-enter animate-enter-delay-1 grid gap-4 sm:grid-cols-2">
+          <div className="cr-dashboard-tenant-grid">
             {ids.map((id) => (
               <Link
                 key={id}
                 href={`/dashboard/${id}`}
-                className="group surface-1 rounded-[16px] p-5 transition-all duration-300 ease-out hover:scale-[1.01] hover:border-black/[0.16] active:scale-[0.99]"
+                className="cr-dashboard-tenant-card cr-product-section-card"
               >
-                <h3 className="text-[15px] font-semibold text-[#111111] group-hover:text-[#FA4616] transition-colors">
-                  {tribes[id].name}
-                </h3>
-                <p className="text-[12px] text-[#6b6b6b] mt-0.5">
-                  {tribes[id].taxName}
-                </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 text-orange-700 text-[11px] font-medium">
-                  Open dashboard →
-                </span>
+                <small>{tribes[id].taxName}</small>
+                <h3>{tribes[id].name}</h3>
+                <span>Open dashboard →</span>
               </Link>
             ))}
           </div>
-        </div>
-      </div>
+        </main>
     </div>
   );
 }
@@ -81,7 +68,7 @@ export default async function DashboardIndex() {
   return (
     <TenantGrid
       ids={ids}
-      note="Local Auth0 and environment settings grant access to these test tenant views."
+      note="Open the payment and pledge records available to your signed-in account."
     />
   );
 }

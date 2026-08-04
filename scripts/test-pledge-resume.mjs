@@ -17,9 +17,47 @@ import {
   restorePledgeDraft,
   restorePledgeSelection,
 } from "../lib/pledge-flow-state.ts";
+import {
+  STREAM_DRIP_COUNT,
+  STREAM_INTERVALS_SECONDS,
+  streamDurationForInterval,
+  streamSettlementCount,
+} from "../lib/stream-plan.ts";
 
 const pledgeFlowSource = readFileSync(
   new URL("../components/PledgeFlow.tsx", import.meta.url),
+  "utf8",
+);
+const streamTimingSource = readFileSync(
+  new URL("../components/stream/StreamTimingControls.tsx", import.meta.url),
+  "utf8",
+);
+const streamPanelSource = readFileSync(
+  new URL("../components/stream/StreamPanel.tsx", import.meta.url),
+  "utf8",
+);
+const sliderDetentsSource = readFileSync(
+  new URL("../components/interior/SliderDetents.tsx", import.meta.url),
+  "utf8",
+);
+const donationReceiptSource = readFileSync(
+  new URL("../components/DonationReceipt.tsx", import.meta.url),
+  "utf8",
+);
+const tempoStreamSource = readFileSync(
+  new URL("../components/TempoStream.tsx", import.meta.url),
+  "utf8",
+);
+const programCardSource = readFileSync(
+  new URL("../components/programs/ProgramCard.tsx", import.meta.url),
+  "utf8",
+);
+const programHeroSource = readFileSync(
+  new URL("../components/content-rewards/ProgramCampaignHeader.tsx", import.meta.url),
+  "utf8",
+);
+const programDetailSource = readFileSync(
+  new URL("../app/programs/[id]/page.tsx", import.meta.url),
   "utf8",
 );
 
@@ -148,7 +186,7 @@ test("a rejected checkout return keeps valid details and gives a recovery action
   });
   assert.equal(
     pledgeResumeError({ demo: false, hasProgram: true }),
-    "We couldn’t restore every saved checkout detail. Review the amount and timing below, then try Stripe test checkout again.",
+    "We couldn’t restore every saved checkout detail. Review the amount and drip rate, then try Stripe again.",
   );
   assert.equal(
     pledgeCheckoutButtonLabel({
@@ -205,18 +243,71 @@ test("the pledge names the Stripe record and Tempo boundary before checkout", ()
   );
   assert.equal(
     pledgeTempoPlanExplanation("once"),
-    "If checkout succeeds, Stripe records a one-time test payment. Tend attempts this Tempo testnet plan after Stripe confirms the payment.",
+    "After Stripe confirms the test payment, the amount drips at your selected rate until it is complete.",
   );
   assert.equal(
     pledgeTempoPlanExplanation("month"),
-    "If checkout succeeds, Stripe creates a monthly test subscription. Tend attempts this Tempo testnet plan after Stripe confirms the first payment. Later subscription invoices do not trigger another attempt.",
+    "Stripe creates a monthly test subscription. The first test payment drips at your selected rate; later invoices do not start another drip.",
   );
   assert.match(
     pledgeFlowSource,
-    /Review the Stripe test payment or subscription and timing below before continuing\./,
+    /Review the test amount and drip rate below\./,
   );
-  assert.match(pledgeFlowSource, /"If checkout succeeds"/);
   assert.doesNotMatch(pledgeFlowSource, /Stripe will record/);
+});
+
+test("the drip slider changes speed without changing the transfer count", () => {
+  for (const intervalSeconds of STREAM_INTERVALS_SECONDS) {
+    const durationSeconds = streamDurationForInterval(intervalSeconds);
+    assert.equal(
+      streamSettlementCount(durationSeconds, intervalSeconds),
+      STREAM_DRIP_COUNT,
+    );
+  }
+
+  assert.match(streamTimingSource, /SliderDetents/);
+  assert.match(streamTimingSource, /label="Drip rate"/);
+  assert.doesNotMatch(streamTimingSource, /Demo length|Time between payments/);
+});
+
+test("the donation checkout stays compact and saves proof for after payment", () => {
+  assert.match(streamPanelSource, /className="donation-checkout"/);
+  assert.match(streamPanelSource, /role="radiogroup"/);
+  assert.match(streamPanelSource, /StreamTimingControls/);
+  assert.match(streamPanelSource, /LoadingButton/);
+  assert.doesNotMatch(
+    streamPanelSource,
+    /DonationReceipt|program-amount-field|pledge-amount-chip/,
+  );
+
+  assert.match(sliderDetentsSource, /relative h-9/);
+  assert.match(sliderDetentsSource, /h-\[10px\]/);
+  assert.match(sliderDetentsSource, /h-\[20px\] w-\[18px\]/);
+  assert.doesNotMatch(sliderDetentsSource, /detent-slider-track/);
+
+  assert.match(donationReceiptSource, /CopyButton/);
+  assert.match(tempoStreamSource, /TaskSteps/);
+  assert.match(tempoStreamSource, /ValueFlash/);
+});
+
+test("program entry points lead to checkout and keep the official fallback", () => {
+  assert.match(programCardSource, /href=\{`\/programs\/\$\{program\.id\}#donate`\}/);
+  assert.match(programCardSource, /View program/);
+  assert.match(programCardSource, /Official site/);
+  assert.match(programHeroSource, /href="#donate"/);
+  assert.match(programHeroSource, /Make a donation/);
+  assert.doesNotMatch(programCardSource, />[^<]*Tend[^<]*</);
+  assert.doesNotMatch(programHeroSource, />[^<]*Tend[^<]*</);
+});
+
+test("program pages use real program media and explain the donor problem", () => {
+  assert.match(programHeroSource, /ProgramVideo/);
+  assert.match(programHeroSource, /\/videos\/\$\{program\.id\}-poster\.jpg/);
+  assert.match(programDetailSource, /Why use this checkout/);
+  assert.match(programDetailSource, /Choose the right program/);
+  assert.match(programDetailSource, /Keep the proof/);
+  assert.match(programDetailSource, /cr-product-technical/);
+  assert.doesNotMatch(programDetailSource, /program-about-panel|program-secondary-stack/);
 });
 
 test("an invalid amount names the fix instead of promising a $0.00 checkout", () => {
@@ -310,7 +401,6 @@ test("editing a failed pledge clears stale recovery before changing intent", () 
     "chooseInterval",
     "chooseAmount",
     "changeCustomAmount",
-    "chooseStreamDuration",
     "chooseStreamInterval",
   ]) {
     assert.match(
@@ -327,6 +417,5 @@ test("editing a failed pledge clears stale recovery before changing intent", () 
     pledgeFlowSource,
     /onChange=\{\(event\) =>\s+changeCustomAmount\(event\.target\.value\)\s+\}/,
   );
-  assert.match(pledgeFlowSource, /onDurationChange=\{chooseStreamDuration\}/);
   assert.match(pledgeFlowSource, /onIntervalChange=\{chooseStreamInterval\}/);
 });
