@@ -2,9 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowUpRight,
-  Check,
-  FileText,
-  MapPinned,
+  ReceiptText,
 } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { countyNotes, countyTribes, getTribe } from "@/lib/tribes";
@@ -39,26 +37,38 @@ export default async function ProgramDetail({
 
         <div className="cr-product-campaign-workspace">
           <section className="cr-product-donation-panel scroll-mt-28" id="donate">
-            <StreamPanel demo={demo} tribeId={tribe.id} tribeName={tribe.name} />
+            <StreamPanel
+              demo={demo}
+              programName={tribe.taxName}
+              tribeId={tribe.id}
+              tribeName={tribe.name}
+            />
           </section>
 
           <aside className="cr-product-campaign-sidebar">
-            <section className="cr-product-section-card">
-              <h2>Why use this checkout</h2>
-              <ul className="cr-product-requirements">
-                <li><MapPinned aria-hidden="true" size={17} /><span><strong>Choose the right program</strong>Published coverage stays visible before payment.</span></li>
-                <li><Check aria-hidden="true" size={17} /><span><strong>Keep the proof</strong>The payment and settlement links share one receipt.</span></li>
-                <li><FileText aria-hidden="true" size={17} /><span><strong>Reduce reconciliation</strong>The program reference remains attached after checkout.</span></li>
-              </ul>
+            <section className="cr-product-record-preview">
+              <header>
+                <span>After checkout</span>
+                <ReceiptText aria-hidden="true" size={17} />
+              </header>
+              <h2>Your donation record</h2>
+              <p>The receipt keeps the program and payment together.</p>
+              <dl>
+                <div><dt>Program</dt><dd>{tribe.taxName}</dd></div>
+                <div><dt>Organization</dt><dd>{tribe.name}</dd></div>
+                <div><dt>Payment</dt><dd>Stripe Checkout</dd></div>
+                <div><dt>Schedule</dt><dd>Chosen at checkout</dd></div>
+              </dl>
+              <footer>Created after Stripe confirms payment</footer>
             </section>
 
-            <section className="cr-product-section-card">
-              <h2>Program sources</h2>
+            <details className="cr-product-section-card cr-product-source-card">
+              <summary>Program sources</summary>
               <div className="cr-product-resources">
                 <a href={tribe.officialProgramUrl} rel="noreferrer" target="_blank">Official program page <ArrowUpRight aria-hidden="true" size={14} /></a>
                 <a href={tribe.officialDonationUrl} rel="noreferrer" target="_blank">Organization donation page <ArrowUpRight aria-hidden="true" size={14} /></a>
               </div>
-            </section>
+            </details>
           </aside>
         </div>
 

@@ -4,10 +4,9 @@
  */
 "use client";
 
-import { ShieldCheck } from "lucide-react";
+import { CreditCard, ReceiptText, ShieldCheck } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LoadingButton } from "@/components/interior/LoadingButton";
-import { StreamTimingControls } from "@/components/stream/StreamTimingControls";
 import {
   consumeCheckoutIntent,
   startCheckout,
@@ -16,7 +15,6 @@ import {
 } from "@/lib/checkout-client";
 import {
   DEFAULT_STREAM_INTERVAL_SECONDS,
-  STREAM_DRIP_COUNT,
   streamDurationForInterval,
   type StreamIntervalSeconds,
 } from "@/lib/stream-plan";
@@ -35,10 +33,12 @@ const PAYMENT_FREQUENCIES = [
 
 export function StreamPanel({
   demo = false,
+  programName,
   tribeId,
   tribeName,
 }: {
   demo?: boolean;
+  programName: string;
   tribeId: "ramaytush" | "muwekma";
   tribeName: string;
 }) {
@@ -145,7 +145,10 @@ export function StreamPanel({
       data-state={error ? "error" : busy ? "loading" : "default"}
     >
       <header className="donation-checkout__header">
-        <h2 id="stream-title">Make a donation</h2>
+        <div>
+          <h2 id="stream-title">Make a donation</h2>
+          <p>{programName}</p>
+        </div>
         <span className="donation-checkout__mode" role="note">
           {demo ? "Demo" : "Test mode"}
           <small>No real money</small>
@@ -199,16 +202,10 @@ export function StreamPanel({
           </small>
         </label>
 
-        <StreamTimingControls
-          disabled={busy}
-          intervalSeconds={streamIntervalSeconds}
-          onIntervalChange={setStreamIntervalSeconds}
-        />
-
-        <p className="donation-checkout__explanation">
-          <strong>One card payment becomes {STREAM_DRIP_COUNT} small payments.</strong>
-          <span>The stream stops when the full amount is sent.</span>
-        </p>
+        <div className="donation-checkout__assurances" aria-label="Checkout details">
+          <span><CreditCard aria-hidden="true" size={16} /> Secure Stripe checkout</span>
+          <span><ReceiptText aria-hidden="true" size={16} /> Receipt after payment</span>
+        </div>
 
         <div className="donation-checkout__action">
           <LoadingButton

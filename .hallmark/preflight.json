@@ -1,0 +1,15 @@
+{
+  "date": "2026-08-04",
+  "framework": "Next.js 16 App Router",
+  "designSystem": "design.md / Shelby Content Rewards",
+  "fonts": ["Space Grotesk", "Inter", "Geist Mono"],
+  "palette": "Warm paper and orange product tokens",
+  "motion": "Motion cut; no animation library",
+  "spacing": "4pt product token scale",
+  "preserve": [
+    "Content Rewards navigation",
+    "Editorial footer",
+    "Existing design tokens",
+    "Responsive component behavior"
+  ]
+}

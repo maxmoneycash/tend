@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-08-04",
+    "scope": "app",
+    "macrostructure": "Narrative Workflow",
+    "theme": "studied-DNA",
+    "enrichment": "real program media and operations preview",
+    "brief": "Pair the public donation page with a searchable, exportable staff register"
+  },
+  {
+    "date": "2026-08-04",
+    "scope": "app",
+    "macrostructure": "Program record + donation action + operations register",
+    "theme": "studied-DNA",
+    "enrichment": "real program media",
+    "brief": "Replace donor-facing settlement controls with a simple giving flow and make the staff record the product value"
+  },
+  {
     "date": "2026-08-03",
     "scope": "product routes",
     "macrostructure": "Product campaign + operations register",

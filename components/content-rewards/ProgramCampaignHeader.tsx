@@ -54,16 +54,16 @@ export function ProgramCampaignHeader({
 
       <dl className="cr-product-campaign-facts" aria-label="Donation page capabilities">
         <div>
-          <dt>Frequency</dt>
+          <dt>Program area</dt>
+          <dd>{program.region}</dd>
+        </div>
+        <div>
+          <dt>Ways to give</dt>
           <dd>One time, monthly, or yearly</dd>
         </div>
         <div>
-          <dt>Checkout</dt>
-          <dd>Stripe card or Apple Pay</dd>
-        </div>
-        <div>
-          <dt>After payment</dt>
-          <dd>Payment and settlement receipt</dd>
+          <dt>Your receipt</dt>
+          <dd>Payment and program together</dd>
         </div>
       </dl>
     </>

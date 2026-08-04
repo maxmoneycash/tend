@@ -273,8 +273,14 @@ test("the drip slider changes speed without changing the transfer count", () => 
 test("the donation checkout stays compact and saves proof for after payment", () => {
   assert.match(streamPanelSource, /className="donation-checkout"/);
   assert.match(streamPanelSource, /role="radiogroup"/);
-  assert.match(streamPanelSource, /StreamTimingControls/);
+  assert.match(streamPanelSource, /Donation amount/);
+  assert.match(streamPanelSource, /Secure Stripe checkout/);
+  assert.match(streamPanelSource, /Receipt after payment/);
   assert.match(streamPanelSource, /LoadingButton/);
+  assert.doesNotMatch(
+    streamPanelSource,
+    /StreamTimingControls|Drip rate|small payments|Tempo timing/,
+  );
   assert.doesNotMatch(
     streamPanelSource,
     /DonationReceipt|program-amount-field|pledge-amount-chip/,
@@ -300,12 +306,13 @@ test("program entry points lead to checkout and keep the official fallback", () 
   assert.doesNotMatch(programHeroSource, />[^<]*Tend[^<]*</);
 });
 
-test("program pages use real program media and explain the donor problem", () => {
+test("program pages use real program media and preview the donor record", () => {
   assert.match(programHeroSource, /ProgramVideo/);
   assert.match(programHeroSource, /\/videos\/\$\{program\.id\}-poster\.jpg/);
-  assert.match(programDetailSource, /Why use this checkout/);
-  assert.match(programDetailSource, /Choose the right program/);
-  assert.match(programDetailSource, /Keep the proof/);
+  assert.match(programDetailSource, /Your donation record/);
+  assert.match(programDetailSource, /The receipt keeps the program and payment together/);
+  assert.match(programDetailSource, /Created after Stripe confirms payment/);
+  assert.match(programDetailSource, /Program sources/);
   assert.match(programDetailSource, /cr-product-technical/);
   assert.doesNotMatch(programDetailSource, /program-about-panel|program-secondary-stack/);
 });
